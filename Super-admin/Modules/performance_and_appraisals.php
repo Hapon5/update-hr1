@@ -22,6 +22,22 @@ try {
     // but we can catch this to prevent a hard crash on the create step if needed.
 }
 
+// function to relay data to external API
+function relayToExternalAPI($data) {
+    $url = 'https://hr4.cranecali-ms.com/api/performance.php';
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $response;
+}
+
 // Handle Form Submission (Add Review)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_review') {
     try {
@@ -41,7 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $_POST['comments']
         ]);
 
-        $_SESSION['success_msg'] = "Performance review added successfully!";
+        // Relay data to external API
+        $relayData = [
+            'employee_id' => $_POST['employee_id'],
+            'review_date' => $_POST['review_date'],
+            'review_type' => $_POST['review_type'],
+            'kpi_score' => $_POST['kpi_score'],
+            'attendance_score' => $_POST['attendance_score'],
+            'supervisor_quality_rating' => $_POST['supervisor_quality_rating'],
+            'productivity_score' => $_POST['productivity_score'],
+            'promotion_recommended' => isset($_POST['promotion_recommended']) ? 1 : 0,
+            'comments' => $_POST['comments']
+        ];
+        relayToExternalAPI($relayData);
+
+        $_SESSION['success_msg'] = "Performance review added and synchronized successfully!";
         header("Location: performance_and_appraisals.php");
         exit;
     } catch (PDOException $e) {
@@ -144,10 +174,6 @@ if ($totalEmployees > 0) {
                 <p class="text-[10px] text-gray-400 mt-1 uppercase font-black tracking-[0.3em]">Connected Evaluation System</p>
             </div>
             <div class="flex gap-3">
-                <a href="../../integration/sender_performance.php" 
-                   class="bg-white border border-gray-200 text-gray-900 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
-                   <i class="fas fa-link text-indigo-500"></i> API Link
-                </a>
                 <button onclick="openModal('evaluateModal')"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all flex items-center gap-2">
                     <i class="fas fa-plus"></i> New Evaluation

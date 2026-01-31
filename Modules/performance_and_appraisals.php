@@ -44,6 +44,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_employee_appraisal' && is
 }
 
 
+// function to relay data to external API
+function relayToExternalAPI($data) {
+    $url = 'https://hr4.cranecali-ms.com/api/performance.php';
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $response;
+}
+
 // --- AJAX HANDLER: Add / Update / Delete Appraisals ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
@@ -78,6 +94,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt->execute([$employee_id, $rater_email, $rating, $comment]);
                 $message = 'Appraisal submitted successfully!';
             }
+
+            // Relay data to external API
+            $relayData = [
+                'employee_id' => $employee_id,
+                'rater_email' => $rater_email,
+                'rating' => $rating,
+                'comment' => $comment,
+                'review_date' => date('Y-m-d'),
+                'review_type' => 'Appraisal'
+            ];
+            relayToExternalAPI($relayData);
+
             echo json_encode(['status' => 'success', 'message' => $message]);
 
         } elseif ($action === 'delete_appraisal') {
@@ -209,10 +237,6 @@ try {
                 <p class="text-[10px] text-gray-400 mt-1 uppercase font-black tracking-[0.3em]">Connected Evaluation System</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="../integration/sender_performance.php" 
-                   class="bg-white border border-gray-200 text-gray-900 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
-                   <i class="fas fa-link text-indigo-500"></i> API Link
-                </a>
                 <div id="datetime" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-gray-100 px-4 py-2 rounded-xl"></div>
             </div>
         </div>
