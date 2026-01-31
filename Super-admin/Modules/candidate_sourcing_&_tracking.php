@@ -49,7 +49,7 @@ class CandidateManager
             address TEXT,
             resume_path VARCHAR(255),
             extracted_image_path VARCHAR(255),
-            status ENUM('Applied', 'Shortlisted', 'Interviewed', 'Passed', 'Failed', 'Hired') DEFAULT 'Applied',
+            status VARCHAR(50) DEFAULT 'Applied',
             source VARCHAR(100) DEFAULT 'Direct',
             skills TEXT,
             notes TEXT,
@@ -78,6 +78,11 @@ class CandidateManager
             'background_status' => "ENUM('Pending', 'In Progress', 'Cleared', 'Flagged') DEFAULT 'Pending'",
             'interview_status' => "ENUM('Pending', 'Scheduled', 'Completed', 'Cancelled') DEFAULT 'Pending'"
         ];
+
+        // Ensure status is VARCHAR(50) for flexibility (fixes truncation issues)
+        try {
+            $this->conn->exec("ALTER TABLE candidates MODIFY COLUMN status VARCHAR(50) DEFAULT 'Applied'");
+        } catch (Exception $e) {}
 
         foreach ($columns as $col => $def) {
             try {
@@ -197,7 +202,7 @@ class CandidateManager
             $data['skills'] ?? '',
             $data['skill_rating'] ?? 0,
             $data['background_status'] ?? 'Pending',
-            $data['status'] ?? 'Applied',
+            (!empty($data['status'])) ? $data['status'] : 'Applied',
             $data['notes'] ?? '',
             !empty($data['interview_date']) ? $data['interview_date'] : null,
             $id
