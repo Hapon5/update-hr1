@@ -25,26 +25,7 @@ $email = $_SESSION['Email'];
 <body class="bg-gray-100 flex">
     
     <!-- Sidebar -->
-    <aside class="w-64 bg-indigo-900 text-white min-h-screen hidden md:block">
-        <div class="p-6">
-            <h1 class="text-2xl font-bold">HR1 Staff</h1>
-            <p class="text-indigo-200 text-sm">Management Portal</p>
-        </div>
-        <nav class="mt-6">
-            <a href="#" class="block py-3 px-6 bg-indigo-800 border-l-4 border-white">
-                <i class="fas fa-th-large mr-3"></i> Dashboard
-            </a>
-            <a href="#" class="block py-3 px-6 hover:bg-indigo-800 hover:border-l-4 hover:border-indigo-400 transition-all">
-                <i class="fas fa-user-tie mr-3"></i> Candidates
-            </a>
-            <a href="#" class="block py-3 px-6 hover:bg-indigo-800 hover:border-l-4 hover:border-indigo-400 transition-all">
-                <i class="fas fa-users mr-3"></i> Employees
-            </a>
-            <a href="#" class="block py-3 px-6 hover:bg-indigo-800 hover:border-l-4 hover:border-indigo-400 transition-all">
-                <i class="fas fa-clipboard-list mr-3"></i> Attendance
-            </a>
-        </nav>
-    </aside>
+    <?php include 'Components/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
@@ -68,7 +49,7 @@ $email = $_SESSION['Email'];
         <!-- Content Body -->
         <main class="p-6 overflow-y-auto">
             <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500">
                     <div class="flex justify-between items-center">
                         <div>
@@ -77,17 +58,6 @@ $email = $_SESSION['Email'];
                         </div>
                         <div class="bg-indigo-50 p-3 rounded-full text-indigo-600">
                             <i class="fas fa-user-friends"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-gray-500 text-sm">Active Employees</p>
-                            <h3 class="text-2xl font-bold text-gray-800">45</h3>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-full text-green-600">
-                            <i class="fas fa-id-badge"></i>
                         </div>
                     </div>
                 </div>
