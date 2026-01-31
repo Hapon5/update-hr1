@@ -376,10 +376,12 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                 }
             }
         }
+        // Dark mode specific styles
+        document.documentElement.classList.add('dark');
     </script>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-black text-gray-200 font-sans">
 
     <?php
     $root_path = '../../';
@@ -393,7 +395,7 @@ $candidates = $manager->getCandidates($search, $filterStatus);
         <!-- Page Header -->
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Candidate Tracking</h1>
+                <h1 class="text-2xl font-bold text-white uppercase tracking-tight">Candidate Tracking</h1>
                 <p class="text-gray-500 text-sm mt-1">Manage and track candidate applications across the pipeline.</p>
             </div>
             
@@ -401,19 +403,19 @@ $candidates = $manager->getCandidates($search, $filterStatus);
 
         <!-- Filters -->
         <div
-            class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            class="bg-gray-900 p-4 rounded-xl shadow-2xl border border-gray-800 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="relative w-full md:w-96">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <form method="GET" class="w-full">
                     <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
                         placeholder="Search candidates..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
+                        class="w-full pl-10 pr-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm text-gray-200">
                 </form>
             </div>
             <div class="flex gap-3 w-full md:w-auto">
                 <form method="GET" id="filterForm">
                     <select name="status" onchange="this.form.submit()"
-                        class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                        class="px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200">
                         <option value="All">All Status</option>
                         <?php
                         $statuses = ['Applied', 'Shortlisted', 'Interviewed', 'Passed', 'Failed', 'Hired'];
@@ -428,12 +430,12 @@ $candidates = $manager->getCandidates($search, $filterStatus);
         </div>
 
         <!-- Candidates Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-900 rounded-xl shadow-2xl border border-gray-800 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr
-                            class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-semibold tracking-wider">
+                            class="bg-gray-950 border-b border-gray-800 text-[10px] uppercase text-gray-500 font-bold tracking-widest">
                             <th class="px-6 py-4 text-left">Candidate</th>
                             <th class="px-6 py-4 text-center">Position</th>
                             <th class="px-6 py-4 text-center">Experience</th>
@@ -444,9 +446,9 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                             <th class="px-6 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-800">
                         <?php foreach ($candidates as $c): ?>
-                            <tr class="hover:bg-gray-50 transition-colors group">
+                            <tr class="hover:bg-white/[0.02] transition-colors group">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <?php if (!empty($c['extracted_image_path'])): ?>
@@ -454,19 +456,18 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                                                 alt="Profile"
                                                 class="w-10 h-10 rounded-full object-cover border border-gray-200">
                                         <?php else: ?>
-                                            <div
-                                                class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                                                class="w-10 h-10 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-500/20 shadow-lg">
                                                 <?= strtoupper(substr($c['full_name'], 0, 1)) ?>
                                             </div>
                                         <?php endif; ?>
                                         <div class="text-left">
-                                            <div class="font-medium text-gray-900"><?= htmlspecialchars($c['full_name']) ?>
+                                            <div class="font-medium text-white"><?= htmlspecialchars($c['full_name']) ?>
                                             </div>
-                                            <div class="text-xs text-gray-500"><?= htmlspecialchars($c['email']) ?></div>
+                                            <div class="text-[10px] text-gray-500"><?= htmlspecialchars($c['email']) ?></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700 text-center">
+                                <td class="px-6 py-4 text-sm text-gray-300 text-center font-light">
                                     <?= htmlspecialchars($c['position']) ?>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 text-center">
@@ -475,16 +476,16 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                                 <td class="px-6 py-4 text-center">
                                     <?php
                                     $sClass = match ($c['status']) {
-                                        'Applied' => 'bg-blue-50 text-blue-700',
-                                        'Shortlisted' => 'bg-purple-50 text-purple-700',
-                                        'Interviewed' => 'bg-orange-50 text-orange-700',
-                                        'Passed' => 'bg-green-50 text-green-700',
-                                        'Hired' => 'bg-teal-50 text-teal-700',
-                                        'Failed' => 'bg-red-50 text-red-700',
-                                        default => 'bg-gray-50 text-gray-600'
+                                        'Applied' => 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+                                        'Shortlisted' => 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
+                                        'Interviewed' => 'bg-orange-500/10 text-orange-400 border border-orange-500/20',
+                                        'Passed' => 'bg-green-500/10 text-green-400 border border-green-500/20',
+                                        'Hired' => 'bg-teal-500/10 text-teal-400 border border-teal-500/20',
+                                        'Failed' => 'bg-red-500/10 text-red-400 border border-red-500/20',
+                                        default => 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
                                     };
                                     ?>
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-medium <?= $sClass ?>">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $sClass ?>">
                                         <?= $c['status'] ?>
                                     </span>
                                 </td>
@@ -498,10 +499,10 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                                 <td class="px-6 py-4">
                                     <?php
                                     $bgClass = match ($c['background_status']) {
-                                        'Cleared' => 'text-green-600',
-                                        'Flagged' => 'text-red-600',
-                                        'In Progress' => 'text-blue-600',
-                                        default => 'text-gray-400'
+                                        'Cleared' => 'text-green-400',
+                                        'Flagged' => 'text-red-400',
+                                        'In Progress' => 'text-blue-400',
+                                        default => 'text-gray-600'
                                     };
                                     ?>
                                     <div
@@ -544,13 +545,13 @@ $candidates = $manager->getCandidates($search, $filterStatus);
 
     <!-- MODAL: ADD/EDIT CANDIDATE -->
     <div id="candidateModal"
-        class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
+        class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-md">
         <div
-            class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform transition-all scale-100">
+            class="bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform transition-all scale-100 border border-gray-800">
             <!-- Header -->
             <div
-                class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
-                <h3 class="text-xl font-bold text-gray-900" id="modalTitle">Add Candidate</h3>
+                class="sticky top-0 bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between z-10">
+                <h3 class="text-xl font-bold text-white uppercase tracking-widest" id="modalTitle">Add Candidate</h3>
                 <button onclick="closeModal()"
                     class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"><i
                         class="fas fa-times"></i></button>
@@ -563,47 +564,47 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                 <!-- Section: Personal Info -->
                 <div>
                     <h4
-                        class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 border-l-4 border-indigo-500 pl-3">
+                        class="text-sm font-bold text-white uppercase tracking-widest mb-4 border-l-4 border-indigo-500 pl-3">
                         Personal Information</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-                            <div id="display_full_name" class="text-gray-900 font-semibold text-lg"></div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Full Name</label>
+                            <div id="display_full_name" class="text-white font-bold text-xl"></div>
                             <input type="hidden" name="full_name">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
-                            <div id="display_email" class="text-gray-900 font-medium break-all"></div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Email Address</label>
+                            <div id="display_email" class="text-gray-300 font-medium break-all"></div>
                             <input type="hidden" name="email">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-                            <div id="display_contact_number" class="text-gray-900 font-medium"></div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Phone Number</label>
+                            <div id="display_contact_number" class="text-gray-300 font-medium"></div>
                             <input type="hidden" name="contact_number">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Experience (Years)</label>
-                            <div id="display_experience_years" class="text-gray-900 font-medium"></div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Experience (Years)</label>
+                            <div id="display_experience_years" class="text-gray-300 font-medium"></div>
                             <input type="hidden" name="experience_years">
                         </div>
                     </div>
                 </div>
 
                 <!-- Section: Application Details -->
-                <div class="border-t border-gray-100 pt-6">
+                <div class="border-t border-gray-800 pt-6">
                     <h4
-                        class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 border-l-4 border-blue-500 pl-3">
+                        class="text-sm font-bold text-white uppercase tracking-widest mb-4 border-l-4 border-blue-500 pl-3">
                         Application Details</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Position Applied For</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Position Applied For</label>
                             <input type="text" name="position" required
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Status</label>
                             <select name="status"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-white">
                                 <option value="Applied">Applied</option>
                                 <option value="Shortlisted">Shortlisted</option>
                                 <option value="Interviewed">Interviewed</option>
@@ -614,15 +615,15 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                         </div>
 
                         <!-- Interview Scheduling -->
-                        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Interview Schedule</label>
+                        <div class="md:col-span-2 bg-gray-950/50 p-4 rounded-lg border border-gray-800">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Interview Schedule</label>
                             <div class="flex flex-col sm:flex-row gap-4">
                                 <input type="datetime-local" name="interview_date"
-                                    class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    class="flex-1 px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-white">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm text-gray-500">Skill Rating (1-5):</span>
+                                    <span class="text-xs text-gray-500 uppercase font-bold tracking-tighter">Skill Rating:</span>
                                     <input type="number" name="skill_rating" min="0" max="5"
-                                        class="w-20 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        class="w-20 px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-white">
                                 </div>
                             </div>
                         </div>
@@ -630,9 +631,9 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                 </div>
 
                 <!-- Section: Tracking & Documents -->
-                <div class="border-t border-gray-100 pt-6">
+                <div class="border-t border-gray-800 pt-6">
                     <h4
-                        class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 border-l-4 border-green-500 pl-3">
+                        class="text-sm font-bold text-white uppercase tracking-widest mb-4 border-l-4 border-green-500 pl-3">
                         Documents</h4>
 
                     <div class="flex items-center gap-4">
@@ -648,34 +649,34 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                 </div>
 
                 <!-- Section: Notes -->
-                <div class="border-t border-gray-100 pt-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                <div class="border-t border-gray-800 pt-6">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Notes</label>
                     <textarea name="notes" rows="3"
-                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none"
+                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-white placeholder-gray-600"
                         placeholder="Add internal notes about this candidate..."></textarea>
                 </div>
 
                 <!-- Footer -->
-                <div class="flex justify-end gap-3 pt-4">
+                <div class="flex justify-end gap-3 pt-6 border-t border-gray-800">
                     <button type="button" onclick="closeModal()"
-                        class="px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+                        class="px-6 py-2.5 bg-gray-800 text-gray-300 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-gray-700 transition-colors">Cancel</button>
                     <button type="submit" id="submitBtn"
-                        class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">Admin HR Portal</button>
+                        class="px-6 py-2.5 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-950/50">Admin HR Portal</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Preview Modal for DOCX -->
-    <div id="previewModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-50 flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-lg w-full max-w-5xl h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center p-4 border-b">
-                <h3 class="text-xl font-bold text-gray-800">Resume Preview</h3>
-                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center backdrop-blur-md">
+        <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col border border-gray-800">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800">
+                <h3 class="text-xl font-bold text-white uppercase tracking-widest">Resume Preview</h3>
+                <button onclick="closePreviewModal()" class="text-gray-400 hover:text-white transition-colors">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
-            <div id="docx-container" class="flex-1 overflow-auto p-8 bg-gray-100">
+            <div id="docx-container" class="flex-1 overflow-auto p-8 bg-black">
                 <!-- Content renders here -->
             </div>
         </div>
@@ -683,25 +684,24 @@ $candidates = $manager->getCandidates($search, $filterStatus);
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal"
-        class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-[60] flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 transform transition-all">
+        class="fixed inset-0 bg-black bg-opacity-80 hidden z-[60] flex items-center justify-center backdrop-blur-md">
+        <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-sm p-6 transform transition-all border border-gray-800">
             <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-500/10 mb-4 border border-red-500/20">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
                 </div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete Candidate</h3>
-                <div class="mt-2">
-                    <p class="text-sm text-gray-500">Are you sure you want to delete this candidate? This action cannot
-                        be undone.</p>
+                <h3 class="text-lg leading-6 font-bold text-white uppercase tracking-widest" id="modal-title">Delete Candidate</h3>
+                <div class="mt-2 text-center text-xs text-gray-500">
+                    Are you sure you want to delete this candidate? This action cannot be undone.
                 </div>
             </div>
-            <div class="mt-5 sm:mt-6 flex gap-3">
+            <div class="mt-8 flex gap-3">
                 <button type="button" onclick="closeDeleteModal()"
-                    class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                    class="w-full inline-flex justify-center rounded-lg border border-gray-800 shadow-sm px-4 py-2.5 bg-gray-800 text-xs font-bold uppercase tracking-widest text-gray-300 hover:bg-gray-700 transition-colors outline-none">
                     Cancel
                 </button>
                 <button type="button" onclick="confirmDelete()"
-                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                    class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-lg px-4 py-2.5 bg-red-600 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors shadow-red-950/20 outline-none">
                     Delete
                 </button>
             </div>

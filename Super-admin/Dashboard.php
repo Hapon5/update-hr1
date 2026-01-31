@@ -87,10 +87,16 @@ try {
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        brand: { 500: '#6366f1', 600: '#4f46e5', 50: '#eef2ff' },
+                        brand: { 500: '#6366f1', 600: '#4f46e5', 50: '#1e1b4b' },
                         success: '#10b981',
                         warning: '#f59e0b',
-                        danger: '#ef4444'
+                        danger: '#ef4444',
+                        dark: {
+                            950: '#030712',
+                            900: '#111827',
+                            800: '#1f2937',
+                            700: '#374151'
+                        }
                     }
                 }
             }
@@ -103,9 +109,9 @@ try {
     <style>
         /* Glassmorphism & Custom Scrollbar */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(17, 24, 39, 0.8);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         ::-webkit-scrollbar {
@@ -132,7 +138,7 @@ try {
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-black text-gray-200 font-sans">
 
     <!-- Sidebar -->
     <?php include 'Components/sidebar.php'; ?>
@@ -150,58 +156,58 @@ try {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Employees -->
                 <div
-                    class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border-l-4 border-blue-500 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 h-full w-16 bg-blue-50 transform skew-x-12 translate-x-8"></div>
+                    class="bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-blue-500 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-full w-16 bg-blue-500/5 transform skew-x-12 translate-x-8"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Employees</p>
-                            <h3 class="text-3xl font-bold text-gray-800 mt-2"><?= $total_employees ?></h3>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Employees</p>
+                            <h3 class="text-3xl font-bold text-white mt-2"><?= $total_employees ?></h3>
                             <div class="flex items-center gap-2 mt-2 text-xs">
                                 <span
-                                    class="text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium"><?= $active_employees ?>
+                                    class="text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full font-medium"><?= $active_employees ?>
                                     Active</span>
                                 <span
-                                    class="text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full"><?= $inactive_employees ?>
+                                    class="text-gray-400 bg-white/5 px-2 py-0.5 rounded-full"><?= $inactive_employees ?>
                                     Inactive</span>
                             </div>
                         </div>
-                        <div class="p-3 bg-blue-100 rounded-lg text-blue-600">
+                        <div class="p-3 bg-blue-500/10 rounded-lg text-blue-500">
                             <i class="fas fa-users text-xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Job Openings -->
-                <a href="../Modules/job_posting.php"
-                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border-l-4 border-purple-500 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 h-full w-16 bg-purple-50 transform skew-x-12 translate-x-8">
+                <a href="../Modules/Job_posting.php"
+                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-purple-500 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-full w-16 bg-purple-500/5 transform skew-x-12 translate-x-8">
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Job Openings</p>
-                            <h3 class="text-3xl font-bold text-gray-800 mt-2"><?= $open_jobs ?></h3>
-                            <p class="text-xs text-purple-600 mt-2 font-medium">Accepting Applications</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Job Openings</p>
+                            <h3 class="text-3xl font-bold text-white mt-2"><?= $open_jobs ?></h3>
+                            <p class="text-xs text-purple-400 mt-2 font-medium">Accepting Applications</p>
                         </div>
-                        <div class="p-3 bg-purple-100 rounded-lg text-purple-600">
+                        <div class="p-3 bg-purple-500/10 rounded-lg text-purple-500">
                             <i class="fas fa-briefcase text-xl"></i>
                         </div>
                     </div>
                 </a>
 
                 <!-- Applicants -->
-                <a href="../Main/candidate_sourcing_&_tracking.php"
-                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border-l-4 border-pink-500 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 h-full w-16 bg-pink-50 transform skew-x-12 translate-x-8"></div>
+                <a href="../Modules/candidate_sourcing_&_tracking.php"
+                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-pink-500 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-full w-16 bg-pink-500/5 transform skew-x-12 translate-x-8"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">New Applicants</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">New Applicants</p>
                             <div class="flex items-baseline gap-2 mt-2">
-                                <h3 class="text-3xl font-bold text-gray-800"><?= $applicants_today ?></h3>
+                                <h3 class="text-3xl font-bold text-white"><?= $applicants_today ?></h3>
                                 <span class="text-xs text-gray-500">Today</span>
                             </div>
                             <p class="text-xs text-gray-500 mt-1"><?= $applicants_month ?> this month</p>
                         </div>
-                        <div class="p-3 bg-pink-100 rounded-lg text-pink-600">
+                        <div class="p-3 bg-pink-500/10 rounded-lg text-pink-500">
                             <i class="fas fa-user-clock text-xl"></i>
                         </div>
                     </div>
@@ -209,16 +215,16 @@ try {
 
                 <!-- Interviews -->
                 <a href="../Modules/Interviewschedule.php"
-                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border-l-4 border-yellow-500 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 h-full w-16 bg-yellow-50 transform skew-x-12 translate-x-8">
+                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-yellow-500 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-full w-16 bg-yellow-500/5 transform skew-x-12 translate-x-8">
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Interviews</p>
-                            <h3 class="text-3xl font-bold text-gray-800 mt-2"><?= $scheduled_interviews ?></h3>
-                            <p class="text-xs text-yellow-600 mt-2 font-medium">Scheduled</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Interviews</p>
+                            <h3 class="text-3xl font-bold text-white mt-2"><?= $scheduled_interviews ?></h3>
+                            <p class="text-xs text-yellow-500 mt-2 font-medium">Scheduled</p>
                         </div>
-                        <div class="p-3 bg-yellow-100 rounded-lg text-yellow-600">
+                        <div class="p-3 bg-yellow-500/10 rounded-lg text-yellow-500">
                             <i class="fas fa-calendar-check text-xl"></i>
                         </div>
                     </div>
@@ -231,9 +237,9 @@ try {
                 <!-- Main Charts Column -->
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Hiring Chart -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
                         <div class="flex justify-between items-center mb-6">
-                            <h4 class="font-bold text-gray-800">Hiring Trends</h4>
+                            <h4 class="font-bold text-white uppercase text-xs tracking-widest">Hiring Trends</h4>
                         </div>
                         <div class="h-64">
                             <canvas id="hiringChart"></canvas>
@@ -243,15 +249,15 @@ try {
                     <!-- Secondary Charts Row -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Incident Chart -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                            <h4 class="font-bold text-gray-800 mb-4 text-sm">Accidents per Month</h4>
+                        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
+                            <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">Accidents per Month</h4>
                             <div class="h-48">
                                 <canvas id="incidentChart"></canvas>
                             </div>
                         </div>
                         <!-- Turnover (Active vs Inactive) -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                            <h4 class="font-bold text-gray-800 mb-4 text-sm">Employee Status</h4>
+                        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
+                            <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">Employee Status</h4>
                             <div class="h-48 relative flex items-center justify-center">
                                 <canvas id="turnoverChart"></canvas>
                             </div>
@@ -260,13 +266,13 @@ try {
                 </div>
 
                 <!-- Safety Incident Alerts Panel -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex flex-col h-full">
+                <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                        <h4 class="font-bold text-white flex items-center gap-2 uppercase text-xs tracking-widest">
                             <i class="fas fa-exclamation-triangle text-amber-500"></i> Safety Alerts
                         </h4>
                         <span
-                            class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full font-bold"><?= count($recent_incidents) ?>
+                            class="bg-red-500/10 text-red-500 text-[10px] px-2 py-1 rounded-full font-bold border border-red-500/20 uppercase tracking-tighter"><?= count($recent_incidents) ?>
                             Active</span>
                     </div>
 
@@ -279,19 +285,19 @@ try {
                         <?php else: ?>
                             <?php foreach ($recent_incidents as $incident): ?>
                                 <div
-                                    class="p-4 bg-red-50 rounded-lg border border-red-100 relative group hover:bg-red-100 transition-colors">
+                                    class="p-4 bg-red-950/20 rounded-lg border border-red-900/30 relative group hover:bg-red-900/30 transition-colors">
                                     <div class="flex justify-between items-start mb-1">
-                                        <p class="text-sm font-bold text-gray-800">
+                                        <p class="text-sm font-bold text-red-200">
                                             <?= htmlspecialchars($incident['incident_type']) ?>
                                         </p>
                                         <span
                                             class="text-[10px] text-gray-500"><?= date('M d', strtotime($incident['incident_date'])) ?></span>
                                     </div>
-                                    <p class="text-xs text-gray-600 mb-2"><?= htmlspecialchars($incident['incident_details']) ?>
+                                    <p class="text-xs text-gray-400 mb-2 font-light"><?= htmlspecialchars($incident['incident_details']) ?>
                                     </p>
                                     <div class="flex items-center gap-2">
                                         <span
-                                            class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-white text-red-600 border border-red-200"><?= htmlspecialchars($incident['severity']) ?></span>
+                                            class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-500 text-white shadow-lg shadow-red-900/50"><?= htmlspecialchars($incident['severity']) ?></span>
                                         <span class="text-[10px] text-gray-500"><i
                                                 class="fas fa-map-marker-alt mr-1"></i><?= htmlspecialchars($incident['location']) ?></span>
                                     </div>
@@ -300,28 +306,28 @@ try {
                         <?php endif; ?>
 
                         <!-- Static Notification Placeholders if needed to fill space -->
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-800">
                             <div class="flex gap-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 text-yellow-600">
+                                    class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0 text-yellow-500 border border-yellow-500/20">
                                     <i class="fas fa-id-card text-xs"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-800">License Expiring</p>
+                                    <p class="text-sm font-medium text-gray-200">License Expiring</p>
                                     <p class="text-xs text-gray-500">Sarah J. - Safety Officer Cert</p>
-                                    <p class="text-[10px] text-red-500 mt-1 font-medium">Expires: 3 Days</p>
+                                    <p class="text-[10px] text-red-400 mt-1 font-medium">Expires: 3 Days</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-800">
                             <div class="flex gap-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-600">
+                                    class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-blue-500 border border-blue-500/20">
                                     <i class="fas fa-clock text-xs"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-800">Attendance Alert</p>
+                                    <p class="text-sm font-medium text-gray-200">Attendance Alert</p>
                                     <p class="text-xs text-gray-500">3 Late arrivals today.</p>
                                 </div>
                             </div>
@@ -334,22 +340,22 @@ try {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 <!-- Performance Summary -->
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="lg:col-span-2 bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
                     <div class="flex justify-between items-center mb-6">
-                        <h4 class="font-bold text-gray-800">Performance Summary</h4>
-                        <div class="flex bg-gray-100 rounded-lg p-1">
+                        <h4 class="font-bold text-white uppercase text-xs tracking-widest">Performance Summary</h4>
+                        <div class="flex bg-gray-800 rounded-lg p-1 border border-gray-700">
                             <button id="btnTop" onclick="togglePerformance('top')"
-                                class="px-4 py-1.5 text-xs font-medium rounded-md bg-white text-gray-800 shadow-sm transition-all">Top
+                                class="px-4 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white shadow-lg transition-all">Top
                                 Performers</button>
                             <button id="btnLow" onclick="togglePerformance('low')"
-                                class="px-4 py-1.5 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">Low
+                                class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-gray-300 transition-all">Low
                                 Performers</button>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-gray-500 uppercase bg-gray-50/50 border-b">
+                            <thead class="text-xs text-gray-500 uppercase bg-gray-950/50 border-b border-gray-800">
                                 <tr>
                                     <th class="px-4 py-3">Employee</th>
                                     <th class="px-4 py-3">Position</th>
@@ -357,7 +363,7 @@ try {
                                     <th class="px-4 py-3 text-right">Rating</th>
                                 </tr>
                             </thead>
-                            <tbody id="performanceBody" class="divide-y divide-gray-100">
+                            <tbody id="performanceBody" class="divide-y divide-gray-800">
                                 <!-- JS will populate this -->
                             </tbody>
                         </table>
@@ -365,8 +371,8 @@ try {
                 </div>
 
                 <!-- Notifications & Approvals -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h4 class="font-bold text-gray-800 mb-4">Pending HR Requests</h4>
+                <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
+                    <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-widest">Pending HR Requests</h4>
 
                     <div class="space-y-4">
                         <?php if (empty($hr_requests)): ?>
@@ -377,16 +383,16 @@ try {
                                 $name = ($data['name'] ?? '') . ' ' . ($data['lastname'] ?? '');
                                 $pos = $data['position'] ?? 'N/A';
                             ?>
-                                <div class="flex gap-3 items-start">
-                                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 font-bold text-sm">
+                                <div class="flex gap-3 items-start group">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0 text-indigo-400 font-bold text-sm border border-indigo-500/20">
                                         <i class="fas fa-user-plus"></i>
                                     </div>
                                     <div class="flex-grow">
                                         <div class="flex justify-between items-start">
-                                            <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($name) ?></p>
-                                            <span class="text-[10px] text-gray-400"><?= date('M d', strtotime($req['created_at'])) ?></span>
+                                            <p class="text-sm font-medium text-white"><?= htmlspecialchars($name) ?></p>
+                                            <span class="text-[10px] text-gray-500"><?= date('M d', strtotime($req['created_at'])) ?></span>
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-0.5">Application for: <?= htmlspecialchars($pos) ?></p>
+                                        <p class="text-xs text-gray-500 mt-0.5 font-light">Application for: <?= htmlspecialchars($pos) ?></p>
                                         <div class="flex gap-2 mt-3">
                                             <a href="https://admin.cranecali-ms.com/" target="_blank"
                                                 class="text-[10px] bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors">
@@ -395,7 +401,7 @@ try {
                                         </div>
                                     </div>
                                 </div>
-                                <hr class="border-gray-50 last:hidden">
+                                <hr class="border-gray-800 last:hidden">
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
@@ -442,8 +448,8 @@ try {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } } },
                 scales: {
-                    y: { grid: { borderDash: [2, 4], color: '#f3f4f6' }, border: { display: false } },
-                    x: { grid: { display: false }, border: { display: false } }
+                    y: { grid: { borderDash: [2, 4], color: '#374151' }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } },
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } }
                 },
                 interaction: { intersect: false, mode: 'index' }
             }
@@ -464,7 +470,10 @@ try {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+                scales: { 
+                    y: { beginAtZero: true, grid: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } }, 
+                    x: { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } } 
+                }
             }
         });
 
@@ -482,7 +491,7 @@ try {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 cutout: '70%',
-                plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } }
+                plugins: { legend: { position: 'right', labels: { boxWidth: 10, color: '#9ca3af', font: { size: 10 } } } }
             }
         });
 
@@ -494,27 +503,27 @@ try {
         function renderPerformance(data, type) {
             perfBody.innerHTML = '';
             if (data.length === 0) {
-                perfBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No data available.</td></tr>';
+                perfBody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-500 font-light">No data available.</td></tr>';
                 return;
             }
             data.forEach(p => {
                 const badge = type === 'top'
-                    ? '<span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">Exceeding</span>'
-                    : '<span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">Needs Imp.</span>';
+                    ? '<span class="bg-indigo-500/10 text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded border border-indigo-500/20 lowercase tracking-wider">exceeding</span>'
+                    : '<span class="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-500/20 lowercase tracking-wider">needs imp.</span>';
 
                 const initial = p.name ? p.name.charAt(0) : '?';
 
                 const row = `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-4 py-3 font-medium text-gray-900 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-xs">
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-4 py-4 font-medium text-white flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-indigo-400 font-bold text-xs ring-1 ring-white/5">
                                 ${initial}
                             </div>
-                            ${p.name}
+                            <span class="group-hover:text-indigo-400 transition-colors">${p.name}</span>
                         </td>
-                        <td class="px-4 py-3 text-gray-500">${p.position}</td>
+                        <td class="px-4 py-3 text-gray-400 font-light">${p.position}</td>
                         <td class="px-4 py-3">${badge}</td>
-                        <td class="px-4 py-3 text-right font-bold ${type === 'top' ? 'text-indigo-600' : 'text-orange-500'}">${parseFloat(p.rating).toFixed(1)}/5.0</td>
+                        <td class="px-4 py-3 text-right font-bold ${type === 'top' ? 'text-indigo-400' : 'text-orange-500'}">${parseFloat(p.rating).toFixed(1)}</td>
                     </tr>
                 `;
                 perfBody.innerHTML += row;
@@ -524,12 +533,12 @@ try {
         function togglePerformance(type) {
             if (type === 'top') {
                 renderPerformance(topPerformers, 'top');
-                btnTop.className = "px-4 py-1.5 text-xs font-medium rounded-md bg-white text-gray-800 shadow-sm transition-all";
-                btnLow.className = "px-4 py-1.5 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all";
+                btnTop.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white shadow-lg transition-all";
+                btnLow.className = "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-gray-300 transition-all";
             } else {
                 renderPerformance(lowPerformers, 'low');
-                btnLow.className = "px-4 py-1.5 text-xs font-medium rounded-md bg-white text-gray-800 shadow-sm transition-all";
-                btnTop.className = "px-4 py-1.5 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all";
+                btnLow.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white shadow-lg transition-all";
+                btnTop.className = "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-gray-300 transition-all";
             }
         }
 

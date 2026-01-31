@@ -91,12 +91,30 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f9fafb;
+            background-color: #000;
+        }
+ 
+        /* Custom Scroll */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+ 
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+ 
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+ 
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-black text-gray-200">
 
     <?php
     $root_path = '../../';
@@ -106,13 +124,15 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300">
 
-        <!-- Welcome / Header-like section matching your screenshot -->
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8">
+        <!-- Welcome / Header-like section -->
+        <div class="bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 p-8 mb-8">
             <div class="flex items-center gap-4">
-                <i class="fas fa-trophy text-4xl text-gray-700"></i>
+                <div class="p-4 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 shadow-lg shadow-yellow-950/20">
+                    <i class="fas fa-trophy text-4xl text-yellow-500"></i>
+                </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800">Employee Recognition</h1>
-                    <p class="text-gray-500 mt-1 text-lg">Recognize and celebrate outstanding employee contributions</p>
+                    <h1 class="text-3xl font-black text-white uppercase tracking-tight">Employee Recognition</h1>
+                    <p class="text-gray-500 mt-1 text-[10px] font-bold uppercase tracking-widest">Recognize and celebrate outstanding employee contributions</p>
                 </div>
             </div>
         </div>
@@ -121,18 +141,18 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- Left Column: Give Recognition Form -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <i class="fas fa-plus-circle"></i> Give Recognition
+                <div class="bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 p-8">
+                    <h2 class="text-sm font-black text-white mb-6 flex items-center gap-2 uppercase tracking-widest">
+                        <i class="fas fa-plus-circle text-indigo-500"></i> Give Recognition
                     </h2>
 
                     <form method="POST" class="space-y-6">
                         <input type="hidden" name="action" value="give_recognition">
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 mb-2">Recognize:</label>
+                            <label class="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Recognize:</label>
                             <select name="to_employee_id" required
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50">
+                                class="w-full px-4 py-3.5 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-black outline-none transition-all text-sm font-bold text-white">
                                 <option value="" disabled selected>Select an employee...</option>
                                 <?php foreach ($employees as $emp): ?>
                                     <option value="<?= $emp['id'] ?>">
@@ -144,17 +164,17 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 mb-2">Recognition Type:</label>
+                            <label class="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Recognition Type:</label>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 <?php foreach ($categories as $cat): ?>
-                                    <label class="cursor-pointer relative">
+                                    <label class="cursor-pointer relative group">
                                         <input type="radio" name="category_id" value="<?= $cat['id'] ?>"
                                             class="peer sr-only" required>
                                         <div
-                                            class="p-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 peer-checked:border-<?= $cat['color'] ?>-500 peer-checked:bg-<?= $cat['color'] ?>-50 transition-all text-center h-full flex flex-col items-center justify-center gap-1 group">
+                                            class="p-4 rounded-xl border border-gray-800 bg-gray-950 hover:bg-black peer-checked:border-<?= $cat['color'] ?>-500 peer-checked:bg-<?= $cat['color'] ?>-500/10 transition-all text-center h-full flex flex-col items-center justify-center gap-2 shadow-lg">
                                             <i
-                                                class="fas <?= $cat['icon'] ?> text-<?= $cat['color'] ?>-500 text-xl group-hover:scale-110 transition-transform"></i>
-                                            <span class="text-xs font-medium text-gray-600">
+                                                class="fas <?= $cat['icon'] ?> text-<?= $cat['color'] ?>-500 text-2xl group-hover:scale-110 transition-transform"></i>
+                                            <span class="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-tighter">
                                                 <?= $cat['name'] ?>
                                             </span>
                                         </div>
@@ -164,22 +184,22 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 mb-2">Recognition Title:</label>
+                            <label class="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Recognition Title:</label>
                             <input type="text" name="title" required
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                class="w-full px-4 py-3.5 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-black outline-none transition-all text-sm font-bold text-white placeholder-gray-700"
                                 placeholder="Enter a title for this recognition...">
                         </div>
-
+ 
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 mb-2">Recognition Message:</label>
+                            <label class="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Recognition Message:</label>
                             <textarea name="message" rows="4" required
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                                class="w-full px-4 py-3.5 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-black outline-none transition-all text-sm font-bold text-white placeholder-gray-700 resize-none"
                                 placeholder="Write a detailed message about their contribution..."></textarea>
                         </div>
 
                         <div class="pt-2">
                             <button type="submit"
-                                class="w-full py-3.5 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg active:scale-[0.99]">
+                                class="w-full py-4 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-950/40 active:scale-[0.99]">
                                 Send Recognition
                             </button>
                         </div>
@@ -190,9 +210,9 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
             <!-- Right Column: Recent Wall -->
             <div class="space-y-6">
                 <!-- Stats / Featured -->
-                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg">
-                    <h3 class="font-bold text-lg mb-1">Impact Summary</h3>
-                    <p class="text-indigo-100 text-sm mb-4">This month's engagement</p>
+                <div class="bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-3xl p-6 text-white shadow-2xl border border-indigo-500/20">
+                    <h3 class="font-black text-lg mb-1 uppercase tracking-tight">Impact Summary</h3>
+                    <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-4">This month's engagement</p>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
                             <div class="text-2xl font-bold">
@@ -209,37 +229,37 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
 
                 <!-- Feed -->
                 <div>
-                    <h3 class="font-bold text-gray-800 mb-4 px-2">Recent Callouts</h3>
+                    <h3 class="font-black text-gray-500 text-[10px] mb-4 px-2 uppercase tracking-widest">Recent Callouts</h3>
                     <div class="space-y-4">
                         <?php if (count($recognitions) > 0): ?>
                             <?php foreach ($recognitions as $rec): ?>
-                                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                                <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800">
                                     <div class="flex items-start justify-between mb-3">
                                         <div class="flex items-center gap-3">
                                             <img src="../../<?= $rec['to_photo'] ?>"
                                                 class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
                                             <div>
-                                                <p class="text-sm font-bold text-gray-900">
+                                                <p class="text-sm font-black text-white uppercase tracking-tight">
                                                     <?= $rec['to_name'] ?>
                                                 </p>
-                                                <p class="text-[10px] text-gray-500 uppercase tracking-wide">
+                                                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
                                                     <?= $rec['to_pos'] ?>
                                                 </p>
                                             </div>
                                         </div>
                                         <div
-                                            class="w-8 h-8 rounded-full bg-<?= $rec['cat_color'] ?>-50 flex items-center justify-center text-<?= $rec['cat_color'] ?>-600">
+                                            class="w-8 h-8 rounded-full bg-<?= $rec['cat_color'] ?>-500/10 flex items-center justify-center text-<?= $rec['cat_color'] ?>-500 border border-<?= $rec['cat_color'] ?>-500/20">
                                             <i class="fas <?= $rec['cat_icon'] ?> text-sm"></i>
                                         </div>
                                     </div>
-                                    <h4 class="font-bold text-gray-800 text-sm mb-1">
+                                    <h4 class="font-black text-white text-sm mb-1 uppercase tracking-tight">
                                         <?= $rec['title'] ?>
                                     </h4>
-                                    <p class="text-xs text-gray-600 leading-relaxed mb-3">"
+                                    <p class="text-xs text-gray-400 leading-relaxed mb-3 font-light">"
                                         <?= $rec['message'] ?>"
                                     </p>
                                     <div
-                                        class="flex items-center justify-between pt-3 border-t border-gray-50 text-xs text-gray-400">
+                                        class="flex items-center justify-between pt-3 border-t border-gray-800 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                         <span>From:
                                             <?= $rec['from_name'] ?: 'System Admin' ?>
                                         </span>
@@ -251,9 +271,9 @@ $recognitions = $conn->query($sqlRecog)->fetchAll(PDO::FETCH_ASSOC);
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div
-                                class="text-center py-8 text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200">
+                                class="text-center py-8 text-gray-600 bg-gray-950 rounded-2xl border border-dashed border-gray-800">
                                 <i class="far fa-star text-2xl mb-2"></i>
-                                <p class="text-sm">No recognitions yet. Be the first!</p>
+                                <p class="text-xs font-bold uppercase tracking-widest">No recognitions yet. Be the first!</p>
                             </div>
                         <?php endif; ?>
                     </div>

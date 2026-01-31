@@ -6,34 +6,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Helper function to check if a link is active
 function isActive($pageName, $current_page)
 {
-    return $pageName === $current_page ? 'bg-white/20 text-white shadow-sm' : 'text-blue-50 hover:bg-white/10 hover:text-white transition-all';
+    return $pageName === $current_page ? 'bg-indigo-600/30 text-indigo-400 shadow-sm border border-indigo-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white transition-all';
 }
 
 function getIconColor($pageName, $current_page)
 {
-    return $pageName === $current_page ? 'text-white' : 'text-blue-100 group-hover:text-white';
+    return $pageName === $current_page ? 'text-indigo-400' : 'text-gray-500 group-hover:text-white';
 }
 ?>
 
 <!-- Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-screen w-64 bg-[#4A90E2] border-r border-blue-400/30 transition-transform duration-300 z-50 overflow-y-auto custom-scrollbar flex flex-col shadow-xl"
+    class="fixed top-0 left-0 h-screen w-64 bg-gray-950 border-r border-gray-800 transition-transform duration-300 z-50 overflow-y-auto custom-scrollbar flex flex-col shadow-2xl"
     id="sidebar">
     <!-- Brand -->
-    <div class="flex items-center gap-3 px-6 h-20 border-b border-white/10 mb-2 flex-shrink-0">
+    <div class="flex items-center gap-3 px-6 h-20 border-b border-gray-800 mb-2 flex-shrink-0">
         <div
-            class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
+            class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center shadow-lg overflow-hidden border border-gray-800">
             <img src="<?php echo $root_path; ?>Image/logo.png" alt="Logo" class="w-full h-full object-cover">
         </div>
         <div>
             <h2 class="text-white font-bold tracking-tight text-sm">HR1 CRANE</h2>
-            <p class="text-[10px] text-blue-100 font-bold uppercase tracking-widest leading-none mt-1">Super Admin</p>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mt-1">Super Admin</p>
         </div>
     </div>
 
     <!-- Navigation -->
     <nav class="px-3 py-4 space-y-1 flex-grow">
-        <p class="px-4 text-[10px] font-bold text-blue-100/70 uppercase tracking-widest mb-2 mt-2">Core Module</p>
+        <p class="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2 mt-2">Core Module</p>
 
         <a href="<?php echo $root_path; ?>Super-admin/Dashboard.php"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('Dashboard.php', $current_page); ?>">
@@ -41,7 +41,7 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Dashboard</span>
         </a>
 
-        <p class="px-4 text-[10px] font-bold text-blue-100/70 uppercase tracking-widest mb-2 mt-6">Recruitment</p>
+        <p class="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2 mt-6">Recruitment</p>
 
         <a href="<?php echo $root_path; ?>Super-admin/Modules/Job_posting.php"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('Job_posting.php', $current_page); ?>">
@@ -64,7 +64,7 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Interview Schedule</span>
         </a>
 
-        <p class="px-4 text-[10px] font-bold text-blue-100/70 uppercase tracking-widest mb-2 mt-6">Operations</p>
+        <p class="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2 mt-6">Operations</p>
 
         <a href="<?php echo $root_path; ?>Super-admin/Modules/performance_and_appraisals.php"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('performance_and_appraisals.php', $current_page); ?>">
@@ -86,7 +86,7 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Recognition</span>
         </a>
 
-        <p class="px-4 text-[10px] font-bold text-blue-100/70 uppercase tracking-widest mb-2 mt-6">System</p>
+        <p class="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2 mt-6">System</p>
 
         <a href="<?php echo $root_path; ?>Main/about_us.php"
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('about_us.php', $current_page); ?>">
@@ -103,9 +103,9 @@ function getIconColor($pageName, $current_page)
     </nav>
 
     <!-- Footer / Logout -->
-    <div class="px-4 py-6 border-t border-white/10 flex-shrink-0">
+    <div class="px-4 py-6 border-t border-gray-800 flex-shrink-0">
         <a href="<?php echo $root_path; ?>logout.php"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-red-500/20 transition-all duration-200 group">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group">
             <i class="fas fa-sign-out-alt w-5 text-center group-hover:scale-110 transition-transform"></i>
             <span class="font-semibold text-sm">Logout</span>
         </a>

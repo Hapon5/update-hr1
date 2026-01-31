@@ -100,7 +100,7 @@ if ($totalEmployees > 0) {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f9fafb;
+            background-color: #000;
         }
 
         .modal {
@@ -113,21 +113,21 @@ if ($totalEmployees > 0) {
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #000;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #333;
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #444;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-black text-gray-200">
 
     <?php
     $root_path = '../../';
@@ -140,48 +140,48 @@ if ($totalEmployees > 0) {
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Performance Management</h1>
-                <p class="text-sm text-gray-500 mt-1">Monitor KPIs, Evaluations, and Employee Growth</p>
+                <h1 class="text-2xl font-black text-white uppercase tracking-tight">Performance Management</h1>
+                <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">Monitor KPIs, Evaluations, and Employee Growth</p>
             </div>
             <button onclick="openModal('evaluateModal')"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all flex items-center gap-2">
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-950/40 transition-all flex items-center gap-2">
                 <i class="fas fa-plus"></i> New Evaluation
             </button>
         </div>
 
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Avg. Company KPI</h3>
-                    <div class="p-2 bg-green-50 text-green-600 rounded-lg"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Avg. Company KPI</h3>
+                    <div class="p-2 bg-green-500/10 text-green-400 rounded-lg"><i class="fas fa-chart-line"></i></div>
                 </div>
-                <p class="text-2xl font-bold text-gray-800"><?= $avgCompanyKPI ?>%</p>
-                <span class="text-xs text-green-500 font-medium">+2.5% from last month</span>
+                <p class="text-3xl font-black text-white"><?= $avgCompanyKPI ?>%</p>
+                <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest">+2.5% from last month</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-yellow-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Top Performer</h3>
-                    <div class="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><i class="fas fa-trophy"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Top Performer</h3>
+                    <div class="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg"><i class="fas fa-trophy"></i></div>
                 </div>
-                <p class="text-lg font-bold text-gray-800 truncate"><?= $topPerformer ?></p>
-                <span class="text-xs text-gray-400">Consistent Excellence</span>
+                <p class="text-lg font-black text-white uppercase tracking-tight truncate"><?= $topPerformer ?></p>
+                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Consistent Excellence</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-orange-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Reviews Pending</h3>
-                    <div class="p-2 bg-orange-50 text-orange-600 rounded-lg"><i class="fas fa-clock"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Reviews Pending</h3>
+                    <div class="p-2 bg-orange-500/10 text-orange-500 rounded-lg"><i class="fas fa-clock"></i></div>
                 </div>
-                <p class="text-2xl font-bold text-gray-800">5</p>
-                <span class="text-xs text-orange-500 font-medium">Due this week</span>
+                <p class="text-3xl font-black text-white">5</p>
+                <span class="text-[10px] text-orange-500 font-bold uppercase tracking-widest">Due this week</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-purple-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Promotions Recom.</h3>
-                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i class="fas fa-user-plus"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Promotions Recom.</h3>
+                    <div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg"><i class="fas fa-user-plus"></i></div>
                 </div>
-                <p class="text-2xl font-bold text-gray-800">2</p>
-                <span class="text-xs text-purple-500 font-medium">Based on recent data</span>
+                <p class="text-3xl font-black text-white">2</p>
+                <span class="text-[10px] text-purple-500 font-bold uppercase tracking-widest">Based on recent data</span>
             </div>
         </div>
 
@@ -192,19 +192,19 @@ if ($totalEmployees > 0) {
             <div class="lg:col-span-2 space-y-6">
 
                 <!-- Employees Table -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-50 flex justify-between items-center">
-                        <h2 class="font-bold text-gray-800">Employee Performance Overview</h2>
+                <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-950/50">
+                        <h2 class="font-black text-white uppercase tracking-tight">Employee Performance Overview</h2>
                         <div class="relative">
                             <input type="text" placeholder="Search..."
-                                class="pl-8 pr-4 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                class="pl-8 pr-4 py-1.5 text-xs bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-600">
                             <i
-                                class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-700 text-xs"></i>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
-                            <thead class="bg-gray-50 text-xs text-gray-500 uppercase font-semibold">
+                            <thead class="bg-gray-950 text-[10px] text-gray-500 uppercase font-bold tracking-widest">
                                 <tr>
                                     <th class="px-6 py-3">Employee</th>
                                     <th class="px-6 py-3 text-center">Avg. KPI</th>
@@ -213,9 +213,9 @@ if ($totalEmployees > 0) {
                                     <th class="px-6 py-3 text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody class="divide-y divide-gray-800">
                                 <?php foreach ($employees as $emp): ?>
-                                    <tr class="hover:bg-gray-50 transition-colors">
+                                    <tr class="hover:bg-white/[0.02] transition-colors group">
                                         <td class="px-6 py-4">
                                             <?php
                                             // Fix image path case sensitivity
@@ -234,37 +234,37 @@ if ($totalEmployees > 0) {
                                             <div class="flex items-center gap-3">
                                                 <img src="../../<?= htmlspecialchars($photo) ?>?v=<?= time() ?>"
                                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?= urlencode($emp['name']) ?>&background=random&color=fff';"
-                                                    class="w-9 h-9 rounded-full object-cover border border-gray-100">
+                                                    class="w-9 h-9 rounded-full object-cover border border-gray-800">
                                                 <div>
-                                                    <p class="font-medium text-sm text-gray-900"><?= $emp['name'] ?>
+                                                    <p class="font-bold text-sm text-white uppercase tracking-tight"><?= $emp['name'] ?>
                                                     </p>
-                                                    <p class="text-xs text-gray-500"><?= $emp['position'] ?></p>
+                                                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"><?= $emp['position'] ?></p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <?php if ($emp['avg_kpi']): ?>
                                                 <span
-                                                    class="inline-block px-2 py-0.5 rounded text-xs font-semibold
-                                                <?= $emp['avg_kpi'] >= 90 ? 'bg-green-100 text-green-700' :
-                                                    ($emp['avg_kpi'] >= 75 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700') ?>">
+                                                    class="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest
+                                                <?= $emp['avg_kpi'] >= 90 ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                    ($emp['avg_kpi'] >= 75 ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20') ?>">
                                                     <?= number_format($emp['avg_kpi'], 1) ?>%
                                                 </span>
                                             <?php else: ?>
                                                 <span class="text-gray-400 text-xs">N/A</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="px-6 py-4 text-center text-sm text-gray-600">
+                                        <td class="px-6 py-4 text-center text-sm text-gray-400 font-light">
                                             <?= $emp['avg_prod'] ? number_format($emp['avg_prod'], 1) : '-' ?>
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <span
-                                                class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Active</span>
+                                                class="text-[10px] font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded-full uppercase tracking-widest border border-green-500/20">Active</span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <button
                                                 onclick="openEvaluationModal('<?= $emp['id'] ?>', '<?= $emp['name'] ?>')"
-                                                class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold hover:underline">
+                                                class="text-indigo-400 hover:text-indigo-300 text-[10px] font-bold uppercase tracking-widest hover:underline">
                                                 Evaluate
                                             </button>
                                         </td>
@@ -276,8 +276,8 @@ if ($totalEmployees > 0) {
                 </div>
 
                 <!-- Productivy Chart -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="font-bold text-gray-800 mb-4">Department Productivity Trends</h2>
+                <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 p-6">
+                    <h2 class="font-black text-white uppercase tracking-tight mb-4">Department Productivity Trends</h2>
                     <canvas id="productivityChart" height="100"></canvas>
                 </div>
 
@@ -287,13 +287,13 @@ if ($totalEmployees > 0) {
             <div class="space-y-6">
 
                 <!-- Recent Reviews -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="font-bold text-gray-800 mb-4">Recent Evaluations</h2>
+                <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 p-6">
+                    <h2 class="font-black text-white uppercase tracking-tight mb-4">Recent Evaluations</h2>
                     <div class="space-y-4">
                         <?php if (count($history) > 0): ?>
                             <?php foreach ($history as $rec): ?>
                                 <div
-                                    class="flex gap-3 items-start p-3 hover:bg-gray-50 rounded-xl transition-colors border border-transparent hover:border-gray-100">
+                                    class="flex gap-3 items-start p-3 hover:bg-white/[0.02] rounded-xl transition-colors border border-transparent hover:border-gray-800">
                                     <?php
                                     $photo = $rec['image_path'];
                                     if (!empty($photo)) {
@@ -307,18 +307,18 @@ if ($totalEmployees > 0) {
                                     ?>
                                     <img src="../../<?= htmlspecialchars($photo) ?>?v=<?= time() ?>"
                                         onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($rec['full_name']) ?>&background=random&color=fff';"
-                                        class="w-8 h-8 rounded-full object-cover">
+                                        class="w-8 h-8 rounded-full object-cover border border-gray-800">
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate"><?= $rec['full_name'] ?></p>
-                                        <p class="text-xs text-gray-500"><?= $rec['review_type'] ?> Review •
+                                        <p class="text-sm font-bold text-white uppercase tracking-tight truncate"><?= $rec['full_name'] ?></p>
+                                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"><?= $rec['review_type'] ?> Review •
                                             <?= date('M d', strtotime($rec['review_date'])) ?>
                                         </p>
                                         <div class="flex items-center gap-2 mt-1">
-                                            <div class="text-[10px] font-bold px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">
+                                            <div class="text-[10px] font-black px-1.5 py-0.5 bg-gray-950 rounded text-gray-400 border border-gray-800 uppercase tracking-tighter">
                                                 KPI: <?= $rec['kpi_score'] ?></div>
                                             <?php if ($rec['promotion_recommended']): ?>
                                                 <div
-                                                    class="text-[10px] font-bold px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">
+                                                    class="text-[10px] font-black px-1.5 py-0.5 bg-purple-500/10 text-purple-400 rounded border border-purple-500/20 uppercase tracking-tighter">
                                                     <i class="fas fa-star mr-1"></i>Promote
                                                 </div>
                                             <?php endif; ?>
@@ -331,14 +331,14 @@ if ($totalEmployees > 0) {
                         <?php endif; ?>
                     </div>
                     <button
-                        class="w-full mt-4 text-center text-sm text-indigo-600 font-medium hover:text-indigo-800">View
+                        class="w-full mt-4 text-center text-[10px] text-indigo-400 font-bold uppercase tracking-widest hover:text-indigo-300">View
                         All History</button>
                 </div>
 
                 <!-- Top Skills / Metrics -->
-                <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl shadow-lg p-6 text-white">
-                    <h2 class="font-bold text-lg mb-2">Evaluation Criteria</h2>
-                    <p class="text-indigo-100 text-sm mb-4">Weightage for score calculation</p>
+                <div class="bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-2xl shadow-2xl p-6 text-white border border-indigo-500/20">
+                    <h2 class="font-black text-lg mb-2 uppercase tracking-tight">Evaluation Criteria</h2>
+                    <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-4">Weightage for score calculation</p>
 
                     <div class="space-y-3">
                         <div>
@@ -386,12 +386,12 @@ if ($totalEmployees > 0) {
 
     <!-- EVALUATION MODAL -->
     <div id="evaluateModal"
-        class="flex fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        class="flex fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-lg text-gray-800">New Performance Evaluation</h3>
-                <button onclick="closeModal('evaluateModal')" class="text-gray-400 hover:text-gray-600"><i
+            class="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-800">
+            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-950">
+                <h3 class="font-black text-lg text-white uppercase tracking-tight">New Performance Evaluation</h3>
+                <button onclick="closeModal('evaluateModal')" class="text-gray-400 hover:text-white transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
 
@@ -401,9 +401,9 @@ if ($totalEmployees > 0) {
                 <!-- Employee Select -->
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Employee</label>
                         <select name="employee_id" id="eval_employee_id"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                            class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-xs text-white font-bold">
                             <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= $emp['name'] ?> - <?= $emp['position'] ?>
                                 </option>
@@ -411,9 +411,9 @@ if ($totalEmployees > 0) {
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Review Period</label>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Review Period</label>
                         <select name="review_type"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                            class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-xs text-white font-bold">
                             <option value="Monthly">Monthly Review</option>
                             <option value="Quarterly">Quarterly Review</option>
                             <option value="Annual">Annual Appraisal</option>
@@ -426,42 +426,42 @@ if ($totalEmployees > 0) {
 
                 <div class="grid grid-cols-2 gap-6">
                     <!-- KPI Score -->
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                        <label class="block text-sm font-bold text-blue-800 mb-1">KPI Score (0-100)</label>
+                    <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20">
+                        <label class="block text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">KPI Score (0-100)</label>
                         <input type="number" name="kpi_score" min="0" max="100" required
-                            class="w-full px-3 py-1.5 border border-blue-200 rounded md:text-lg font-bold text-blue-900 focus:outline-none focus:border-blue-500"
+                            class="w-full px-3 py-2.5 bg-gray-950 border border-blue-500/30 rounded md:text-xl font-black text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
                             placeholder="85">
-                        <p class="text-[10px] text-blue-600 mt-1">Based on role targets (Sales, Tickets, etc)</p>
+                        <p class="text-[10px] text-blue-800 mt-2 font-bold uppercase tracking-tighter">Based on role targets</p>
                     </div>
 
                     <!-- Productivity -->
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100">
-                        <label class="block text-sm font-bold text-green-800 mb-1">Productivity (0-100)</label>
+                    <div class="bg-green-500/10 p-4 rounded-xl border border-green-500/20">
+                        <label class="block text-[10px] font-black text-green-400 uppercase tracking-widest mb-2">Productivity (0-100)</label>
                         <input type="number" name="productivity_score" min="0" max="100" required
-                            class="w-full px-3 py-1.5 border border-green-200 rounded md:text-lg font-bold text-green-900 focus:outline-none focus:border-green-500"
+                            class="w-full px-3 py-2.5 bg-gray-950 border border-green-500/30 rounded md:text-xl font-black text-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 text-center"
                             placeholder="92">
-                        <p class="text-[10px] text-green-600 mt-1">Output volume / Efficiency metrics</p>
+                        <p class="text-[10px] text-green-800 mt-2 font-bold uppercase tracking-tighter">Output / Efficiency metrics</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">
                     <!-- Attendance -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Attendance Score %</label>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Attendance Score %</label>
                         <input type="number" name="attendance_score" min="0" max="100"
-                            class="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                            class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-xs text-white placeholder-gray-700"
                             placeholder="e.g. 98">
                     </div>
                     <!-- Supervisor Rating -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Rating (1-5)</label>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Supervisor Rating (1-5)</label>
                         <div class="flex gap-4 mt-2">
                             <?php for ($i = 1; $i <= 5; $i++): ?>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="supervisor_quality_rating" value="<?= $i ?>"
                                         class="peer sr-only" required>
                                     <div
-                                        class="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 hover:bg-gray-50 transition-all font-bold text-sm text-gray-600">
+                                        class="w-9 h-9 rounded-full flex items-center justify-center border border-gray-800 bg-gray-950 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 hover:bg-black transition-all font-black text-sm text-gray-500">
                                         <?= $i ?>
                                     </div>
                                 </label>
@@ -471,26 +471,26 @@ if ($totalEmployees > 0) {
                 </div>
 
                 <!-- Recommendation -->
-                <div class="flex items-center gap-3 p-3 border border-purple-100 bg-purple-50 rounded-lg">
+                <div class="flex items-center gap-3 p-4 border border-purple-500/20 bg-purple-500/5 rounded-xl">
                     <input type="checkbox" id="promo" name="promotion_recommended"
-                        class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 border-gray-300">
-                    <label for="promo" class="text-sm font-medium text-purple-900 cursor-pointer">Recommend for
+                        class="w-5 h-5 text-purple-600 bg-gray-950 border-gray-800 rounded focus:ring-purple-500">
+                    <label for="promo" class="text-[10px] font-black text-purple-400 cursor-pointer uppercase tracking-widest">Recommend for
                         Promotion / Raise</label>
                 </div>
 
                 <!-- Comments -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Feedback / Notes</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Feedback / Notes</label>
                     <textarea name="comments" rows="3"
-                        class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                        class="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none resize-none text-xs text-white placeholder-gray-700"
                         placeholder="Enter strengths, areas for improvement..."></textarea>
                 </div>
 
-                <div class="pt-2 flex justify-end gap-3">
+                <div class="pt-6 border-t border-gray-800 flex justify-end gap-3 bg-gray-950 -mx-6 -mb-6 p-6 mt-6">
                     <button type="button" onclick="closeModal('evaluateModal')"
-                        class="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Cancel</button>
+                        class="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:bg-gray-800 transition-colors">Cancel</button>
                     <button type="submit"
-                        class="px-5 py-2.5 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">Submit
+                        class="px-8 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-950/40 transition-all">Submit
                         Evaluation</button>
                 </div>
             </form>
@@ -535,13 +535,13 @@ if ($totalEmployees > 0) {
                 datasets: [{
                     label: 'Overall Efficiency',
                     data: [78, 82, 80, 85, 88, 91],
-                    borderColor: '#4F46E5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
                     tension: 0.4,
                     fill: true,
                     pointRadius: 4,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#4F46E5',
+                    pointBackgroundColor: '#6366f1',
+                    pointBorderColor: '#000',
                     pointBorderWidth: 2
                 }]
             },
@@ -551,8 +551,16 @@ if ($totalEmployees > 0) {
                     legend: { display: false }
                 },
                 scales: {
-                    y: { beginAtZero: false, min: 60, max: 100, grid: { borderDash: [2, 4] } },
-                    x: { grid: { display: false } }
+                    y: { 
+                        beginAtZero: false, 
+                        min: 60, max: 100, 
+                        grid: { color: '#1f2937', borderDash: [2, 4] },
+                        ticks: { color: '#6b7280', font: { size: 10, weight: 'bold' } }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: '#6b7280', font: { size: 10, weight: 'bold' } }
+                    }
                 }
             }
         });

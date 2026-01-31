@@ -78,38 +78,55 @@ if ($totalIncidents > 0) {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f9fafb;
+            background-color: #000;
         }
 
         .modal {
             z-index: 50;
         }
 
-        /* Left border colors for cards */
+        /* Left border colors for cards with glow */
         .border-l-Critical {
             border-left-color: #ef4444;
+            box-shadow: inset 4px 0 10px -4px rgba(239, 68, 68, 0.3);
         }
 
-        /* Red */
         .border-l-High {
             border-left-color: #f97316;
+            box-shadow: inset 4px 0 10px -4px rgba(249, 115, 22, 0.3);
         }
 
-        /* Orange */
         .border-l-Medium {
             border-left-color: #eab308;
+            box-shadow: inset 4px 0 10px -4px rgba(234, 179, 8, 0.3);
         }
 
-        /* Yellow */
         .border-l-Low {
             border-left-color: #22c55e;
+            box-shadow: inset 4px 0 10px -4px rgba(34, 197, 94, 0.3);
         }
 
-        /* Green */
+        /* Custom Scroll */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-black text-gray-200">
 
     <?php
     $root_path = '../../';
@@ -122,102 +139,102 @@ if ($totalIncidents > 0) {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Safety Management</h1>
-                <p class="text-sm text-gray-500 mt-1">Track incidents, monitor risks, and ensure workplace safety.</p>
+                <h1 class="text-2xl font-black text-white uppercase tracking-tight">Safety Management</h1>
+                <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">Track incidents, monitor risks, and ensure workplace safety.</p>
             </div>
             <button onclick="openModal('reportModal')"
-                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all flex items-center gap-2">
+                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-950/40 transition-all flex items-center gap-2">
                 <i class="fas fa-exclamation-triangle"></i> Report Incident
             </button>
         </div>
 
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Safe Days Streak</h3>
-                    <div class="p-2 bg-green-50 text-green-600 rounded-lg"><i class="fas fa-calendar-check"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Safe Days Streak</h3>
+                    <div class="p-2 bg-green-500/10 text-green-400 rounded-lg"><i class="fas fa-calendar-check"></i></div>
                 </div>
-                <p class="text-3xl font-bold text-gray-800">
+                <p class="text-3xl font-black text-white">
                     <?= $daysSafe ?>
                 </p>
-                <span class="text-xs text-gray-400">Days since last incident</span>
+                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Days since last incident</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-blue-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Open Cases</h3>
-                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i class="fas fa-folder-open"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Open Cases</h3>
+                    <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg"><i class="fas fa-folder-open"></i></div>
                 </div>
-                <p class="text-3xl font-bold text-gray-800">
+                <p class="text-3xl font-black text-white">
                     <?= $openCases ?>
                 </p>
-                <span class="text-xs text-blue-500 font-medium font-medium">Active investigations</span>
+                <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Active investigations</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-red-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Severe Incidents</h3>
-                    <div class="p-2 bg-red-50 text-red-600 rounded-lg"><i class="fas fa-biohazard"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Severe Incidents</h3>
+                    <div class="p-2 bg-red-500/10 text-red-500 rounded-lg"><i class="fas fa-biohazard"></i></div>
                 </div>
-                <p class="text-3xl font-bold text-gray-800">
+                <p class="text-3xl font-black text-white">
                     <?= $severeIncidents ?>
                 </p>
-                <span class="text-xs text-red-500 font-medium">High/Critical priority</span>
+                <span class="text-[10px] text-red-500 font-bold uppercase tracking-widest">High/Critical priority</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-gray-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-sm font-medium">Total Incidents</h3>
-                    <div class="p-2 bg-gray-50 text-gray-600 rounded-lg"><i class="fas fa-history"></i></div>
+                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Total Incidents</h3>
+                    <div class="p-2 bg-gray-800 text-gray-400 rounded-lg"><i class="fas fa-history"></i></div>
                 </div>
-                <p class="text-3xl font-bold text-gray-800">
+                <p class="text-3xl font-black text-white">
                     <?= $totalIncidents ?>
                 </p>
-                <span class="text-xs text-gray-400">Recorded All-time</span>
+                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Recorded All-time</span>
             </div>
         </div>
 
         <!-- Recent Incidents Feed -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-history text-gray-400"></i> Recent Safety Incidents
+        <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
+            <div class="p-6 border-b border-gray-800 flex flex-col sm:flex-row justify-between items-center bg-gray-950/50 gap-4">
+                <h2 class="text-lg font-black text-white flex items-center gap-2 uppercase tracking-tight">
+                    <i class="fas fa-history text-indigo-500"></i> Recent Safety Incidents
                 </h2>
                 <form class="relative w-full sm:w-64">
                     <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
                         placeholder="Search incidents..."
-                        class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        class="w-full pl-9 pr-4 py-2 text-xs bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-600">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-xs"></i>
                 </form>
             </div>
 
-            <div class="divide-y divide-gray-50">
+            <div class="divide-y divide-gray-800">
                 <?php if (count($incidents) > 0): ?>
                     <?php foreach ($incidents as $inc): ?>
-                        <div class="p-6 hover:bg-gray-50 transition-colors border-l-4 border-l-<?= $inc['severity'] ?>">
+                        <div class="p-6 hover:bg-white/[0.02] transition-colors border-l-4 border-l-<?= $inc['severity'] ?>">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-gray-900 text-lg">
+                                <h3 class="font-black text-white text-lg uppercase tracking-tight">
                                     <?= htmlspecialchars($inc['employee_name']) ?>
                                 </h3>
-                                <span class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded">
+                                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-gray-950 border border-gray-800 px-2.5 py-1 rounded">
                                     <?= date('M d, Y h:i A', strtotime($inc['incident_date'])) ?>
                                 </span>
                             </div>
-                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                            <p class="text-gray-400 text-sm mb-4 leading-relaxed font-light">
                                 <?= htmlspecialchars($inc['incident_details']) ?>
                             </p>
-                            <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div class="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
                                 <!-- Incident Type Badge -->
-                                <span class="px-2.5 py-1 rounded bg-blue-50 text-blue-700 border border-blue-100">
+                                <span class="px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
                                     <?= htmlspecialchars($inc['incident_type']) ?>
                                 </span>
 
                                 <!-- Severity Badge -->
                                 <?php
                                 $sevClass = match ($inc['severity']) {
-                                    'Low' => 'bg-green-50 text-green-700 border-green-100',
-                                    'Medium' => 'bg-yellow-50 text-yellow-700 border-yellow-100',
-                                    'High' => 'bg-orange-50 text-orange-700 border-orange-100',
-                                    'Critical' => 'bg-red-50 text-red-700 border-red-100',
-                                    default => 'bg-gray-50 text-gray-600'
+                                    'Low' => 'bg-green-500/10 text-green-400 border-green-500/20',
+                                    'Medium' => 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+                                    'High' => 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+                                    'Critical' => 'bg-red-500/10 text-red-500 border-red-500/20',
+                                    default => 'bg-gray-800 text-gray-400'
                                 };
                                 ?>
                                 <span class="px-2.5 py-1 rounded border <?= $sevClass ?>">
@@ -225,7 +242,7 @@ if ($totalIncidents > 0) {
                                 </span>
 
                                 <!-- Location Badge -->
-                                <span class="px-2.5 py-1 rounded bg-purple-50 text-purple-700 border border-purple-100">
+                                <span class="px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
                                     <i class="fas fa-map-marker-alt mr-1"></i>
                                     <?= htmlspecialchars($inc['location']) ?>
                                 </span>
@@ -245,12 +262,12 @@ if ($totalIncidents > 0) {
 
     <!-- REPORT MODAL -->
     <div id="reportModal"
-        class="flex fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        class="flex fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-lg text-gray-800">Report New Incident</h3>
-                <button onclick="closeModal('reportModal')" class="text-gray-400 hover:text-gray-600"><i
+            class="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-800">
+            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-950">
+                <h3 class="font-black text-lg text-white uppercase tracking-tight">Report New Incident</h3>
+                <button onclick="closeModal('reportModal')" class="text-gray-400 hover:text-white transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
 
@@ -258,9 +275,9 @@ if ($totalIncidents > 0) {
                 <input type="hidden" name="action" value="report_incident">
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Employee Involved</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Employee Involved</label>
                     <input type="text" name="employee_name" required
-                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm"
+                        class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white placeholder-gray-700"
                         placeholder="e.g. John Doe">
                 </div>
 
@@ -293,7 +310,7 @@ if ($totalIncidents > 0) {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Severity</label>
                         <select name="severity"
-                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
+                            class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white">
                             <option value="Low">Low</option>
                             <option value="Medium">Medium</option>
                             <option value="High">High</option>
@@ -303,17 +320,17 @@ if ($totalIncidents > 0) {
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Incident Details</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Incident Details</label>
                     <textarea name="incident_details" rows="3" required
-                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm resize-none"
+                        class="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white placeholder-gray-700 resize-none"
                         placeholder="Describe what happened..."></textarea>
                 </div>
 
-                <div class="pt-2 flex justify-end gap-3">
+                <div class="pt-6 border-t border-gray-800 flex justify-end gap-3 bg-gray-950 -mx-6 -mb-6 p-6 mt-6">
                     <button type="button" onclick="closeModal('reportModal')"
-                        class="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Cancel</button>
+                        class="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:bg-gray-800 transition-colors">Cancel</button>
                     <button type="submit"
-                        class="px-5 py-2.5 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-200 transition-all">Submit
+                        class="px-8 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-950/40 transition-all">Submit
                         Report</button>
                 </div>
             </form>
