@@ -108,37 +108,38 @@ try {
 
     <style>
         /* Glassmorphism & Custom Scrollbar */
+        /* Glassmorphism & Custom Scrollbar */
         .glass-panel {
-            background: rgba(17, 24, 39, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-
+ 
         ::-webkit-scrollbar {
             width: 6px;
         }
-
+ 
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
-
+ 
         ::-webkit-scrollbar-thumb {
             background: #c7c7c7;
             border-radius: 10px;
         }
-
+ 
         ::-webkit-scrollbar-thumb:hover {
             background: #a0a0a0;
         }
-
+ 
         .card-hover:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
 
-<body class="bg-black text-gray-200 font-sans">
+<body class="bg-[#f8f9fa] text-gray-800 font-sans">
 
     <!-- Sidebar -->
     <?php include 'Components/sidebar.php'; ?>
@@ -156,39 +157,39 @@ try {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Employees -->
                 <div
-                    class="bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-blue-500 relative overflow-hidden group">
+                    class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border border-gray-100 border-l-4 border-l-blue-500 relative overflow-hidden group">
                     <div class="absolute right-0 top-0 h-full w-16 bg-blue-500/5 transform skew-x-12 translate-x-8"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Employees</p>
-                            <h3 class="text-3xl font-bold text-white mt-2"><?= $total_employees ?></h3>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Employees</p>
+                            <h3 class="text-3xl font-bold text-gray-900 mt-2"><?= $total_employees ?></h3>
                             <div class="flex items-center gap-2 mt-2 text-xs">
                                 <span
-                                    class="text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full font-medium"><?= $active_employees ?>
+                                    class="text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-medium"><?= $active_employees ?>
                                     Active</span>
                                 <span
-                                    class="text-gray-400 bg-white/5 px-2 py-0.5 rounded-full"><?= $inactive_employees ?>
+                                    class="text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full"><?= $inactive_employees ?>
                                     Inactive</span>
                             </div>
                         </div>
-                        <div class="p-3 bg-blue-500/10 rounded-lg text-blue-500">
+                        <div class="p-3 bg-blue-50 rounded-lg text-blue-500">
                             <i class="fas fa-users text-xl"></i>
                         </div>
                     </div>
                 </div>
-
+ 
                 <!-- Job Openings -->
                 <a href="../Modules/Job_posting.php"
-                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-purple-500 relative overflow-hidden group">
+                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border border-gray-100 border-l-4 border-l-purple-500 relative overflow-hidden group">
                     <div class="absolute right-0 top-0 h-full w-16 bg-purple-500/5 transform skew-x-12 translate-x-8">
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Job Openings</p>
-                            <h3 class="text-3xl font-bold text-white mt-2"><?= $open_jobs ?></h3>
-                            <p class="text-xs text-purple-400 mt-2 font-medium">Accepting Applications</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Job Openings</p>
+                            <h3 class="text-3xl font-bold text-gray-900 mt-2"><?= $open_jobs ?></h3>
+                            <p class="text-xs text-purple-600 mt-2 font-medium">Accepting Applications</p>
                         </div>
-                        <div class="p-3 bg-purple-500/10 rounded-lg text-purple-500">
+                        <div class="p-3 bg-purple-50 rounded-lg text-purple-500">
                             <i class="fas fa-briefcase text-xl"></i>
                         </div>
                     </div>
@@ -196,35 +197,35 @@ try {
 
                 <!-- Applicants -->
                 <a href="../Modules/candidate_sourcing_&_tracking.php"
-                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-pink-500 relative overflow-hidden group">
+                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border border-gray-100 border-l-4 border-l-pink-500 relative overflow-hidden group">
                     <div class="absolute right-0 top-0 h-full w-16 bg-pink-500/5 transform skew-x-12 translate-x-8"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">New Applicants</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">New Applicants</p>
                             <div class="flex items-baseline gap-2 mt-2">
-                                <h3 class="text-3xl font-bold text-white"><?= $applicants_today ?></h3>
-                                <span class="text-xs text-gray-500">Today</span>
+                                <h3 class="text-3xl font-bold text-gray-900"><?= $applicants_today ?></h3>
+                                <span class="text-xs text-gray-400">Today</span>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1"><?= $applicants_month ?> this month</p>
+                            <p class="text-xs text-gray-400 mt-1"><?= $applicants_month ?> this month</p>
                         </div>
-                        <div class="p-3 bg-pink-500/10 rounded-lg text-pink-500">
+                        <div class="p-3 bg-pink-50 rounded-lg text-pink-500">
                             <i class="fas fa-user-clock text-xl"></i>
                         </div>
                     </div>
                 </a>
-
+ 
                 <!-- Interviews -->
                 <a href="../Modules/Interviewschedule.php"
-                    class="block bg-gray-900 rounded-xl shadow-2xl p-6 card-hover transition-all duration-300 border-l-4 border-yellow-500 relative overflow-hidden group">
+                    class="block bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 border border-gray-100 border-l-4 border-l-yellow-500 relative overflow-hidden group">
                     <div class="absolute right-0 top-0 h-full w-16 bg-yellow-500/5 transform skew-x-12 translate-x-8">
                     </div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Interviews</p>
-                            <h3 class="text-3xl font-bold text-white mt-2"><?= $scheduled_interviews ?></h3>
-                            <p class="text-xs text-yellow-500 mt-2 font-medium">Scheduled</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Interviews</p>
+                            <h3 class="text-3xl font-bold text-gray-900 mt-2"><?= $scheduled_interviews ?></h3>
+                            <p class="text-xs text-yellow-600 mt-2 font-medium">Scheduled</p>
                         </div>
-                        <div class="p-3 bg-yellow-500/10 rounded-lg text-yellow-500">
+                        <div class="p-3 bg-yellow-50 rounded-lg text-yellow-600">
                             <i class="fas fa-calendar-check text-xl"></i>
                         </div>
                     </div>
@@ -237,9 +238,9 @@ try {
                 <!-- Main Charts Column -->
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Hiring Chart -->
-                    <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
-                            <h4 class="font-bold text-white uppercase text-xs tracking-widest">Hiring Trends</h4>
+                            <h4 class="font-bold text-gray-800 uppercase text-xs tracking-widest">Hiring Trends</h4>
                         </div>
                         <div class="h-64">
                             <canvas id="hiringChart"></canvas>
@@ -249,15 +250,15 @@ try {
                     <!-- Secondary Charts Row -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Incident Chart -->
-                        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
-                            <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">Accidents per Month</h4>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                            <h4 class="font-bold text-gray-800 mb-4 text-xs uppercase tracking-widest">Accidents per Month</h4>
                             <div class="h-48">
                                 <canvas id="incidentChart"></canvas>
                             </div>
                         </div>
                         <!-- Turnover (Active vs Inactive) -->
-                        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
-                            <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">Employee Status</h4>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                            <h4 class="font-bold text-gray-800 mb-4 text-xs uppercase tracking-widest">Employee Status</h4>
                             <div class="h-48 relative flex items-center justify-center">
                                 <canvas id="turnoverChart"></canvas>
                             </div>
@@ -266,13 +267,13 @@ try {
                 </div>
 
                 <!-- Safety Incident Alerts Panel -->
-                <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800 flex flex-col h-full">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="font-bold text-white flex items-center gap-2 uppercase text-xs tracking-widest">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2 uppercase text-xs tracking-widest">
                             <i class="fas fa-exclamation-triangle text-amber-500"></i> Safety Alerts
                         </h4>
                         <span
-                            class="bg-red-500/10 text-red-500 text-[10px] px-2 py-1 rounded-full font-bold border border-red-500/20 uppercase tracking-tighter"><?= count($recent_incidents) ?>
+                            class="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded-full font-bold border border-red-100 uppercase tracking-tighter"><?= count($recent_incidents) ?>
                             Active</span>
                     </div>
 
@@ -285,20 +286,20 @@ try {
                         <?php else: ?>
                             <?php foreach ($recent_incidents as $incident): ?>
                                 <div
-                                    class="p-4 bg-red-950/20 rounded-lg border border-red-900/30 relative group hover:bg-red-900/30 transition-colors">
+                                    class="p-4 bg-red-50 rounded-lg border border-red-100 relative group hover:bg-red-100 transition-colors">
                                     <div class="flex justify-between items-start mb-1">
-                                        <p class="text-sm font-bold text-red-200">
+                                        <p class="text-sm font-bold text-red-600">
                                             <?= htmlspecialchars($incident['incident_type']) ?>
                                         </p>
                                         <span
-                                            class="text-[10px] text-gray-500"><?= date('M d', strtotime($incident['incident_date'])) ?></span>
+                                            class="text-[10px] text-gray-400"><?= date('M d', strtotime($incident['incident_date'])) ?></span>
                                     </div>
-                                    <p class="text-xs text-gray-400 mb-2 font-light"><?= htmlspecialchars($incident['incident_details']) ?>
+                                    <p class="text-xs text-gray-600 mb-2 font-light"><?= htmlspecialchars($incident['incident_details']) ?>
                                     </p>
                                     <div class="flex items-center gap-2">
                                         <span
-                                            class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-500 text-white shadow-lg shadow-red-900/50"><?= htmlspecialchars($incident['severity']) ?></span>
-                                        <span class="text-[10px] text-gray-500"><i
+                                            class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-500 text-white shadow-sm shadow-red-200"><?= htmlspecialchars($incident['severity']) ?></span>
+                                        <span class="text-[10px] text-gray-400"><i
                                                 class="fas fa-map-marker-alt mr-1"></i><?= htmlspecialchars($incident['location']) ?></span>
                                     </div>
                                 </div>
@@ -306,28 +307,28 @@ try {
                         <?php endif; ?>
 
                         <!-- Static Notification Placeholders if needed to fill space -->
-                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-800">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
                             <div class="flex gap-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0 text-yellow-500 border border-yellow-500/20">
+                                    class="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0 text-yellow-600 border border-yellow-100">
                                     <i class="fas fa-id-card text-xs"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-200">License Expiring</p>
+                                    <p class="text-sm font-medium text-gray-800">License Expiring</p>
                                     <p class="text-xs text-gray-500">Sarah J. - Safety Officer Cert</p>
-                                    <p class="text-[10px] text-red-400 mt-1 font-medium">Expires: 3 Days</p>
+                                    <p class="text-[10px] text-red-600 mt-1 font-medium">Expires: 3 Days</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-800">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
                             <div class="flex gap-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-blue-500 border border-blue-500/20">
+                                    class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600 border border-blue-100">
                                     <i class="fas fa-clock text-xs"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-200">Attendance Alert</p>
+                                    <p class="text-sm font-medium text-gray-800">Attendance Alert</p>
                                     <p class="text-xs text-gray-500">3 Late arrivals today.</p>
                                 </div>
                             </div>
@@ -340,22 +341,22 @@ try {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 <!-- Performance Summary -->
-                <div class="lg:col-span-2 bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                     <div class="flex justify-between items-center mb-6">
-                        <h4 class="font-bold text-white uppercase text-xs tracking-widest">Performance Summary</h4>
-                        <div class="flex bg-gray-800 rounded-lg p-1 border border-gray-700">
+                        <h4 class="font-bold text-gray-800 uppercase text-xs tracking-widest">Performance Summary</h4>
+                        <div class="flex bg-gray-50 rounded-lg p-1 border border-gray-200">
                             <button id="btnTop" onclick="togglePerformance('top')"
                                 class="px-4 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white shadow-lg transition-all">Top
                                 Performers</button>
                             <button id="btnLow" onclick="togglePerformance('low')"
-                                class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-gray-300 transition-all">Low
+                                class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-400 hover:text-gray-600 transition-all">Low
                                 Performers</button>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-gray-500 uppercase bg-gray-950/50 border-b border-gray-800">
+                            <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th class="px-4 py-3">Employee</th>
                                     <th class="px-4 py-3">Position</th>
@@ -363,7 +364,7 @@ try {
                                     <th class="px-4 py-3 text-right">Rating</th>
                                 </tr>
                             </thead>
-                            <tbody id="performanceBody" class="divide-y divide-gray-800">
+                            <tbody id="performanceBody" class="divide-y divide-gray-100">
                                 <!-- JS will populate this -->
                             </tbody>
                         </table>
@@ -371,8 +372,8 @@ try {
                 </div>
 
                 <!-- Notifications & Approvals -->
-                <div class="bg-gray-900 rounded-xl shadow-2xl p-6 border border-gray-800">
-                    <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-widest">Pending HR Requests</h4>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-widest">Pending HR Requests</h4>
 
                     <div class="space-y-4">
                         <?php if (empty($hr_requests)): ?>
@@ -384,13 +385,13 @@ try {
                                 $pos = $data['position'] ?? 'N/A';
                             ?>
                                 <div class="flex gap-3 items-start group">
-                                    <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0 text-indigo-400 font-bold text-sm border border-indigo-500/20">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 font-bold text-sm border border-indigo-100">
                                         <i class="fas fa-user-plus"></i>
                                     </div>
                                     <div class="flex-grow">
                                         <div class="flex justify-between items-start">
-                                            <p class="text-sm font-medium text-white"><?= htmlspecialchars($name) ?></p>
-                                            <span class="text-[10px] text-gray-500"><?= date('M d', strtotime($req['created_at'])) ?></span>
+                                            <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($name) ?></p>
+                                            <span class="text-[10px] text-gray-400"><?= date('M d', strtotime($req['created_at'])) ?></span>
                                         </div>
                                         <p class="text-xs text-gray-500 mt-0.5 font-light">Application for: <?= htmlspecialchars($pos) ?></p>
                                         <div class="flex gap-2 mt-3">
@@ -401,7 +402,7 @@ try {
                                         </div>
                                     </div>
                                 </div>
-                                <hr class="border-gray-800 last:hidden">
+                                <hr class="border-gray-100 last:hidden">
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
@@ -448,8 +449,8 @@ try {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } } },
                 scales: {
-                    y: { grid: { borderDash: [2, 4], color: '#374151' }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } },
-                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } }
+                    y: { grid: { borderDash: [2, 4], color: '#e5e7eb' }, border: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } },
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } }
                 },
                 interaction: { intersect: false, mode: 'index' }
             }
@@ -471,8 +472,8 @@ try {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: { 
-                    y: { beginAtZero: true, grid: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } }, 
-                    x: { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 10 } } } 
+                    y: { beginAtZero: true, grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } }, 
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } } 
                 }
             }
         });
@@ -514,16 +515,16 @@ try {
                 const initial = p.name ? p.name.charAt(0) : '?';
 
                 const row = `
-                    <tr class="hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-4 py-4 font-medium text-white flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-indigo-400 font-bold text-xs ring-1 ring-white/5">
+                    <tr class="hover:bg-gray-50 transition-colors group">
+                        <td class="px-4 py-4 font-medium text-gray-900 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-indigo-600 font-bold text-xs ring-1 ring-gray-200">
                                 ${initial}
                             </div>
-                            <span class="group-hover:text-indigo-400 transition-colors">${p.name}</span>
+                            <span class="group-hover:text-indigo-600 transition-colors">${p.name}</span>
                         </td>
-                        <td class="px-4 py-3 text-gray-400 font-light">${p.position}</td>
+                        <td class="px-4 py-3 text-gray-500 font-light">${p.position}</td>
                         <td class="px-4 py-3">${badge}</td>
-                        <td class="px-4 py-3 text-right font-bold ${type === 'top' ? 'text-indigo-400' : 'text-orange-500'}">${parseFloat(p.rating).toFixed(1)}</td>
+                        <td class="px-4 py-3 text-right font-bold ${type === 'top' ? 'text-indigo-600' : 'text-orange-500'}">${parseFloat(p.rating).toFixed(1)}</td>
                     </tr>
                 `;
                 perfBody.innerHTML += row;

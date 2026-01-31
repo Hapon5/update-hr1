@@ -209,9 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .glass-panel {
-            background: rgba(10, 10, 10, 0.9);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* Global Modern Smooth Scrollbar */
@@ -221,17 +221,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #f1f1f1;
         }
-
+ 
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #c7c7c7;
             border-radius: 10px;
             transition: all 0.3s ease;
         }
  
         ::-webkit-scrollbar-thumb:hover {
-            background: #6366f1;
+            background: #a0a0a0;
         }
 
         /* Modal Specific adjustment */
@@ -241,29 +241,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         #calendar {
-            background: #0a0a0a;
+            background: #ffffff;
             padding: 20px;
             border-radius: 12px;
-            border: 1px solid #1f2937;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #f1f1f1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
  
         .fc-toolbar-title {
             font-size: 1.25rem !important;
             font-weight: 700 !important;
-            color: #ffffff !important;
+            color: #111827 !important;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
  
-        /* FullCalendar Dark Overrides */
-        .fc-daygrid-day { background-color: #0a0a0a !important; border-color: #1f2937 !important; }
-        .fc-col-header-cell { background-color: #111827 !important; color: #9ca3af !important; border-color: #1f2937 !important; padding: 10px 0 !important; font-size: 10px !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
+        /* FullCalendar Light Overrides */
+        .fc-daygrid-day { background-color: #ffffff !important; border-color: #f3f4f6 !important; }
+        .fc-col-header-cell { background-color: #f9fafb !important; color: #6b7280 !important; border-color: #f3f4f6 !important; padding: 10px 0 !important; font-size: 10px !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
         .fc-day-today { background-color: rgba(99, 102, 241, 0.05) !important; }
-        .fc-theme-standard th, .fc-theme-standard td { border-color: #1f2937 !important; }
-        .fc-list { background-color: #0a0a0a !important; border-color: #1f2937 !important; }
-        .fc-list-day-cushion { background-color: #111827 !important; }
-        .fc-list-event:hover td { background-color: rgba(255, 255, 255, 0.02) !important; }
+        .fc-theme-standard th, .fc-theme-standard td { border-color: #f3f4f6 !important; }
+        .fc-list { background-color: #ffffff !important; border-color: #f3f4f6 !important; }
+        .fc-list-day-cushion { background-color: #f9fafb !important; }
+        .fc-list-event:hover td { background-color: #f9fafb !important; }
  
         .fc-button-primary {
             background-color: #1f2937 !important;
@@ -285,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 
-<body class="bg-gray-900 text-gray-100 font-sans">
+<body class="bg-[#f8f9fa] text-gray-800 font-sans">
 
     <?php
     $root_path = '../../';
@@ -299,21 +299,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Page Header -->
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-2xl font-black text-white uppercase tracking-tight">Interview Management</h1>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-1">Schedule, track, and evaluate candidate interviews.</p>
+                    <h1 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Interview Management</h1>
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mt-1">Schedule, track, and evaluate candidate interviews.</p>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="openScheduleModal()"
                         class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg shadow-indigo-950/40 hover:bg-indigo-700 transition-all font-bold text-xs uppercase tracking-widest flex items-center gap-2">
                         <i class="fas fa-plus"></i> Schedule Interview
                     </button>
-                    <div class="flex bg-gray-950 rounded-lg p-1 border border-gray-800">
+                    <div class="flex bg-white rounded-lg p-1 border border-gray-100">
                         <button onclick="switchView('calendar')" id="viewCal"
-                            class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-indigo-600 text-white shadow-lg transition-all">
+                            class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-indigo-600 text-white shadow-md transition-all">
                             <i class="fas fa-calendar-alt mr-1"></i> Calendar
                         </button>
                         <button onclick="switchView('list')" id="viewList"
-                            class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md text-gray-500 hover:text-gray-300 transition-all">
+                            class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md text-gray-400 hover:text-gray-600 transition-all">
                             <i class="fas fa-list mr-1"></i> List View
                         </button>
                     </div>
@@ -322,20 +322,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <!-- Stats Row -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gray-900 p-6 rounded-xl shadow-2xl border border-gray-800 border-l-4 border-l-indigo-500 transition-all hover:translate-y-[-2px]">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total Interviews</p>
-                    <h3 class="text-3xl font-black mt-2 text-white"><?= $total_interviews ?></h3>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-indigo-500 transition-all hover:translate-y-[-2px]">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Interviews</p>
+                    <h3 class="text-3xl font-black mt-2 text-gray-900"><?= $total_interviews ?></h3>
                 </div>
-                <div class="bg-gray-900 p-6 rounded-xl shadow-2xl border border-gray-800 border-l-4 border-l-yellow-500 transition-all hover:translate-y-[-2px]">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Scheduled</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-yellow-500 transition-all hover:translate-y-[-2px]">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Scheduled</p>
                     <h3 class="text-3xl font-black mt-2 text-yellow-500"><?= $scheduled_interviews ?></h3>
                 </div>
-                <div class="bg-gray-900 p-6 rounded-xl shadow-2xl border border-gray-800 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Completed</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Completed</p>
                     <h3 class="text-3xl font-black mt-2 text-green-500"><?= $completed_interviews ?></h3>
                 </div>
-                <div class="bg-gray-900 p-6 rounded-xl shadow-2xl border border-gray-800 border-l-4 border-l-red-500 transition-all hover:translate-y-[-2px]">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cancelled</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500 transition-all hover:translate-y-[-2px]">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
                     <h3 class="text-3xl font-black mt-2 text-red-500"><?= $cancelled_interviews ?></h3>
                 </div>
             </div>
@@ -346,10 +346,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div id="listView" class="hidden">
-                <div class="bg-gray-900 rounded-xl shadow-2xl overflow-hidden border border-gray-800">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="text-[10px] text-gray-500 uppercase bg-gray-950 border-b border-gray-800 tracking-widest font-bold">
+                            <thead class="text-[10px] text-gray-400 uppercase bg-gray-50 border-b border-gray-100 tracking-widest font-bold">
                                 <tr>
                                     <th class="px-6 py-4">Candidate</th>
                                     <th class="px-6 py-4">Position</th>
@@ -360,38 +360,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <th class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="interviewTableBody" class="divide-y divide-gray-800">
+                            <tbody id="interviewTableBody" class="divide-y divide-gray-100">
                                 <!-- Populated via AJAX or PHP -->
                                 <?php
                                 $stmt = $conn->query("SELECT * FROM interviews ORDER BY start_time DESC");
                                 while ($row = $stmt->fetch()):
                                     ?>
-                                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                                    <tr class="hover:bg-gray-50 transition-colors group">
                                         <td class="px-6 py-4">
-                                            <div class="font-bold text-white uppercase tracking-tight">
+                                            <div class="font-bold text-gray-900 uppercase tracking-tight">
                                                 <?= htmlspecialchars($row['candidate_name']) ?>
                                             </div>
-                                            <div class="text-[10px] text-gray-500 uppercase font-bold"><?= htmlspecialchars($row['email']) ?></div>
+                                            <div class="text-[10px] text-gray-400 uppercase font-bold"><?= htmlspecialchars($row['email']) ?></div>
                                         </td>
                                         <td class="px-6 py-4 text-gray-400 font-light"><?= htmlspecialchars($row['position']) ?></td>
                                         <td class="px-6 py-4 text-gray-400 font-light text-xs">
-                                            <div class="font-bold text-gray-200"><?= date('M d, Y', strtotime($row['start_time'])) ?></div>
-                                            <div class="text-[10px] text-gray-600 uppercase tracking-tighter">
+                                            <div class="font-bold text-gray-800"><?= date('M d, Y', strtotime($row['start_time'])) ?></div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-tighter">
                                                 <?= date('h:i A', strtotime($row['start_time'])) ?> -
                                                 <?= date('h:i A', strtotime($row['end_time'])) ?>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
                                             <span
-                                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest <?= $row['interview_type'] === 'Online' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-gray-800 text-gray-400 border border-gray-700' ?>">
+                                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest <?= $row['interview_type'] === 'Online' ? 'bg-blue-50 text-blue-500 border border-blue-100' : 'bg-gray-50 text-gray-400 border border-gray-100' ?>">
                                                 <?= $row['interview_type'] ?>
                                             </span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <span
                                                 class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest 
-                                            <?= $row['status'] === 'completed' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                ($row['status'] === 'cancelled' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20') ?>">
+                                             <?= $row['status'] === 'completed' ? 'bg-green-50 text-green-500 border border-green-100' :
+                                                 ($row['status'] === 'cancelled' ? 'bg-red-50 text-red-500 border border-red-100' : 'bg-yellow-50 text-yellow-600 border border-yellow-100') ?>">
                                                 <?= $row['status'] ?>
                                             </span>
                                         </td>
@@ -421,11 +421,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <!-- Schedule Modal -->
-    <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-800">
-            <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900">
-                <h3 id="modalTitle" class="text-xl font-black text-white uppercase tracking-tight">Schedule Interview</h3>
-                <button onclick="closeModal('scheduleModal')" class="text-gray-400 hover:text-white transition-colors"><i
+    <div id="scheduleModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-50">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50">
+                <h3 id="modalTitle" class="text-xl font-black text-gray-900 uppercase tracking-tight">Schedule Interview</h3>
+                <button onclick="closeModal('scheduleModal')" class="text-gray-400 hover:text-gray-600 transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
             <form id="scheduleForm" class="p-6 space-y-4">
@@ -434,9 +434,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Select Candidate</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Select Candidate</label>
                         <select name="candidate_id" id="candSelect" onchange="autoFillCandidate()"
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                             <option value="">New Candidate / Manual Entry</option>
                             <?php foreach ($candidates as $cand): ?>
                                 <option value="<?= $cand['id'] ?>" data-name="<?= htmlspecialchars($cand['full_name']) ?>"
@@ -449,30 +449,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Candidate Name</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Candidate Name</label>
                             <input type="text" name="candidate_name" id="candName" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Candidate Email</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Candidate Email</label>
                         <input type="email" name="email" id="candEmail" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Job Position</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Job Position</label>
                         <input type="text" name="position" id="candPosition" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Interviewer(s)</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Interviewer(s)</label>
                     <input type="text" name="interviewer" id="intInterviewer" placeholder="Select or type name..."
                         list="employeeList" required
-                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none">
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     <datalist id="employeeList">
                         <?php foreach ($employees as $emp): ?>
                             <option value="<?= htmlspecialchars($emp['name']) ?>">
@@ -482,43 +482,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Start Time</label>
                         <input type="datetime-local" name="start_time" id="intStart" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Time</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">End Time</label>
                         <input type="datetime-local" name="end_time" id="intEnd" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Interview Type</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Interview Type</label>
                         <select name="interview_type" id="intType" onchange="toggleMeetingLink()"
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                             <option value="Onsite">Onsite</option>
                             <option value="Online">Online</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Location / Room</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Location / Room</label>
                         <input type="text" name="location" id="intLocation" required
-                            class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                     </div>
                 </div>
 
                 <div id="meetingLinkGroup" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Meeting Link</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Meeting Link</label>
                     <input type="url" name="meeting_link" id="intLink"
-                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white">
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Status</label>
                     <select name="status" id="intStatus"
-                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none text-white font-bold">
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none text-gray-900 font-bold">
                         <option value="scheduled">Scheduled</option>
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
@@ -527,23 +527,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Internal Notes</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Internal Notes</label>
                     <textarea name="notes" id="intNotes" rows="3"
-                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none resize-none text-white placeholder-gray-600"></textarea>
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none resize-none text-gray-900 placeholder-gray-400"></textarea>
                 </div>
 
                 <div class="flex items-center gap-2 py-2">
                     <input type="checkbox" name="send_notification" value="1" id="sendNotif"
-                        class="w-4 h-4 text-indigo-600 bg-gray-950 border-gray-800 rounded focus:ring-indigo-500">
-                    <label for="sendNotif" class="text-xs font-bold text-gray-500 uppercase tracking-widest">Send Email Notification to
+                        class="w-4 h-4 text-indigo-600 bg-white border-gray-200 rounded focus:ring-indigo-500">
+                    <label for="sendNotif" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Send Email Notification to
                         Candidate</label>
                 </div>
 
-                <div class="pt-6 border-t border-gray-800 flex justify-end gap-3">
+                <div class="pt-6 border-t border-gray-50 flex justify-end gap-3">
                     <button type="button" onclick="closeModal('scheduleModal')"
-                        class="px-6 py-2.5 bg-gray-800 text-gray-300 font-bold text-[10px] uppercase tracking-widest rounded-lg hover:bg-gray-700 transition-colors">Cancel</button>
+                        class="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase tracking-widest rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-lg shadow-indigo-950/40 hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest">Save
+                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest">Save
                         Schedule</button>
                 </div>
             </form>
@@ -551,11 +551,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <!-- Feedback Modal -->
-    <div id="feedbackModal" class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-800">
-            <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900">
-                <h3 class="text-xl font-black text-white uppercase tracking-tight">Interview Evaluation</h3>
-                <button onclick="closeModal('feedbackModal')" class="text-gray-400 hover:text-white transition-colors"><i
+    <div id="feedbackModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-50">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50">
+                <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">Interview Evaluation</h3>
+                <button onclick="closeModal('feedbackModal')" class="text-gray-400 hover:text-gray-600 transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
             <form id="feedbackForm" class="p-6 space-y-4">
@@ -563,37 +563,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="id" id="feedIntId">
 
                 <div class="text-center mb-6">
-                    <p class="text-sm text-gray-500 mb-2">Overall Candidate Score</p>
+                    <p class="text-sm text-gray-400 mb-2">Overall Candidate Score</p>
                     <div class="flex items-center justify-center gap-4">
                         <input type="range" name="score" id="feedScore" min="0" max="100" value="70"
                             oninput="updateScoreVal(this.value)"
-                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                            class="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-600">
                         <span id="scoreVal" class="text-2xl font-bold text-brand-600 w-16">70%</span>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Detailed Feedback</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Detailed Feedback</label>
                     <textarea name="feedback" id="feedText" rows="5" required
                         placeholder="Observations, strengths, weaknesses..."
-                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none resize-none text-white placeholder-gray-600"></textarea>
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none resize-none text-gray-900 placeholder-gray-400"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Final Result</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Final Result</label>
                     <select name="status" id="feedStatus"
-                        class="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-black transition-all outline-none font-bold text-white">
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-bold text-gray-900">
                         <option value="completed" class="text-green-500">Pass / Next Round</option>
                         <option value="rejected" class="text-red-500">Reject</option>
-                        <option value="hired" class="text-indigo-400">Hired (Move to Onboarding)</option>
+                        <option value="hired" class="text-indigo-600">Hired (Move to Onboarding)</option>
                     </select>
                 </div>
 
-                <div class="pt-6 border-t border-gray-800 flex justify-end gap-3">
+                <div class="pt-6 border-t border-gray-50 flex justify-end gap-3">
                     <button type="button" onclick="closeModal('feedbackModal')"
-                        class="px-6 py-2.5 bg-gray-800 text-gray-300 font-bold text-[10px] uppercase tracking-widest rounded-lg hover:bg-gray-700 transition-all">Cancel</button>
+                        class="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase tracking-widest rounded-lg hover:bg-gray-200 transition-all">Cancel</button>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-lg shadow-indigo-950/40 hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest">Submit
+                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest">Submit
                         Evaluation</button>
                 </div>
             </form>

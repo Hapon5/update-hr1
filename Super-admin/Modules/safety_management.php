@@ -78,32 +78,32 @@ if ($totalIncidents > 0) {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #000;
+            background-color: #f8f9fa;
         }
 
         .modal {
             z-index: 50;
         }
 
-        /* Left border colors for cards with glow */
+        /* Left border colors for cards with subtle background */
         .border-l-Critical {
             border-left-color: #ef4444;
-            box-shadow: inset 4px 0 10px -4px rgba(239, 68, 68, 0.3);
+            background-color: rgba(239, 68, 68, 0.02);
         }
-
+ 
         .border-l-High {
             border-left-color: #f97316;
-            box-shadow: inset 4px 0 10px -4px rgba(249, 115, 22, 0.3);
+            background-color: rgba(249, 115, 22, 0.02);
         }
-
+ 
         .border-l-Medium {
             border-left-color: #eab308;
-            box-shadow: inset 4px 0 10px -4px rgba(234, 179, 8, 0.3);
+            background-color: rgba(234, 179, 8, 0.02);
         }
-
+ 
         .border-l-Low {
             border-left-color: #22c55e;
-            box-shadow: inset 4px 0 10px -4px rgba(34, 197, 94, 0.3);
+            background-color: rgba(34, 197, 94, 0.02);
         }
 
         /* Custom Scroll */
@@ -112,21 +112,21 @@ if ($totalIncidents > 0) {
         }
 
         ::-webkit-scrollbar-track {
-            background: #000;
+            background: #f1f1f1;
         }
-
+ 
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #c7c7c7;
             border-radius: 10px;
         }
-
+ 
         ::-webkit-scrollbar-thumb:hover {
-            background: #444;
+            background: #a0a0a0;
         }
     </style>
 </head>
 
-<body class="bg-black text-gray-200">
+<body class="bg-[#f8f9fa] text-gray-800">
 
     <?php
     $root_path = '../../';
@@ -139,8 +139,8 @@ if ($totalIncidents > 0) {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-black text-white uppercase tracking-tight">Safety Management</h1>
-                <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">Track incidents, monitor risks, and ensure workplace safety.</p>
+                <h1 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Safety Management</h1>
+                <p class="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-widest">Track incidents, monitor risks, and ensure workplace safety.</p>
             </div>
             <button onclick="openModal('reportModal')"
                 class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-950/40 transition-all flex items-center gap-2">
@@ -150,71 +150,71 @@ if ($totalIncidents > 0) {
 
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-green-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Safe Days Streak</h3>
-                    <div class="p-2 bg-green-500/10 text-green-400 rounded-lg"><i class="fas fa-calendar-check"></i></div>
+                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Safe Days Streak</h3>
+                    <div class="p-2 bg-green-50 text-green-500 rounded-lg"><i class="fas fa-calendar-check"></i></div>
                 </div>
-                <p class="text-3xl font-black text-white">
+                <p class="text-3xl font-black text-gray-900">
                     <?= $daysSafe ?>
                 </p>
-                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Days since last incident</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Days since last incident</span>
             </div>
-            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-blue-500 transition-all hover:translate-y-[-2px]">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-blue-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Open Cases</h3>
-                    <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg"><i class="fas fa-folder-open"></i></div>
+                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Open Cases</h3>
+                    <div class="p-2 bg-blue-50 text-blue-500 rounded-lg"><i class="fas fa-folder-open"></i></div>
                 </div>
-                <p class="text-3xl font-black text-white">
+                <p class="text-3xl font-black text-gray-900">
                     <?= $openCases ?>
                 </p>
                 <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Active investigations</span>
             </div>
-            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-red-500 transition-all hover:translate-y-[-2px]">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-red-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Severe Incidents</h3>
-                    <div class="p-2 bg-red-500/10 text-red-500 rounded-lg"><i class="fas fa-biohazard"></i></div>
+                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Severe Incidents</h3>
+                    <div class="p-2 bg-red-50 text-red-500 rounded-lg"><i class="fas fa-biohazard"></i></div>
                 </div>
-                <p class="text-3xl font-black text-white">
+                <p class="text-3xl font-black text-gray-900">
                     <?= $severeIncidents ?>
                 </p>
                 <span class="text-[10px] text-red-500 font-bold uppercase tracking-widest">High/Critical priority</span>
             </div>
-            <div class="bg-gray-900 p-5 rounded-2xl shadow-2xl border border-gray-800 border-l-4 border-l-gray-500 transition-all hover:translate-y-[-2px]">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-gray-500 transition-all hover:translate-y-[-2px]">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Total Incidents</h3>
-                    <div class="p-2 bg-gray-800 text-gray-400 rounded-lg"><i class="fas fa-history"></i></div>
+                    <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Total Incidents</h3>
+                    <div class="p-2 bg-gray-50 text-gray-500 rounded-lg"><i class="fas fa-history"></i></div>
                 </div>
-                <p class="text-3xl font-black text-white">
+                <p class="text-3xl font-black text-gray-900">
                     <?= $totalIncidents ?>
                 </p>
-                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Recorded All-time</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Recorded All-time</span>
             </div>
         </div>
 
         <!-- Recent Incidents Feed -->
-        <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
-            <div class="p-6 border-b border-gray-800 flex flex-col sm:flex-row justify-between items-center bg-gray-950/50 gap-4">
-                <h2 class="text-lg font-black text-white flex items-center gap-2 uppercase tracking-tight">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center bg-gray-50 gap-4">
+                <h2 class="text-lg font-black text-gray-900 flex items-center gap-2 uppercase tracking-tight">
                     <i class="fas fa-history text-indigo-500"></i> Recent Safety Incidents
                 </h2>
                 <form class="relative w-full sm:w-64">
                     <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
                         placeholder="Search incidents..."
-                        class="w-full pl-9 pr-4 py-2 text-xs bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-600">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-xs"></i>
+                        class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 placeholder-gray-400">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                 </form>
             </div>
 
-            <div class="divide-y divide-gray-800">
+            <div class="divide-y divide-gray-100">
                 <?php if (count($incidents) > 0): ?>
                     <?php foreach ($incidents as $inc): ?>
-                        <div class="p-6 hover:bg-white/[0.02] transition-colors border-l-4 border-l-<?= $inc['severity'] ?>">
+                        <div class="p-6 hover:bg-gray-50 transition-colors border-l-4 border-l-<?= $inc['severity'] ?>">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-black text-white text-lg uppercase tracking-tight">
+                                <h3 class="font-black text-gray-900 text-lg uppercase tracking-tight">
                                     <?= htmlspecialchars($inc['employee_name']) ?>
                                 </h3>
-                                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-gray-950 border border-gray-800 px-2.5 py-1 rounded">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest bg-gray-50 border border-gray-200 px-2.5 py-1 rounded">
                                     <?= date('M d, Y h:i A', strtotime($inc['incident_date'])) ?>
                                 </span>
                             </div>
@@ -223,18 +223,18 @@ if ($totalIncidents > 0) {
                             </p>
                             <div class="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
                                 <!-- Incident Type Badge -->
-                                <span class="px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                <span class="px-2.5 py-1 rounded bg-blue-50 text-blue-500 border border-blue-100">
                                     <?= htmlspecialchars($inc['incident_type']) ?>
                                 </span>
 
                                 <!-- Severity Badge -->
                                 <?php
                                 $sevClass = match ($inc['severity']) {
-                                    'Low' => 'bg-green-500/10 text-green-400 border-green-500/20',
-                                    'Medium' => 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-                                    'High' => 'bg-orange-500/10 text-orange-500 border-orange-500/20',
-                                    'Critical' => 'bg-red-500/10 text-red-500 border-red-500/20',
-                                    default => 'bg-gray-800 text-gray-400'
+                                    'Low' => 'bg-green-50 text-green-500 border-green-100',
+                                    'Medium' => 'bg-yellow-50 text-yellow-600 border-yellow-100',
+                                    'High' => 'bg-orange-50 text-orange-600 border-orange-100',
+                                    'Critical' => 'bg-red-50 text-red-500 border-red-100',
+                                    default => 'bg-gray-100 text-gray-500'
                                 };
                                 ?>
                                 <span class="px-2.5 py-1 rounded border <?= $sevClass ?>">
@@ -242,7 +242,7 @@ if ($totalIncidents > 0) {
                                 </span>
 
                                 <!-- Location Badge -->
-                                <span class="px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                <span class="px-2.5 py-1 rounded bg-purple-50 text-purple-500 border border-purple-100">
                                     <i class="fas fa-map-marker-alt mr-1"></i>
                                     <?= htmlspecialchars($inc['location']) ?>
                                 </span>
@@ -262,12 +262,12 @@ if ($totalIncidents > 0) {
 
     <!-- REPORT MODAL -->
     <div id="reportModal"
-        class="flex fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        class="flex fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div
-            class="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-800">
-            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-950">
-                <h3 class="font-black text-lg text-white uppercase tracking-tight">Report New Incident</h3>
-                <button onclick="closeModal('reportModal')" class="text-gray-400 hover:text-white transition-colors"><i
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-50">
+            <div class="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-gray-50">
+                <h3 class="font-black text-lg text-gray-900 uppercase tracking-tight">Report New Incident</h3>
+                <button onclick="closeModal('reportModal')" class="text-gray-400 hover:text-gray-600 transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
 
@@ -275,31 +275,31 @@ if ($totalIncidents > 0) {
                 <input type="hidden" name="action" value="report_incident">
 
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Employee Involved</label>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Employee Involved</label>
                     <input type="text" name="employee_name" required
-                        class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white placeholder-gray-700"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-white transition-all outline-none text-xs text-gray-900 placeholder-gray-400"
                         placeholder="e.g. John Doe">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Date & Time</label>
                         <input type="datetime-local" name="incident_date" required
-                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 transition-all outline-none text-xs text-gray-900">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Location</label>
                         <input type="text" name="location" required
-                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm"
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 transition-all outline-none text-xs text-gray-900 placeholder-gray-400"
                             placeholder="e.g. Warehouse A">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Type</label>
                         <select name="incident_type"
-                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 transition-all outline-none text-xs text-gray-900">
                             <option value="Injury">Injury</option>
                             <option value="Near Miss">Near Miss</option>
                             <option value="Property Damage">Property Damage</option>
@@ -308,9 +308,9 @@ if ($totalIncidents > 0) {
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Severity</label>
                         <select name="severity"
-                            class="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white">
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:bg-white transition-all outline-none text-xs text-gray-900">
                             <option value="Low">Low</option>
                             <option value="Medium">Medium</option>
                             <option value="High">High</option>
@@ -320,17 +320,17 @@ if ($totalIncidents > 0) {
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Incident Details</label>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Incident Details</label>
                     <textarea name="incident_details" rows="3" required
-                        class="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-black transition-all outline-none text-xs text-white placeholder-gray-700 resize-none"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white transition-all outline-none text-xs text-gray-900 placeholder-gray-400 resize-none"
                         placeholder="Describe what happened..."></textarea>
                 </div>
 
-                <div class="pt-6 border-t border-gray-800 flex justify-end gap-3 bg-gray-950 -mx-6 -mb-6 p-6 mt-6">
+                <div class="pt-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50 -mx-6 -mb-6 p-6 mt-6">
                     <button type="button" onclick="closeModal('reportModal')"
-                        class="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:bg-gray-800 transition-colors">Cancel</button>
+                        class="px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
                     <button type="submit"
-                        class="px-8 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-950/40 transition-all">Submit
+                        class="px-8 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-600 text-white hover:bg-red-700 shadow-md transition-all">Submit
                         Report</button>
                 </div>
             </form>

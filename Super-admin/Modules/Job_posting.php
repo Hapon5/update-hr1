@@ -131,14 +131,14 @@ try {
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #000;
+            background: #f1f1f1;
         }
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #c7c7c7;
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #444;
+            background: #a0a0a0;
         }
 
         .modal-body {
@@ -148,7 +148,7 @@ try {
     </style>
 </head>
 
-<body class="bg-black text-gray-200 font-sans">
+<body class="bg-[#f8f9fa] text-gray-800 font-sans">
 
     <?php
     // Define CSS path for components included from a subdirectory
@@ -167,7 +167,7 @@ try {
     <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300" id="mainContent">
 
         <div class="max-w-7xl mx-auto text-center mb-10">
-            <h2 class="text-3xl font-extrabold text-white sm:text-4xl uppercase tracking-tight">Current Openings</h2>
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl uppercase tracking-tight">Current Openings</h2>
             <p class="mt-4 text-gray-500 uppercase text-xs font-bold tracking-widest">Explore the opportunities waiting for you.</p>
         </div>
 
@@ -180,20 +180,20 @@ try {
                     ?>
                     <!-- Job Card -->
                     <div
-                        class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl hover:border-indigo-500/30 transition-all p-6 flex flex-col h-full relative group">
+                        class="bg-white rounded-xl border border-gray-100 shadow-sm hover:border-indigo-500/30 transition-all p-6 flex flex-col h-full relative group">
                         <!-- Top Right Badge (Platform) -->
                         <div class="absolute top-6 right-6">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100">
                                 <?= htmlspecialchars($job['platform'] ?: 'N/A') ?>
                             </span>
                         </div>
-
+ 
                         <div class="mb-4">
-                            <h3 class="text-xl font-black text-white pr-16 leading-tight uppercase tracking-tight">
+                            <h3 class="text-xl font-black text-gray-900 pr-16 leading-tight uppercase tracking-tight">
                                 <?= htmlspecialchars($job['title']) ?>
                             </h3>
-                            <p class="text-[10px] font-bold text-indigo-400 uppercase mt-1 tracking-widest">
+                            <p class="text-[10px] font-bold text-indigo-600 uppercase mt-1 tracking-widest">
                                 <?= htmlspecialchars($job['position']) ?>
                             </p>
                         </div>
@@ -212,13 +212,13 @@ try {
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between mt-auto pt-6 border-t border-gray-800">
+                        <div class="flex items-center justify-between mt-auto pt-6 border-t border-gray-50">
                             <button onclick="viewJob(<?= $job['id'] ?>)"
-                                class="text-indigo-400 hover:text-indigo-300 text-xs font-bold uppercase tracking-widest transition-colors">
+                                class="text-indigo-600 hover:text-indigo-700 text-xs font-bold uppercase tracking-widest transition-colors">
                                 View Details
                             </button>
                             <button onclick="openApplicationModal(<?= $job['id'] ?>)"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-widest py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-indigo-950/40">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-widest py-2.5 px-6 rounded-lg transition-all shadow-md">
                                 Apply Now
                             </button>
                         </div>
@@ -240,9 +240,9 @@ try {
 
     <!-- MODAL: VIEW JOB DETAILS (Improved UI) -->
     <div id="viewModal"
-        class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center p-4 backdrop-blur-md">
+        class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div
-            class="bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-100 relative border border-gray-800">
+            class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-100 relative border border-gray-100">
             <button onclick="document.getElementById('viewModal').classList.add('hidden')"
                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
                 <i class="fas fa-times text-lg"></i>
@@ -253,16 +253,16 @@ try {
 
     <!-- MODAL: APPLICATION FORM -->
     <div id="applicationModal"
-        class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 flex items-center justify-center p-4 backdrop-blur-md">
+        class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div
-            class="bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all scale-100 relative border border-gray-800">
+            class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all scale-100 relative border border-gray-100">
             <button id="closeAppModal"
                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors z-10">
                 <i class="fas fa-times text-lg"></i>
             </button>
 
-            <div class="px-8 pt-8 pb-2 border-b border-gray-800">
-                <h3 class="text-2xl font-black text-white uppercase tracking-tight">Apply for Position</h3>
+            <div class="px-8 pt-8 pb-2 border-b border-gray-100">
+                <h3 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Apply for Position</h3>
                 <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest pb-4">Please fill out the form below.</p>
             </div>
 
@@ -272,15 +272,15 @@ try {
                 <input type="hidden" name="job_id" id="jobIdInput"> <!-- populated by JS -->
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
                     <input type="text" name="applicant_name"
-                        class="block w-full px-4 py-3 rounded-lg border-gray-800 bg-gray-950 border focus:bg-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-white placeholder-gray-600"
+                        class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50 border focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900 placeholder-gray-400"
                         placeholder="John Doe" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Email Address</label>
                     <input type="email" name="email"
-                        class="block w-full px-4 py-3 rounded-lg border-gray-800 bg-gray-950 border focus:bg-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-white placeholder-gray-600"
+                        class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50 border focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900 placeholder-gray-400"
                         placeholder="you@example.com" required>
                 </div>
                 <div>
@@ -297,26 +297,26 @@ try {
                         required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Resume / CV</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Resume / CV</label>
                     <div
-                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-800 border-dashed rounded-lg hover:border-indigo-500 bg-gray-950 hover:bg-black transition-all">
+                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-lg hover:border-indigo-500 bg-gray-50 hover:bg-white transition-all">
                         <div class="space-y-1 text-center">
-                            <i class="fas fa-cloud-upload-alt text-indigo-500/50 text-3xl mb-2"></i>
-                            <div class="flex text-xs font-bold text-gray-500 uppercase tracking-widest justify-center">
+                            <i class="fas fa-cloud-upload-alt text-indigo-300 text-3xl mb-2"></i>
+                            <div class="flex text-xs font-bold text-gray-400 uppercase tracking-widest justify-center">
                                 <label for="file-upload"
-                                    class="relative cursor-pointer bg-transparent rounded-md font-bold text-indigo-400 hover:text-indigo-300 focus-within:outline-none">
+                                    class="relative cursor-pointer bg-transparent rounded-md font-bold text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
                                     <span>Upload a file</span>
                                     <input id="file-upload" name="resume" type="file" class="sr-only"
                                         accept=".pdf,.doc,.docx" required>
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
                             </div>
-                            <p class="text-[10px] text-gray-600">PDF, DOC, DOCX up to 10MB</p>
+                            <p class="text-[10px] text-gray-400">PDF, DOC, DOCX up to 10MB</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-6 border-t border-gray-800">
+ 
+                <div class="pt-6 border-t border-gray-100">
                     <button type="submit"
                         class="w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-lg text-xs font-black uppercase tracking-widest text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-indigo-950/40">
                         Submit Application
@@ -386,32 +386,32 @@ try {
                         document.getElementById('jobDetails').innerHTML = `
                         <div class="space-y-6">
                             <div>
-                                <h2 class="text-3xl font-black text-white uppercase tracking-tight">${job.title}</h2>
-                                <p class="text-xs text-indigo-400 font-bold uppercase tracking-widest mt-1">${job.position}</p>
+                                <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight">${job.title}</h2>
+                                <p class="text-xs text-indigo-600 font-bold uppercase tracking-widest mt-1">${job.position}</p>
                             </div>
                             
-                            <div class="flex flex-wrap gap-4 text-xs text-gray-500 border-b border-gray-800 pb-6 uppercase font-bold tracking-widest">
-                                <div class="flex items-center gap-1.5 bg-gray-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                                    <i class="fas fa-map-marker-alt text-indigo-500/50"></i> ${job.location}
+                            <div class="flex flex-wrap gap-4 text-xs text-gray-500 border-b border-gray-100 pb-6 uppercase font-bold tracking-widest">
+                                <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <i class="fas fa-map-marker-alt text-indigo-400"></i> ${job.location}
                                 </div>
-                                <div class="flex items-center gap-1.5 bg-gray-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                                    <i class="far fa-clock text-indigo-500/50"></i> Posted ${job.date_posted_formatted}
+                                <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <i class="far fa-clock text-indigo-400"></i> Posted ${job.date_posted_formatted}
                                 </div>
-                                <div class="flex items-center gap-1.5 bg-gray-950 px-3 py-1.5 rounded-lg border border-gray-800">
-                                    <i class="fas fa-globe text-indigo-500/50"></i> ${job.platform || 'N/A'}
+                                <div class="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <i class="fas fa-globe text-indigo-400"></i> ${job.platform || 'N/A'}
                                 </div>
                             </div>
  
                             <div>
-                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">About the Role</h4>
-                                <div class="prose prose-invert text-gray-400 whitespace-pre-line leading-relaxed text-sm font-light">
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">About the Role</h4>
+                                <div class="prose prose-invert text-gray-600 whitespace-pre-line leading-relaxed text-sm font-light text-justify">
                                     ${job.requirements}
                                 </div>
                             </div>
  
-                            <div class="pt-8 border-t border-gray-800 flex justify-end gap-3">
-                                <button onclick="document.getElementById('viewModal').classList.add('hidden')" class="px-6 py-2.5 bg-gray-800 text-gray-300 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-gray-700 transition-colors">Close</button>
-                                <button onclick="openApplicationModal(${job.id}); document.getElementById('viewModal').classList.add('hidden')" class="px-6 py-2.5 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-950/40">Apply for this Job</button>
+                            <div class="pt-8 border-t border-gray-100 flex justify-end gap-3">
+                                <button onclick="document.getElementById('viewModal').classList.add('hidden')" class="px-6 py-2.5 bg-gray-100 text-gray-600 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-gray-200 transition-colors">Close</button>
+                                <button onclick="openApplicationModal(${job.id}); document.getElementById('viewModal').classList.add('hidden')" class="px-6 py-2.5 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-indigo-700 transition-all shadow-md">Apply for this Job</button>
                             </div>
                         </div>
                     `;

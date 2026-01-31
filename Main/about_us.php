@@ -14,12 +14,12 @@
 
         :root {
             --primary-color: #6366f1;
-            --background-light: #000000;
-            --background-card: #111827;
-            --text-dark: #f3f4f6;
-            --text-light: #f4f4f4;
-            --text-muted: #9ca3af;
-            --shadow-subtle: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --background-light: #f8f9fa;
+            --background-card: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #f9fafb;
+            --text-muted: #6b7280;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --border-radius: 24px;
         }
 
@@ -42,16 +42,16 @@
         }
  
         ::-webkit-scrollbar-track {
-            background: #000;
+            background: #f1f1f1;
         }
  
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #c7c7c7;
             border-radius: 10px;
         }
  
         ::-webkit-scrollbar-thumb:hover {
-            background: #444;
+            background: #a0a0a0;
         }
 
         /* Sidebar styles handled by component */
@@ -79,7 +79,7 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-subtle);
             margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .page-header h1 {
@@ -135,7 +135,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
  
         .member-card:hover {
@@ -226,8 +226,8 @@
         <?php include '../Components/header_admin.php'; ?>
 
         <header class="page-header">
-            <h1 class="text-4xl font-black text-white uppercase tracking-tighter">About Us</h1>
-            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2">Meet the passionate team behind our success</p>
+            <h1 class="text-4xl font-black text-gray-900 uppercase tracking-tighter">About Us</h1>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Meet the passionate team behind our success</p>
         </header>
 
         <?php
@@ -286,21 +286,21 @@
     </div>
 
     <!-- PIN Modal -->
-    <div id="pinModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center z-50 backdrop-blur-md transition-all duration-300">
-        <div class="bg-gray-900 p-8 rounded-[32px] shadow-2xl w-80 transform transition-all scale-100 border border-gray-800 text-center relative overflow-hidden">
+    <div id="pinModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm transition-all duration-300">
+        <div class="bg-white p-8 rounded-[32px] shadow-2xl w-80 transform transition-all scale-100 border border-gray-50 text-center relative overflow-hidden">
             <!-- Decorative circle -->
             <div class="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
             
-            <div class="mx-auto w-14 h-14 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 flex items-center justify-center mb-6 shadow-lg">
+            <div class="mx-auto w-14 h-14 bg-indigo-50 flex items-center justify-center mb-6 shadow-sm border border-indigo-100">
                 <i class="fa-solid fa-lock text-indigo-500 text-xl"></i>
             </div>
             
-            <h2 class="text-lg font-black text-white mb-1 uppercase tracking-tight">Protected Content</h2>
-            <p class="text-[10px] font-bold text-gray-500 mb-8 uppercase tracking-widest">Please enter the security PIN to view this resume.</p>
+            <h2 class="text-lg font-black text-gray-900 mb-1 uppercase tracking-tight">Protected Content</h2>
+            <p class="text-[10px] font-bold text-gray-400 mb-8 uppercase tracking-widest">Please enter the security PIN to view this resume.</p>
             
             <div class="mb-6 relative">
                 <input type="password" id="pinInput" placeholder="PIN" 
-                    class="w-full px-4 py-4 bg-black border border-gray-800 rounded-xl text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-xs placeholder:font-bold placeholder:tracking-widest text-white"
+                    class="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-xs placeholder:font-bold placeholder:tracking-widest text-gray-900"
                     maxlength="4">
                 <p id="errorMessage" class="text-red-500 text-[10px] mt-2 font-black uppercase tracking-widest hidden flex items-center justify-center gap-1 absolute -bottom-6 left-0 right-0">
                     <i class="fa-solid fa-circle-exclamation"></i> Incorrect PIN
@@ -308,8 +308,8 @@
             </div>
  
             <div class="flex gap-3 mt-10">
-                <button onclick="closePinModal()" class="flex-1 px-4 py-3 border border-gray-800 text-gray-500 rounded-xl hover:bg-gray-800 transition-colors font-bold text-[10px] uppercase tracking-widest">Cancel</button>
-                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-950/40">Access</button>
+                <button onclick="closePinModal()" class="flex-1 px-4 py-3 border border-gray-100 text-gray-400 rounded-xl hover:bg-gray-100 transition-colors font-bold text-[10px] uppercase tracking-widest">Cancel</button>
+                <button onclick="verifyPin()" class="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest shadow-md">Access</button>
             </div>
         </div>
     </div>
