@@ -834,20 +834,28 @@ class CandidateManager
     private function checkPin(): void
     {
         header('Content-Type: application/json');
-        $pin = $_POST['pin'] ?? '';
-        $email = $_SESSION['Email'];
+        try {
+            $pin = $_POST['pin'] ?? '';
+            $email = $_SESSION['Email'];
 
-        $stmt = $this->conn->prepare("SELECT resume_pin FROM logintbl WHERE Email = ?");
-        $stmt->execute([$email]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT resume_pin FROM logintbl WHERE Email = ?");
+            if (!$stmt) {
+                throw new Exception("Database error: prepare failed");
+            }
+            $stmt->execute([$email]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Default PIN is 1234 if not set/found (though DB should have it)
-        $validPin = $row['resume_pin'] ?? '1234';
+            // Default PIN is 1234 if not set/found (though DB should have it)
+            $validPin = $row['resume_pin'] ?? '1234';
 
-        if ($pin === $validPin) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Incorrect PIN']);
+            if ($pin === $validPin) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Incorrect PIN']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
         }
         exit;
     }
