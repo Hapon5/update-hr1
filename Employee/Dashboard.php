@@ -52,17 +52,26 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Navbar -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-gray-950 border-b border-gray-800 shadow-2xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold text-blue-600">HR1 Portal</span>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-cube text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-black text-white uppercase tracking-tighter">HR1 <span class="text-indigo-500 text-sm font-bold tracking-widest ml-1">Portal</span></span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-700 font-medium hidden sm:block">Welcome, <?php echo htmlspecialchars($employee['first_name']); ?></span>
-                    <img class="h-8 w-8 rounded-full border border-gray-200" src="<?php echo $photo; ?>" alt="Profile">
-                    <a href="../logout.php" class="text-gray-500 hover:text-red-600 transition-colors" title="Logout">
-                        <i class="fas fa-sign-out-alt text-lg"></i>
+                <div class="flex items-center gap-6">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-black text-white uppercase leading-none">Welcome, <?php echo htmlspecialchars($employee['first_name']); ?></p>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1 italic">Employee Access</p>
+                    </div>
+                    <div class="relative group">
+                        <img class="h-9 w-9 rounded-xl border-2 border-gray-800 group-hover:border-indigo-500 transition-all cursor-pointer shadow-lg" src="<?php echo $photo; ?>" alt="Profile">
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-gray-950 rounded-full"></div>
+                    </div>
+                    <a href="../logout.php" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-red-500 hover:bg-red-500/10 hover:border-red-500/20 transition-all" title="Logout">
+                        <i class="fas fa-power-off text-sm"></i>
                     </a>
                 </div>
             </div>

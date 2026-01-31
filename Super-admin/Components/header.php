@@ -26,25 +26,23 @@
                 </div>
                 <div class="hidden sm:flex items-center gap-2">
                     <span class="text-sm font-semibold text-gray-200"><?php
-                    $displayName = $_SESSION['GlobalName'] ?? 'Super Admin';
-                    echo htmlspecialchars($displayName === 'System User' ? 'Super Admin' : $displayName);
+                    // Using the same sidebar_user logic if available or fetch here
+                    $header_user_name = $sidebar_user['name'] ?? ($_SESSION['GlobalName'] ?? 'Super Admin');
+                    echo htmlspecialchars($header_user_name);
                     ?></span>
                     <i id="dropdownArrow"
                         class="fas fa-chevron-down text-gray-500 text-xs transition-transform duration-200"></i>
                 </div>
             </div>
-
+ 
             <!-- Dropdown Menu -->
             <div id="profileDropdownMenu"
                 class="absolute top-full right-0 mt-2 w-56 bg-gray-900 rounded-xl shadow-2xl border border-gray-800 py-2 hidden transform transition-all duration-200 origin-top-right z-50">
                 <div class="px-4 py-3 border-b border-gray-800">
                     <p class="text-sm font-semibold text-white">
-                        <?php
-                        $displayName = $_SESSION['GlobalName'] ?? 'Super Admin';
-                        echo htmlspecialchars($displayName === 'System User' ? 'Super Admin' : $displayName);
-                        ?>
+                        <?php echo htmlspecialchars($header_user_name); ?>
                     </p>
-                    <p class="text-xs text-gray-500">Super Admin</p>
+                    <p class="text-xs text-gray-500"><?php echo htmlspecialchars($sidebar_user['role'] ?? 'Management'); ?></p>
                 </div>
                 <div class="py-1">
                     <a href="#"

@@ -110,15 +110,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     }
 
                     // Route based on account type
-                    // Route based on account type
                     if ($accountType == 1) {
                         // HR Admin
                         header('Location: Main/Dashboard.php');
                     } elseif ($accountType == 0) {
-                        // Applicant / User -> Redirecting to Super-admin as requested
+                        // Applicant / User
                         header('Location: Super-admin/Dashboard.php');
                     } elseif ($accountType == 2) {
-                        header('Location: Super-admin/Dashboard.php');
+                        // Staff
+                        header('Location: Staff/Dashboard.php');
+                    } elseif ($accountType == 3) {
+                        // Employee
+                        header('Location: Employee/Dashboard.php');
                     } else {
                         // Default Fallback
                         header('Location: landing.php');
@@ -311,8 +314,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                             </div>
                             <select name="role"
                                 class="w-full pl-10 pr-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-brand-500 outline-none appearance-none text-gray-500">
-                                <option value="0">Applicant / User</option>
+                                <option value="0">Default Admin</option>
                                 <option value="1">HR Admin</option>
+                                <option value="2">Staff</option>
+                                <option value="3">Employee</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                                 <i class="fas fa-chevron-down text-gray-400"></i>

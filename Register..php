@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
     $name = trim($_POST['name'] ?? '');
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
-    $role = isset($_POST['role']) && in_array($_POST['role'], ['0', '1']) ? $_POST['role'] : '0';
+    $role = isset($_POST['role']) && in_array($_POST['role'], ['0', '1', '2', '3']) ? $_POST['role'] : '0';
 
     if (empty($name) || empty($email) || empty($password)) {
         $registerError = "All fields are required.";
