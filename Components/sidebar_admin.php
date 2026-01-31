@@ -3,30 +3,66 @@
 $root_path = $root_path ?? '../';
 $current_page = basename($_SERVER['PHP_SELF']);
 
+// Fetch user info for sidebar
+$sidebar_user = [
+    'name' => 'HR Admin',
+    'role' => 'Management',
+    'photo' => $root_path . 'Image/logo.png'
+];
+
+if (isset($_SESSION['Email'])) {
+    $email = $_SESSION['Email'];
+    try {
+        $stmt = $conn->prepare("SELECT first_name, last_name, position, base64_image FROM employees WHERE email = ?");
+        $stmt->execute([$email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $sidebar_user['name'] = $row['first_name'] . ' ' . $row['last_name'];
+            $sidebar_user['role'] = $row['position'];
+            if (!empty($row['base64_image'])) {
+                $sidebar_user['photo'] = $row['base64_image'];
+            }
+        } else {
+            // Fallback to candidates
+            $stmt = $conn->prepare("SELECT full_name FROM candidates WHERE email = ?");
+            $stmt->execute([$email]);
+            $candidate = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($candidate) {
+                $sidebar_user['name'] = $_SESSION['GlobalName'] ?? $candidate['full_name'];
+            }
+        }
+    } catch (Exception $e) {
+        // Fallback to defaults
+    }
+}
+
 // Helper function to check if a link is active
 function isActive($pageName, $current_page)
 {
-    return $pageName === $current_page ? 'bg-white/10 text-white border-l-4 border-white' : 'text-gray-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent';
+    return $pageName === $current_page ? 'bg-indigo-600/30 text-indigo-400 border-l-4 border-indigo-500 shadow-lg shadow-indigo-500/10' : 'text-gray-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent';
 }
 
 function getIconColor($pageName, $current_page)
 {
-    return $pageName === $current_page ? 'text-white' : 'text-gray-500 group-hover:text-white';
+    return $pageName === $current_page ? 'text-indigo-400' : 'text-gray-500 group-hover:text-white';
 }
 ?>
 
 <!-- Admin Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-screen w-64 bg-black border-r border-white/10 transition-transform duration-300 z-50 overflow-y-auto custom-scrollbar flex flex-col shadow-2xl"
+    class="fixed top-0 left-0 h-screen w-64 bg-gray-950 border-r border-gray-800 transition-transform duration-300 z-50 overflow-y-auto custom-scrollbar flex flex-col shadow-2xl"
     id="sidebar">
-    <!-- Brand -->
-    <div class="flex items-center gap-3 px-6 h-20 border-b border-white/5 mb-2 flex-shrink-0">
-        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden">
-            <img src="<?php echo $root_path; ?>Image/logo.png" alt="Logo" class="w-full h-full object-cover">
+    <!-- Brand / User Profile -->
+    <div class="flex items-center gap-3 px-6 h-20 border-b border-gray-800 mb-2 flex-shrink-0">
+        <div class="relative group">
+            <div class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center shadow-lg overflow-hidden border border-gray-800 group-hover:border-indigo-500/50 transition-all">
+                <img src="<?php echo $sidebar_user['photo']; ?>" alt="Profile" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-gray-950 rounded-full"></div>
         </div>
-        <div>
-            <h2 class="text-white font-bold tracking-tight text-sm">HR Admin</h2>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Management</p>
+        <div class="overflow-hidden">
+            <h2 class="text-white font-bold tracking-tight text-sm truncate uppercase"><?php echo htmlspecialchars($sidebar_user['name']); ?></h2>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mt-1 truncate"><?php echo htmlspecialchars($sidebar_user['role']); ?></p>
         </div>
     </div>
 
@@ -39,6 +75,12 @@ function getIconColor($pageName, $current_page)
             <i
                 class="fas fa-tachometer-alt w-5 text-center <?php echo getIconColor('Dashboard.php', $current_page); ?>"></i>
             <span class="font-medium text-sm">Dashboard</span>
+        </a>
+
+        <a href="<?php echo $root_path; ?>Employee/Dashboard.php"
+            class="flex items-center gap-3 px-4 py-2.5 group hover:bg-indigo-600/20 text-indigo-400/80 hover:text-indigo-400 transition-all rounded-xl mt-1">
+            <i class="fas fa-user-circle w-5 text-center"></i>
+            <span class="font-medium text-sm">Employee Portal</span>
         </a>
 
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Recruitment</p>

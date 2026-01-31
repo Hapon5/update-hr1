@@ -4,6 +4,35 @@ $root_path = './'; // Define root path for includes
 
 require_once "Database/Connections.php";
 
+// Fetch dynamic user data for profile
+$profile_user = [
+    'name' => $_SESSION['GlobalName'] ?? 'Admin User',
+    'email' => $_SESSION['Email'] ?? '',
+    'role' => 'Administrator',
+    'photo' => ''
+];
+
+if (isset($_SESSION['Email'])) {
+    try {
+        $stmt = $conn->prepare("SELECT first_name, last_name, position, base64_image FROM employees WHERE email = ?");
+        $stmt->execute([$_SESSION['Email']]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $profile_user['name'] = $row['first_name'] . ' ' . $row['last_name'];
+            $profile_user['role'] = $row['position'];
+            $profile_user['photo'] = $row['base64_image'];
+        } else {
+            // Fallback to candidates
+            $stmt = $conn->prepare("SELECT full_name FROM candidates WHERE email = ?");
+            $stmt->execute([$_SESSION['Email']]);
+            $cand = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($cand) {
+                $profile_user['name'] = $cand['full_name'];
+            }
+        }
+    } catch (Exception $e) {}
+}
+
 // Ensure logic handles POST requests
 if (isset($_POST['update_password'])) {
     $current_password = $_POST['current_password'];
@@ -77,20 +106,22 @@ if (isset($_POST['update_password'])) {
             <form action="" method="POST" class="space-y-6">
                 <!-- Profile Image Placeholder -->
                 <div class="flex items-center gap-6 mb-8">
-                    <div
-                        class="w-24 h-24 rounded-full bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center text-3xl text-indigo-600 font-bold">
-                        <?php
-                        $name = $_SESSION['GlobalName'] ?? 'AU';
-                        echo strtoupper(substr($name, 0, 2));
-                        ?>
+                    <div class="w-24 h-24 rounded-full bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center text-3xl text-indigo-600 font-bold overflow-hidden shadow-inner">
+                        <?php if ($profile_user['photo']): ?>
+                            <img src="<?= $profile_user['photo'] ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <?= strtoupper(substr($profile_user['name'], 0, 2)) ?>
+                        <?php endif; ?>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-gray-900">
-                            <?= htmlspecialchars($_SESSION['GlobalName'] ?? 'Admin User') ?>
+                        <h3 class="text-xl font-bold text-gray-900 uppercase tracking-tight">
+                            <?= htmlspecialchars($profile_user['name']) ?>
                         </h3>
-                        <p class="text-gray-500">Administrator</p>
+                        <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] mt-1"><?= htmlspecialchars($profile_user['role']) ?></p>
                         <button type="button"
-                            class="mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium">Change Photo</button>
+                            class="mt-3 text-xs text-indigo-600 hover:text-indigo-800 font-bold uppercase tracking-widest flex items-center gap-2 group">
+                            <i class="fas fa-camera transition-transform group-hover:scale-110"></i> Change Photo
+                        </button>
                     </div>
                 </div>
 
@@ -98,8 +129,8 @@ if (isset($_POST['update_password'])) {
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
                         <input type="text" name="full_name"
-                            value="<?= htmlspecialchars($_SESSION['GlobalName'] ?? '') ?>"
-                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50 text-gray-600"
+                            value="<?= htmlspecialchars($profile_user['name']) ?>"
+                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50 text-gray-600 font-medium"
                             readonly>
                     </div>
                     <div>
@@ -110,8 +141,12 @@ if (isset($_POST['update_password'])) {
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Account Type</label>
-                        <input type="text" value="<?= $_SESSION['Account_type'] == 0 ? 'Super Admin' : 'Admin' ?>"
-                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50 text-gray-600"
+                        <?php 
+                        $accType = $_SESSION['Account_type'] ?? null;
+                        $roleLabel = ($accType !== null && $accType == 0) ? 'Super Admin' : 'HR Admin';
+                        ?>
+                        <input type="text" value="<?= $roleLabel ?>"
+                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50 text-gray-600 font-medium"
                             readonly>
                     </div>
                 </div>
