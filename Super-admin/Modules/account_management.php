@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_account'])) {
                 $stmtCand->execute([$name, $email]);
 
                 $conn->commit();
-                $msg = "<div class='bg-green-100 text-green-700 p-4 rounded-xl mb-6 shadow-sm border border-green-200'>Account created successfully for $name!</div>";
+                $msg = "<div class='bg-indigo-50 text-indigo-700 p-4 rounded-xl mb-6 shadow-sm border border-indigo-100 text-[10px] font-black uppercase tracking-widest text-center'>Account created successfully for $name!</div>";
             }
         } catch (Exception $e) {
             $conn->rollBack();
@@ -78,7 +78,7 @@ if (isset($_GET['delete'])) {
                     $stmtDelCand->execute([$row['Email']]);
                     
                     $conn->commit();
-                    $msg = "<div class='bg-amber-500/10 text-amber-500 p-4 rounded-xl mb-6 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest text-center'>Account removed successfully.</div>";
+                    $msg = "<div class='bg-amber-50 text-amber-600 p-4 rounded-xl mb-6 border border-amber-100 text-[10px] font-black uppercase tracking-widest text-center'>Account removed successfully.</div>";
                 }
             }
         } else {
@@ -112,15 +112,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #0a0a0b; color: white; }
+        body { font-family: 'Poppins', sans-serif; background: #ffffff; color: #1e293b; }
         .glass-card {
-            background: rgba(17, 17, 19, 0.8);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
         }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -132,54 +133,58 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
             <div class="mb-10">
-                <h1 class="text-3xl font-black tracking-tighter uppercase">Account <span class="text-indigo-500">Management</span></h1>
-                <p class="text-gray-500 text-sm mt-1">Create and manage system access accounts.</p>
+                <h1 class="text-3xl font-black tracking-tighter uppercase text-gray-900">Account <span class="text-indigo-600">Management</span></h1>
+                <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Unified System Control Terminal</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Add Account Form -->
                 <div class="lg:col-span-1">
-                    <div class="glass-card rounded-[32px] p-8 sticky top-28">
-                        <h3 class="text-lg font-bold mb-6 flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center">
-                                <i class="fas fa-user-plus text-sm"></i>
-                            </span>
-                            Add New Account
+                    <div class="glass-card rounded-[40px] p-8 sticky top-28">
+                        <h3 class="text-sm font-black uppercase tracking-widest text-gray-900 mb-8 border-b border-gray-100 pb-4">
+                            New Account
                         </h3>
 
                         <?php if ($error): ?>
-                            <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-xs font-bold uppercase tracking-wider">
+                            <div class="bg-red-50 border border-red-100 text-red-500 p-4 rounded-2xl mb-6 text-[10px] font-black uppercase tracking-widest">
                                 <?php echo $error; ?>
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" class="space-y-5">
+                        <?php if ($msg): ?>
+                            <?php echo $msg; ?>
+                        <?php endif; ?>
+
+                        <form method="POST" class="space-y-6">
                             <div>
-                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">Full Name</label>
-                                <input type="text" name="name" placeholder="John Doe" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all placeholder:text-gray-600" required>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Full Name</label>
+                                <input type="text" name="name" placeholder="John Doe" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all placeholder:text-gray-300" required>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">Email Address</label>
-                                <input type="email" name="email" placeholder="john@example.com" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all placeholder:text-gray-600" required>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Email Address</label>
+                                <input type="email" name="email" placeholder="john@example.com" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all placeholder:text-gray-300" required>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">Temporary Password</label>
-                                <input type="password" name="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all placeholder:text-gray-600" required>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Temporary Password</label>
+                                <input type="password" name="password" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all placeholder:text-gray-300" required>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">Account Role</label>
-                                <select name="role" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all appearance-none cursor-pointer">
-                                    <option value="3" class="bg-gray-900">Employee</option>
-                                    <option value="1" class="bg-gray-900">HR Admin</option>
-                                    <option value="2" class="bg-gray-900">Staff</option>
-                                    <option value="0" class="bg-gray-900">Super Admin</option>
-                                </select>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Account Role</label>
+                                <div class="relative">
+                                    <select name="role" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all appearance-none cursor-pointer">
+                                        <option value="3">Employee</option>
+                                        <option value="1">HR Admin</option>
+                                        <option value="2">Staff</option>
+                                        <option value="0">Super Admin</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                                </div>
                             </div>
 
-                            <button type="submit" name="add_account" class="w-full bg-indigo-600 text-white font-black text-[11px] uppercase tracking-[0.2em] py-5 rounded-2xl shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                            <button type="submit" name="add_account" class="w-full bg-indigo-600 text-white font-black text-[11px] uppercase tracking-[0.25em] py-5 rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all mt-4">
                                 Create Account
                             </button>
                         </form>
@@ -188,62 +193,68 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <!-- Accounts List -->
                 <div class="lg:col-span-2">
-                    <div class="glass-card rounded-[32px] overflow-hidden">
-                        <div class="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
-                            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">System Accounts</h3>
-                            <span class="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase rounded-full border border-indigo-500/20"><?php echo count($accounts); ?> Total</span>
+                    <div class="glass-card rounded-[40px] overflow-hidden">
+                        <div class="px-10 py-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+                            <div>
+                                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 mb-1">System Accounts</h3>
+                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">System Overview</p>
+                            </div>
+                            <span class="px-4 py-2 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase rounded-xl border border-indigo-100 shadow-sm"><?php echo count($accounts); ?> Records</span>
                         </div>
                         
                         <div class="overflow-x-auto custom-scrollbar">
                             <table class="w-full">
                                 <thead>
                                     <tr class="text-left">
-                                        <th class="px-8 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest">User</th>
-                                        <th class="px-8 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest">Email</th>
-                                        <th class="px-8 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest">Role</th>
-                                        <th class="px-8 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest text-right">Actions</th>
+                                        <th class="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">User Identity</th>
+                                        <th class="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Email</th>
+                                        <th class="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Access Role</th>
+                                        <th class="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-white/5">
+                                <tbody class="divide-y divide-gray-50">
                                     <?php foreach ($accounts as $acc): ?>
-                                    <tr class="hover:bg-white/[0.03] transition-colors group">
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-500/20">
+                                    <tr class="hover:bg-gray-50/50 transition-colors group">
+                                        <td class="px-10 py-6">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center font-black text-xs border border-indigo-100 shadow-sm scale-95 group-hover:scale-100 transition-transform">
                                                     <?php echo strtoupper(substr($acc['full_name'] ?? 'U', 0, 1)); ?>
                                                 </div>
-                                                <span class="text-sm font-bold text-gray-200"><?php echo htmlspecialchars($acc['full_name'] ?? 'System User'); ?></span>
+                                                <div>
+                                                    <span class="text-sm font-black text-gray-900 block truncate max-w-[150px]"><?php echo htmlspecialchars($acc['full_name'] ?? 'System User'); ?></span>
+                                                    <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Active</span>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td class="px-8 py-5">
-                                            <span class="text-xs text-gray-500 font-medium"><?php echo htmlspecialchars($acc['Email']); ?></span>
+                                        <td class="px-10 py-6">
+                                            <span class="text-xs text-gray-500 font-bold"><?php echo htmlspecialchars($acc['Email']); ?></span>
                                         </td>
-                                        <td class="px-8 py-5">
+                                        <td class="px-10 py-6">
                                             <?php
                                             $roles = [
-                                                '0' => ['Super Admin', 'bg-red-500/10 text-red-400 border-red-500/20'],
-                                                '1' => ['HR Admin', 'bg-blue-500/10 text-blue-400 border-blue-500/20'],
-                                                '2' => ['Staff', 'bg-amber-500/10 text-amber-400 border-amber-500/20'],
-                                                '3' => ['Employee', 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20']
+                                                '0' => ['Super Admin', 'bg-red-50 text-red-500 border-red-100 shadow-red-50/20'],
+                                                '1' => ['HR Admin', 'bg-blue-50 text-blue-500 border-blue-100 shadow-blue-50/20'],
+                                                '2' => ['Staff', 'bg-amber-50 text-amber-500 border-amber-100 shadow-amber-50/20'],
+                                                '3' => ['Employee', 'bg-emerald-50 text-emerald-500 border-emerald-100 shadow-emerald-50/20']
                                             ];
-                                            $roleInfo = $roles[$acc['Account_type']] ?? ['Unknown', 'bg-gray-500/10 text-gray-400 border-gray-500/20'];
+                                            $roleInfo = $roles[$acc['Account_type']] ?? ['Unknown', 'bg-gray-50 text-gray-400 border-gray-100'];
                                             ?>
-                                            <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border <?php echo $roleInfo[1]; ?>">
+                                            <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm <?php echo $roleInfo[1]; ?>">
                                                 <?php echo $roleInfo[0]; ?>
                                             </span>
                                         </td>
-                                         <td class="px-8 py-5 text-right">
-                                             <div class="flex justify-end gap-2">
-                                                 <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all">
+                                        <td class="px-10 py-6 text-right">
+                                             <div class="flex justify-end gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                                                 <button class="w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:text-indigo-600 hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-indigo-100">
                                                      <i class="fas fa-edit text-[10px]"></i>
                                                  </button>
                                                  <a href="?delete=<?php echo $acc['LoginID']; ?>" 
                                                     onclick="return confirm('Strict Warning: Are you sure you want to PERMANENTLY delete this account?')"
-                                                    class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center">
+                                                    class="w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-red-100 flex items-center justify-center">
                                                      <i class="fas fa-trash-alt text-[10px]"></i>
                                                  </a>
                                              </div>
-                                         </td>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -256,11 +267,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </main>
 
     <script>
-        // Sidebar active handling (optional if not inherited)
         document.addEventListener('DOMContentLoaded', () => {
-             const sidebar = document.getElementById('sidebar');
-             const mainContent = document.getElementById('mainContent');
-             const header = document.getElementById('header');
+             // Sidebar active handling
         });
     </script>
 </body>
