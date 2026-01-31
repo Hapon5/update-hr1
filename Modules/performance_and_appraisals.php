@@ -202,7 +202,7 @@ try {
     include '../Components/header_admin.php';
     ?>
 
-    <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300">
+    <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300 flex flex-col">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-200">Performance & Appraisals</h1>
             <div id="datetime" class="text-gray-400 font-medium"></div>

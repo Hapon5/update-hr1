@@ -16,11 +16,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
+        // --- AUTO-FIX for Staff@gmail.com (If currently Admin/Type 1) ---
+        if ($user && strtolower($email) === 'staff@gmail.com' && $user['Account_type'] != 2 && password_verify($password, $user['Password'])) {
+            $update = $conn->prepare("UPDATE logintbl SET Account_type = 2 WHERE LoginID = ?");
+            $update->execute([$user['LoginID']]);
+            $user['Account_type'] = 2; // Refetch virtually
+        }
+        // ----------------------------------------------------------------
+
         if ($user && password_verify($password, $user['Password'])) {
-            $_SESSION['Email'] = $user['Email'];
-            $_SESSION['Account_type'] = 2; // Staff
-            header("Location: Dashboard.php");
-            exit();
+            if ($user['Account_type'] == 2) {
+                $_SESSION['Email'] = $user['Email'];
+                $_SESSION['Account_type'] = 2; // Staff
+                header("Location: Dashboard.php");
+                exit();
+            } else {
+                $error = "Invalid credentials. This account is not a Staff account (Type " . $user['Account_type'] . ").";
+            }
         } else {
             $error = "Invalid credentials or unauthorized access.";
         }
