@@ -37,8 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_account'])) {
                 $stmt->execute([$email, $hashed, $role]);
 
                 // 2. Insert into candidates or employees based on role? 
-                // For now, let's sync to candidates as it's the primary name source in this system
-                $stmtCand = $conn->prepare("INSERT INTO candidates (full_name, email, status, job_title, position, contact_number, experience_years) VALUES (?, ?, 'new', ?, ?, 'N/A', 0)");
+                // Using all required fields to prevent SQL default value errors (Age, Address included)
+                $stmtCand = $conn->prepare("INSERT INTO candidates (full_name, email, status, job_title, position, contact_number, experience_years, age, address) VALUES (?, ?, 'new', ?, ?, 'N/A', 0, 0, 'N/A')");
                 $jobTitle = ($role == '0' || $role == '1') ? 'Administrator' : 'Employee';
                 $position = ($role == '0' || $role == '1') ? 'System Controller' : 'Staff';
                 $stmtCand->execute([$name, $email, $jobTitle, $position]);

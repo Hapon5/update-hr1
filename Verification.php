@@ -42,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // If role 0, definitely candidate.
 
             // Request to REMOVE connection to candidates table:
-            // Insert into candidates table to store user name
-            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source, job_title, position, contact_number, experience_years) VALUES (:name, :email, 'new', 'Online Registration', :jobTitle, :position, 'N/A', 0)");
+            // Insert into candidates table to store user name (Added Age and Address for SQL compatibility)
+            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source, job_title, position, contact_number, experience_years, age, address) VALUES (:name, :email, 'new', 'Online Registration', :jobTitle, :position, 'N/A', 0, 0, 'N/A')");
             $jobTitle = ($accountType == '0' || $accountType == '1') ? 'Administrator' : 'Employee';
             $position = ($accountType == '0' || $accountType == '1') ? 'System Controller' : 'Staff';
             $stmtCandidate->execute([
