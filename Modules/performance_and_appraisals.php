@@ -195,7 +195,7 @@ try {
     </style>
 </head>
 
-<body class="bg-gray-900">
+<body class="bg-white">
     <?php
     $root_path = '../';
     include '../Components/sidebar_admin.php';
@@ -204,68 +204,74 @@ try {
 
     <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-200">Performance & Appraisals</h1>
-            <div id="datetime" class="text-gray-400 font-medium"></div>
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 uppercase tracking-tight">Performance <span class="text-indigo-600">Sync</span></h1>
+                <p class="text-[10px] text-gray-400 mt-1 uppercase font-black tracking-[0.3em]">Connected Evaluation System</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="../integration/sender_performance.php" 
+                   class="bg-white border border-gray-200 text-gray-900 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+                   <i class="fas fa-link text-indigo-500"></i> API Link
+                </a>
+                <div id="datetime" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-gray-100 px-4 py-2 rounded-xl"></div>
+            </div>
         </div>
-        <p class="text-gray-400 mb-8">Review and rate employee performance</p>
-
-        <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-700 w-full">
+        
+        <div class="bg-white rounded-[32px] shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100 w-full mb-8">
             <div class="overflow-x-auto h-full">
-                <table class="min-w-full divide-y divide-gray-700">
-                    <thead class="bg-gray-900">
+                <table class="min-w-full divide-y divide-gray-50">
+                    <thead class="bg-gray-50/50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Employee</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Position</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase">Last Rating
-                            </th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase">Actions</th>
+                            <th class="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Employee</th>
+                            <th class="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Position</th>
+                            <th class="px-8 py-5 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Last Rating</th>
+                            <th class="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-gray-800 divide-y divide-gray-700">
+                    <tbody class="bg-white divide-y divide-gray-50">
                         <?php if (empty($employees)): ?>
                             <tr>
-                                <td colspan="4" class="text-center py-10 text-gray-500">No active employees found.</td>
+                                <td colspan="4" class="text-center py-16 text-gray-400 text-xs font-medium uppercase tracking-widest">No active records found.</td>
                             </tr>
                         <?php else:
                             foreach ($employees as $employee): ?>
-                                <tr class="hover:bg-gray-700/50">
-                                    <td class="px-6 py-4">
+                                <tr class="hover:bg-gray-50/50 transition-colors group">
+                                    <td class="px-8 py-5">
                                         <div class="flex items-center">
                                             <?php
                                             $photo = $employee['photo_path'];
                                             if (empty($photo)) {
                                                 $photo = 'Profile/default.png';
                                             } else {
-                                                // Fix case sensitivity: replace lowercase 'profile/' with 'Profile/'
-                                                // This ensures it works on Linux servers where "Profile" != "profile"
                                                 $photo = str_ireplace('profile/', 'Profile/', $photo);
-
-                                                // Double check: if it doesn't start with Profile/, prepend it (handling bare filenames)
                                                 if (strpos($photo, 'Profile/') !== 0) {
                                                     $photo = 'Profile/' . $photo;
                                                 }
                                             }
-                                            // Ensure we point to parent dir
                                             $photoUrl = "../" . htmlspecialchars($photo);
                                             ?>
-                                            <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-600"
-                                                src="<?= $photoUrl ?>?v=<?= time() ?>"
-                                                onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?= urlencode($employee['name']) ?>&background=random&color=fff';"
-                                                alt="<?= htmlspecialchars($employee['name']) ?>">
-                                            <div class="ml-4 font-medium text-gray-200">
+                                            <div class="relative">
+                                                <img class="h-10 w-10 rounded-xl object-cover border border-gray-200 shadow-sm"
+                                                    src="<?= $photoUrl ?>?v=<?= time() ?>"
+                                                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?= urlencode($employee['name']) ?>&background=random&color=fff';"
+                                                    alt="<?= htmlspecialchars($employee['name']) ?>">
+                                                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                            </div>
+                                            <div class="ml-4 font-bold text-sm text-gray-900 uppercase tracking-tight">
                                                 <?= htmlspecialchars($employee['name']) ?>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-300"><?= htmlspecialchars($employee['position']) ?>
+                                    <td class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-widest"><?= htmlspecialchars($employee['position']) ?>
                                     </td>
-                                    <td class="px-6 py-4 text-center text-yellow-400 text-lg">
-                                        <?= $employee['last_rating'] ? str_repeat('★', $employee['last_rating']) . str_repeat('☆', 5 - $employee['last_rating']) : '<span class="text-gray-500 text-sm">Not Rated</span>' ?>
+                                    <td class="px-8 py-5 text-center text-amber-400 text-lg">
+                                        <?= $employee['last_rating'] ? str_repeat('★', $employee['last_rating']) . str_repeat('☆', 5 - $employee['last_rating']) : '<span class="text-gray-300 text-[10px] font-black uppercase tracking-widest">Unrated</span>' ?>
                                     </td>
-                                    <td class="px-6 py-4 text-right text-sm font-medium">
+                                    <td class="px-8 py-5 text-right text-sm font-medium">
                                         <button onclick="openRateModal(<?= $employee['id'] ?>)"
-                                            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500">Rate /
-                                            View</button>
+                                            class="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+                                            Evaluations
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; endif; ?>

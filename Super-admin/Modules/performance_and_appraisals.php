@@ -127,7 +127,7 @@ if ($totalEmployees > 0) {
     </style>
 </head>
 
-<body class="bg-[#f8f9fa] text-gray-800">
+<body class="bg-white text-gray-800">
 
     <?php
     $root_path = '../../';
@@ -140,13 +140,19 @@ if ($totalEmployees > 0) {
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Performance Management</h1>
-                <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">Monitor KPIs, Evaluations, and Employee Growth</p>
+                <h1 class="text-3xl font-black text-gray-900 uppercase tracking-tight">Performance <span class="text-indigo-600">Sync</span></h1>
+                <p class="text-[10px] text-gray-400 mt-1 uppercase font-black tracking-[0.3em]">Connected Evaluation System</p>
             </div>
-            <button onclick="openModal('evaluateModal')"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-950/40 transition-all flex items-center gap-2">
-                <i class="fas fa-plus"></i> New Evaluation
-            </button>
+            <div class="flex gap-3">
+                <a href="../../integration/sender_performance.php" 
+                   class="bg-white border border-gray-200 text-gray-900 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+                   <i class="fas fa-link text-indigo-500"></i> API Link
+                </a>
+                <button onclick="openModal('evaluateModal')"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all flex items-center gap-2">
+                    <i class="fas fa-plus"></i> New Evaluation
+                </button>
+            </div>
         </div>
 
         <!-- Dashboard Stats -->
