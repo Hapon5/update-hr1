@@ -1136,16 +1136,12 @@ if (isset($_SESSION['formResult'])) {
                                                     title="Edit Candidate">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <form method="POST" onsubmit="return confirm('Delete this candidate?')"
-                                                    class="inline">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="id" value="<?php echo $candidate['id']; ?>">
-                                                    <button
-                                                        class="w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors shadow-sm"
-                                                        title="Delete Candidate">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button
+                                                    onclick="openDeleteModal(<?php echo $candidate['id']; ?>)"
+                                                    class="w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors shadow-sm"
+                                                    title="Delete Candidate">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -1335,6 +1331,11 @@ if (isset($_SESSION['formResult'])) {
             if (id === 'candidateModal') {
                 resetForm();
             }
+        }
+
+        function openDeleteModal(id) {
+            document.getElementById('deleteCandidateId').value = id;
+            document.getElementById('deleteModal').classList.remove('hidden');
         }
 
         function resetForm() {
@@ -2204,6 +2205,35 @@ if (isset($_SESSION['formResult'])) {
                         Verify
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-trash-alt text-2xl text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Candidate?</h3>
+                <p class="text-gray-500 text-sm mb-6">Are you sure you want to delete this candidate? This action cannot be undone.</p>
+                
+                <form method="POST" id="deleteForm">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" id="deleteCandidateId">
+                    
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeModal('deleteModal')"
+                            class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-medium transition-colors shadow-lg shadow-red-600/30">
+                            Delete
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
