@@ -26,42 +26,14 @@ if (!$conn) {
     exit;
 }
 
-// Ensure employees table exists (Auto-migration)
-try {
-    $conn->exec("CREATE TABLE IF NOT EXISTS employees (
+    // Ensure user_notifications table exists
+    $conn->exec("CREATE TABLE IF NOT EXISTS user_notifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        first_name VARCHAR(100) NOT NULL,
-        last_name VARCHAR(100) NOT NULL,
-        email VARCHAR(150),
-        phone VARCHAR(20),
-        position VARCHAR(100),
-        department VARCHAR(100),
-        date_hired DATE,
-        salary DECIMAL(10, 2),
-        status ENUM('Active', 'Inactive', 'Resigned', 'Terminated') DEFAULT 'Active',
-        base64_image LONGTEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        type VARCHAR(50),
+        data LONGTEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )");
-
-    // Self-Healing: Check if specific columns exist (in case table existed with old schema)
-    $checkCols = [
-        'date_hired' => "ALTER TABLE employees ADD COLUMN date_hired DATE",
-        'department' => "ALTER TABLE employees ADD COLUMN department VARCHAR(100)",
-        'salary' => "ALTER TABLE employees ADD COLUMN salary DECIMAL(10, 2)",
-        'base64_image' => "ALTER TABLE employees ADD COLUMN base64_image LONGTEXT"
-    ];
-
-    $existingCols = [];
-    $stmt = $conn->query("SHOW COLUMNS FROM employees");
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $existingCols[] = $row['Field'];
-    }
-
-    foreach ($checkCols as $col => $alterCmd) {
-        if (!in_array($col, $existingCols)) {
-            $conn->exec($alterCmd);
-        }
-    }
 
 } catch (PDOException $e) {
     // Continue even if error (table might exist)
@@ -71,36 +43,61 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'POST') {
-        // --- POST: Add New Hired Employee ---
-        $input = json_decode(file_get_contents('php://input'), true);
+        // --- POST: Add New Hired Employee & Request ---
+        
+        // 1. Detect Input Type (JSON vs Form Data)
+        $input = [];
+        if (strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
+            $input = json_decode(file_get_contents('php://input'), true) ?? [];
+        } else {
+            $input = $_POST; // For multipart/form-data
+        }
 
-        // Required fields
-        $first_name = $input['first_name'] ?? null;
-        $last_name = $input['last_name'] ?? null;
-        $position = $input['position'] ?? null;
+        // 2. Extract Fields (Mapping Laravel snippet to our DB)
+        $first_name = $input['first_name'] ?? ($input['name'] ?? null);
+        $last_name = $input['last_name'] ?? ($input['lastname'] ?? null);
         $email = $input['email'] ?? null;
+        $position = $input['position'] ?? null;
+        $phone = $input['phone'] ?? '';
+        $account_type = $input['account_type'] ?? '3'; // Default to Employee
 
-        // Validation
-        if (!$first_name || !$last_name || !$position || !$email) {
+        if (!$first_name || !$last_name || !$email) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Missing required fields: first_name, last_name, position, email']);
+            echo json_encode(['status' => 'error', 'message' => 'Missing required fields: first_name (name), last_name (lastname), email']);
             exit;
         }
 
-        // Optional fields
-        $phone = $input['phone'] ?? '';
-        $department = $input['department'] ?? 'General';
-        $date_hired = $input['date_hired'] ?? date('Y-m-d');
-        $salary = $input['salary'] ?? 0.00;
-        $status = $input['status'] ?? 'Active';
-        $base64_image = $input['base64_image'] ?? null;
+        // 3. Handle Photo Upload
+        $photoPath = $input['base64_image'] ?? null;
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../uploads/hr_photos/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            
+            $fileName = time() . '_' . basename($_FILES['photo']['name']);
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
+                $photoPath = 'uploads/hr_photos/' . $fileName;
+            }
+        }
 
-        $stmt = $conn->prepare("INSERT INTO employees (first_name, last_name, email, phone, position, department, date_hired, salary, status, base64_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        // 4. Log to user_notifications (JSON Data)
+        $notificationData = array_merge($input, ['photo' => $photoPath]);
+        $stmtNotify = $conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
+        $stmtNotify->execute([json_encode($notificationData)]);
+
+        // 5. Insert into employees table
+        $stmtEmp = $conn->prepare("INSERT INTO employees (first_name, last_name, email, phone, position, base64_image, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
         
-        if ($stmt->execute([$first_name, $last_name, $email, $phone, $position, $department, $date_hired, $salary, $status, $base64_image])) {
+        if ($stmtEmp->execute([$first_name, $last_name, $email, $phone, $position, $photoPath, 'Active'])) {
             $newId = $conn->lastInsertId();
             http_response_code(201);
-            echo json_encode(['status' => 'success', 'message' => 'Employee hired successfully', 'id' => $newId]);
+            echo json_encode([
+                'status' => 'success', 
+                'message' => 'HR request and Employee added successfully', 
+                'employee_id' => $newId,
+                'photo_path' => $photoPath
+            ]);
         } else {
             http_response_code(500);
             echo json_encode(['status' => 'error', 'message' => 'Failed to add employee']);
