@@ -122,6 +122,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+
+        .tab-btn.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -193,13 +199,20 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <!-- Accounts List -->
                 <div class="lg:col-span-2">
+                    <!-- Tabs -->
+                    <div class="flex gap-2 mb-6 bg-gray-100/50 p-1.5 rounded-2xl w-fit border border-gray-100">
+                        <button onclick="filterAccounts('all')" id="tab-all" class="tab-btn active px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">All</button>
+                        <button onclick="filterAccounts('admin')" id="tab-admin" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-gray-400 hover:text-gray-600">Admin List</button>
+                        <button onclick="filterAccounts('employee')" id="tab-employee" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-gray-400 hover:text-gray-600">Employee List</button>
+                    </div>
+
                     <div class="glass-card rounded-[40px] overflow-hidden">
                         <div class="px-10 py-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
                             <div>
-                                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 mb-1">System Accounts</h3>
+                                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 mb-1" id="listTitle">System Accounts</h3>
                                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">System Overview</p>
                             </div>
-                            <span class="px-4 py-2 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase rounded-xl border border-indigo-100 shadow-sm"><?php echo count($accounts); ?> Records</span>
+                            <span class="px-4 py-2 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase rounded-xl border border-indigo-100 shadow-sm" id="recordCount"><?php echo count($accounts); ?> Records</span>
                         </div>
                         
                         <div class="overflow-x-auto custom-scrollbar">
@@ -212,9 +225,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                         <th class="px-10 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-50">
-                                    <?php foreach ($accounts as $acc): ?>
-                                    <tr class="hover:bg-gray-50/50 transition-colors group">
+                                <tbody class="divide-y divide-gray-50" id="accountTableBody">
+                                    <?php foreach ($accounts as $acc): 
+                                        $is_admin = in_array($acc['Account_type'], [0, 1]);
+                                        $category = $is_admin ? 'admin' : 'employee';
+                                    ?>
+                                    <tr class="account-row hover:bg-gray-50/50 transition-colors group" data-category="<?php echo $category; ?>">
                                         <td class="px-10 py-6">
                                             <div class="flex items-center gap-4">
                                                 <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center font-black text-xs border border-indigo-100 shadow-sm scale-95 group-hover:scale-100 transition-transform">
@@ -267,8 +283,41 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </main>
 
     <script>
+        function filterAccounts(category) {
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-gray-900');
+                btn.classList.add('text-gray-400', 'hover:text-gray-600');
+            });
+            const activeBtn = document.getElementById('tab-' + category);
+            activeBtn.classList.add('active', 'text-gray-900');
+            activeBtn.classList.remove('text-gray-400', 'hover:text-gray-600');
+
+            // Filter rows
+            const rows = document.querySelectorAll('.account-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                if (category === 'all' || row.dataset.category === category) {
+                    row.style.display = 'table-row';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update header
+            const titles = {
+                'all': 'System Accounts',
+                'admin': 'Administrative List',
+                'employee': 'Employee Directory'
+            };
+            document.getElementById('listTitle').innerText = titles[category];
+            document.getElementById('recordCount').innerText = visibleCount + ' Records';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-             // Sidebar active handling
+             // Initial load logic if needed
         });
     </script>
 </body>
