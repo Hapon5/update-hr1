@@ -155,20 +155,8 @@ class CandidateManager
             $imagePath
         ]);
 
-        // LOG TO NOTIFICATIONS (HR Request Logic - for integration)
-        try {
-            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
-            $notifData = json_encode([
-                'name' => $nameParts[0] ?? '',
-                'lastname' => $nameParts[1] ?? '',
-                'email' => $data['email'] ?? '',
-                'position' => $data['position'] ?? '',
-                'phone' => $data['contact_number'] ?? '',
-                'photo' => $resume
-            ]);
-            $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
-            $stmtNotif->execute([$notifData]);
-        } catch (Exception $e) {}
+        // LINK TO ADMIN HR PORTAL (Notification Logic & Remote Sync)
+        $this->syncWithRemote($data, $resume);
 
         return ['status' => 'success', 'message' => 'Candidate added & HR notification sent'];
     }
@@ -208,20 +196,8 @@ class CandidateManager
             $id
         ]);
 
-        // LINK TO ADMIN HR PORTAL (Notification Logic)
-        try {
-            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
-            $notifData = json_encode([
-                'name' => $nameParts[0] ?? '',
-                'lastname' => $nameParts[1] ?? '',
-                'email' => $data['email'] ?? '',
-                'position' => $data['position'] ?? '',
-                'phone' => $data['contact_number'] ?? '',
-                'photo' => $resume
-            ]);
-            $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
-            $stmtNotif->execute([$notifData]);
-        } catch (Exception $e) {}
+        // LINK TO ADMIN HR PORTAL (Notification Logic & Remote Sync)
+        $this->syncWithRemote($data, $resume);
 
         return ['status' => 'success', 'message' => 'Candidate updated & Admin HR notified'];
     }
@@ -231,6 +207,43 @@ class CandidateManager
         $stmt = $this->conn->prepare("DELETE FROM candidates WHERE id = ?");
         $stmt->execute([$id]);
         return ['status' => 'success', 'message' => 'Candidate deleted'];
+    }
+
+    private function syncWithRemote($data, $resumePath = null)
+    {
+        try {
+            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
+            $firstName = $nameParts[0] ?? '';
+            $lastName = $nameParts[1] ?? '';
+
+            $payload = [
+                'name'         => $firstName,
+                'lastname'     => $lastName,
+                'email'        => $data['email'] ?? '',
+                'position'     => $data['position'] ?? '',
+                'phone'        => $data['contact_number'] ?? '',
+                'account_type' => 'Candidate',
+                'photo'        => $resumePath // Or path if remote handles it
+            ];
+
+            // 1. Local Notification
+            $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
+            $stmtNotif->execute([json_encode($payload)]);
+
+            // 2. Remote API Call (cURL)
+            $ch = curl_init('https://admin.cranecali-ms.com/api/hr/employee');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            
+            return $response;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     private function createDirectories(): void
@@ -821,7 +834,7 @@ $candidates = $manager->getCandidates($search, $filterStatus);
 
 
 
-        form.addEventListener('submit', async function (e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const originalText = btn.innerHTML;
@@ -829,47 +842,24 @@ $candidates = $manager->getCandidates($search, $filterStatus);
             btn.disabled = true;
 
             const fd = new FormData(this);
-            
-            try {
-                // 1. Send to Remote API
-                const nameParts = (fd.get('full_name') || '').split(' ');
-                const remoteData = {
-                    name: nameParts[0] || '',
-                    lastname: nameParts.slice(1).join(' ') || '',
-                    email: fd.get('email'),
-                    position: fd.get('position'),
-                    phone: fd.get('contact_number'),
-                    account_type: 'Candidate', // Default
-                    notes: fd.get('notes'),
-                    interview_date: fd.get('interview_date'),
-                    skill_rating: fd.get('skill_rating')
-                };
-
-                // Note: File uploads to remote might require actual field mapping, 
-                // but since the remote doesn't specify how to handle binary, we send metadata
-                const remoteResponse = await fetch('https://admin.cranecali-ms.com/api/hr/employee', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(remoteData)
+            fetch('', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        alert(res.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + res.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Submission error:', err);
+                    alert('An error occurred. Please try again.');
+                })
+                .finally(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                 });
-
-                // 2. Local Save (Update/Add)
-                const localResponse = await fetch('', { method: 'POST', body: fd });
-                const localResult = await localResponse.json();
-
-                if (localResult.status === 'success') {
-                    alert('Candidate updated and sent to Admin HR Portal successfully!');
-                    location.reload();
-                } else {
-                    alert('Local save failed: ' + localResult.message);
-                }
-            } catch (error) {
-                console.error('Integration error:', error);
-                alert('An error occurred during integration. Please check the console.');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
         });
 
         // Close on outside click

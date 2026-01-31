@@ -57,6 +57,13 @@ try {
 } catch (Exception $e) {
 }
 
+// HR Requests
+$hr_requests = [];
+try {
+    $stmt = $conn->query("SELECT * FROM user_notifications WHERE type='hr_request' ORDER BY created_at DESC LIMIT 5");
+    $hr_requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -359,48 +366,38 @@ try {
 
                 <!-- Notifications & Approvals -->
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h4 class="font-bold text-gray-800 mb-4">Pending Approvals</h4>
+                    <h4 class="font-bold text-gray-800 mb-4">Pending HR Requests</h4>
 
                     <div class="space-y-4">
-                        <!-- Item 1 -->
-                        <div class="flex gap-3 items-start">
-                            <div
-                                class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 font-bold text-sm">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="flex justify-between items-start">
-                                    <p class="text-sm font-medium text-gray-800">Recruitment Team</p>
-                                    <span class="text-[10px] text-gray-400">1h ago</span>
+                        <?php if (empty($hr_requests)): ?>
+                            <div class="text-center py-4 text-gray-400 text-sm">No pending requests.</div>
+                        <?php else: ?>
+                            <?php foreach ($hr_requests as $req): 
+                                $data = json_decode($req['data'], true);
+                                $name = ($data['name'] ?? '') . ' ' . ($data['lastname'] ?? '');
+                                $pos = $data['position'] ?? 'N/A';
+                            ?>
+                                <div class="flex gap-3 items-start">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 font-bold text-sm">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <div class="flex justify-between items-start">
+                                            <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($name) ?></p>
+                                            <span class="text-[10px] text-gray-400"><?= date('M d', strtotime($req['created_at'])) ?></span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-0.5">Application for: <?= htmlspecialchars($pos) ?></p>
+                                        <div class="flex gap-2 mt-3">
+                                            <a href="https://admin.cranecali-ms.com/" target="_blank"
+                                                class="text-[10px] bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors">
+                                                View in Remote Portal <i class="fas fa-external-link-alt ml-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-0.5">New Job Posting: Senior Safety Officer</p>
-                                <div class="flex gap-2 mt-3">
-                                    <a href="../Modules/job_posting.php"
-                                        class="text-[10px] bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors">Review
-                                        Post</a>
-                                </div>
-                            </div>
-                        </div>
-                        <hr class="border-gray-50">
-                        <!-- Item 2 -->
-                        <div class="flex gap-3 items-start">
-                            <div
-                                class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center flex-shrink-0 text-pink-600 font-bold text-sm">
-                                <i class="fas fa-chart-pie"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="flex justify-between items-start">
-                                    <p class="text-sm font-medium text-gray-800">Performance Manager</p>
-                                    <span class="text-[10px] text-gray-400">4h ago</span>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-0.5">25 Employee Appraisals pending review.</p>
-                                <div class="flex gap-2 mt-3">
-                                    <a href="../Modules/performance_and_appraisals.php"
-                                        class="text-[10px] bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors">Go
-                                        to Appraisals</a>
-                                </div>
-                            </div>
-                        </div>
+                                <hr class="border-gray-50 last:hidden">
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
 
