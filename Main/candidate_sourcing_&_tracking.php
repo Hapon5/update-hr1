@@ -874,12 +874,17 @@ class CandidateManager
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Default PIN is 1234 if not set/found (though DB should have it)
-            $validPin = $row['resume_pin'] ?? '1234';
+            // Robust check: Ensure row exists and pin is not empty
+            if ($row && !empty($row['resume_pin'])) {
+                $validPin = trim($row['resume_pin']);
+            } else {
+                $validPin = '1234';
+            }
 
             if ($pin === $validPin) {
                 echo json_encode(['success' => true]);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Incorrect PIN']);
+                echo json_encode(['success' => false, 'message' => 'Incorrect PIN. Default: 1234']);
             }
         } catch (Exception $e) {
             // Return 200 so the frontend can handle the error message gracefully without console errors
