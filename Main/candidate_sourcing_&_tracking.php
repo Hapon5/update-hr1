@@ -798,14 +798,42 @@ class CandidateManager
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Filter out non-existent images to prevent 404s
+        foreach ($candidates as &$candidate) {
+            if (!empty($candidate['extracted_image_path'])) {
+                $checkPath = $candidate['extracted_image_path'];
+                if (strpos($checkPath, 'uploads/') !== 0) {
+                     // Normalize path if needed (though usually it starts with uploads/)
+                     // But strictly, we check exact match with base_path
+                }
+                
+                // Construct absolute path
+                $fullPath = $this->base_path . $checkPath;
+                if (!file_exists($fullPath)) {
+                    $candidate['extracted_image_path'] = null;
+                }
+            }
+        }
+        
+        return $candidates;
     }
 
     public function getCandidate(int $id): ?array
     {
         $stmt = $this->conn->prepare("SELECT * FROM candidates WHERE id = ?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        $candidate = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($candidate && !empty($candidate['extracted_image_path'])) {
+             $fullPath = $this->base_path . $candidate['extracted_image_path'];
+             if (!file_exists($fullPath)) {
+                 $candidate['extracted_image_path'] = null;
+             }
+        }
+
+        return $candidate ?: null;
     }
 
     public function getStatusOptions(): array
