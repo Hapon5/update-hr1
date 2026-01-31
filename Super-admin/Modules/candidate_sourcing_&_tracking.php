@@ -349,12 +349,7 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                 <h1 class="text-2xl font-bold text-gray-900">Candidate Tracking</h1>
                 <p class="text-gray-500 text-sm mt-1">Manage and track candidate applications across the pipeline.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="https://admin.cranecali-ms.com/api/hr/employee" target="_blank" 
-                   class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg border border-indigo-100 font-medium hover:bg-indigo-100 transition-all flex items-center gap-2">
-                   <i class="fas fa-external-link-alt"></i> Admin HR Portal
-                </a>
-            </div>
+            
         </div>
 
         <!-- Filters -->
