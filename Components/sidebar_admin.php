@@ -137,6 +137,12 @@ function getIconColor($pageName, $current_page)
 
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">System</p>
 
+        <a href="<?php echo $root_path; ?>Super-admin/Modules/account_management.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('account_management.php', $current_page); ?>">
+            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('account_management.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Accounts</span>
+        </a>
+
         <a href="<?php echo $root_path; ?>Main/about_us.php"
             class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('about_us.php', $current_page); ?>">
             <i

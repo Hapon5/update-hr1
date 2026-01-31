@@ -4,8 +4,8 @@ session_start();
 $root_path = '../../';
 require_once $root_path . "Database/Connections.php";
 
-if (!isset($_SESSION['Email']) || $_SESSION['Account_type'] != 0) {
-    header("Location: ../../login.php");
+if (!isset($_SESSION['Email']) || !in_array($_SESSION['Account_type'], [0, 1])) {
+    header("Location: " . $root_path . "login.php");
     exit();
 }
 
