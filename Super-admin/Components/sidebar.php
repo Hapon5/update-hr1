@@ -3,6 +3,14 @@
 $root_path = $root_path ?? '../';
 $current_page = basename($_SERVER['PHP_SELF']);
 
+// Ensure database connection is available
+if (!isset($conn)) {
+    $conn_path = ($root_path === './' || $root_path === '') ? "../Database/Connections.php" : $root_path . "Database/Connections.php";
+    if (file_exists($conn_path)) {
+        require_once $conn_path;
+    }
+}
+
 // Fetch user info for sidebar
 $sidebar_user = [
     'name' => 'HR Admin',
@@ -78,6 +86,12 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Dashboard</span>
         </a>
 
+        <a href="<?php echo $root_path; ?>Employee/Dashboard.php"
+            class="flex items-center gap-3 px-4 py-2.5 group hover:bg-indigo-600/20 text-indigo-400/80 hover:text-indigo-400 transition-all rounded-xl mt-1">
+            <i class="fas fa-user-circle w-5 text-center"></i>
+            <span class="font-medium text-sm">Employee Portal</span>
+        </a>
+
         <p class="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2 mt-6">Recruitment</p>
 
         <a href="<?php echo $root_path; ?>Super-admin/Modules/Job_posting.php"
@@ -132,10 +146,10 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">About Us</span>
         </a>
 
-        <a href="#"
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('settings.php', $current_page); ?>">
-            <i class="fas fa-cog w-5 text-center <?php echo getIconColor('settings.php', $current_page); ?>"></i>
-            <span class="font-medium text-sm">Settings</span>
+        <a href="<?php echo $root_path; ?>Super-admin/Modules/account_management.php"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('account_management.php', $current_page); ?>">
+            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('account_management.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Account</span>
         </a>
     </nav>
 

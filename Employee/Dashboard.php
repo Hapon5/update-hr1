@@ -2,7 +2,7 @@
 session_start();
 include('../Database/Connections.php');
 
-if (!isset($_SESSION['Email']) || $_SESSION['Account_type'] != 3) {
+if (!isset($_SESSION['Email']) || !in_array($_SESSION['Account_type'], [0, 1, 3])) {
     header("Location: login.php");
     exit();
 }

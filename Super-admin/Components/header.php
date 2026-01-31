@@ -45,7 +45,7 @@
                     <p class="text-xs text-gray-500"><?php echo htmlspecialchars($sidebar_user['role'] ?? 'Management'); ?></p>
                 </div>
                 <div class="py-1">
-                    <a href="#"
+                    <a href="<?php echo $root_path; ?>Super-admin/Myprofile.php"
                         class="block px-4 py-2 text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
                         <i class="far fa-user-circle mr-2"></i>My Profile
                     </a>
