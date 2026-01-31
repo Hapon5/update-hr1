@@ -821,15 +821,55 @@ $candidates = $manager->getCandidates($search, $filterStatus);
 
 
 
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            btn.disabled = true;
+
             const fd = new FormData(this);
-            fetch('', { method: 'POST', body: fd })
-                .then(r => r.json())
-                .then(res => {
-                    alert(res.message);
-                    if (res.status === 'success') location.reload();
+            
+            try {
+                // 1. Send to Remote API
+                const nameParts = (fd.get('full_name') || '').split(' ');
+                const remoteData = {
+                    name: nameParts[0] || '',
+                    lastname: nameParts.slice(1).join(' ') || '',
+                    email: fd.get('email'),
+                    position: fd.get('position'),
+                    phone: fd.get('contact_number'),
+                    account_type: 'Candidate', // Default
+                    notes: fd.get('notes'),
+                    interview_date: fd.get('interview_date'),
+                    skill_rating: fd.get('skill_rating')
+                };
+
+                // Note: File uploads to remote might require actual field mapping, 
+                // but since the remote doesn't specify how to handle binary, we send metadata
+                const remoteResponse = await fetch('https://admin.cranecali-ms.com/api/hr/employee', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(remoteData)
                 });
+
+                // 2. Local Save (Update/Add)
+                const localResponse = await fetch('', { method: 'POST', body: fd });
+                const localResult = await localResponse.json();
+
+                if (localResult.status === 'success') {
+                    alert('Candidate updated and sent to Admin HR Portal successfully!');
+                    location.reload();
+                } else {
+                    alert('Local save failed: ' + localResult.message);
+                }
+            } catch (error) {
+                console.error('Integration error:', error);
+                alert('An error occurred during integration. Please check the console.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         });
 
         // Close on outside click
