@@ -26,6 +26,7 @@ if (!$conn) {
     exit;
 }
 
+try {
     // Ensure user_notifications table exists
     $conn->exec("CREATE TABLE IF NOT EXISTS user_notifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
