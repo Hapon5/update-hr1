@@ -209,7 +209,7 @@ try {
         </div>
         <p class="text-gray-400 mb-8">Review and rate employee performance</p>
 
-        <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-700 flex-grow">
+        <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-700 flex-grow w-full">
             <div class="overflow-x-auto h-full">
                 <table class="min-w-full divide-y divide-gray-700">
                     <thead class="bg-gray-900">
