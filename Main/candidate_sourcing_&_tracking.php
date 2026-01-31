@@ -2194,7 +2194,9 @@ if (isset($_SESSION['formResult'])) {
             }
 
             if (imageSrc) {
-                imgContainer.innerHTML = `<img src="${imageSrc + '?t=' + Date.now()}" class="w-full h-full object-cover">`;
+                // Add fallback for 404 images
+                const initial = candidate?.full_name?.charAt(0)?.toUpperCase() || '?';
+                imgContainer.innerHTML = `<img src="${imageSrc + '?t=' + Date.now()}" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-blue-500/20 flex items-center justify-center\'><span class=\'text-3xl font-bold text-white\'>${initial}</span></div>'">`;
             } else {
                 const initial = candidate?.full_name?.charAt(0)?.toUpperCase() || '?';
                 imgContainer.innerHTML = `<div class="w-full h-full bg-blue-500/20 flex items-center justify-center"><span class="text-3xl font-bold text-white">${initial}</span></div>`;
