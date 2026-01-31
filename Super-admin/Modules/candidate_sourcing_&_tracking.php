@@ -15,27 +15,24 @@ class CandidateManager
     public function __construct($connection)
     {
         $this->conn = $connection;
-        // Fix base path resolution
-        $this->base_path = __DIR__ . '/../../';
-        // Ensure uploads directory structure exists in root
+        // Fix base path: Super-admin/Modules -> Root
+        $this->base_path = realpath(__DIR__ . '/../../') . DIRECTORY_SEPARATOR;
         $this->initialize();
     }
 
     private function initialize(): void
     {
-        // 1. Create Directories if not exist
-        $directories = ['resumes', 'certificates', 'licenses', 'resume_images', 'temp'];
+        // 1. Create Directories in Main/uploads/
+        $directories = ['resumes', 'certificates', 'licenses', 'resume_images', 'temp', 'hr_photos'];
         foreach ($directories as $dir) {
-            $path = $this->base_path . $this->uploads_dir . $dir . '/';
+            $path = $this->base_path . 'Main' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR;
             if (!is_dir($path)) {
                 @mkdir($path, 0777, true);
             }
         }
 
-        // 2. Ensure Table Exists
+        // 2. Ensure Tables Exist
         $this->createTable();
-
-        // 3. Update Table Schema (Add new columns if missing)
         $this->updateSchema();
     }
 
@@ -46,7 +43,7 @@ class CandidateManager
             full_name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
             job_title VARCHAR(255),
-            position VARCHAR(255), -- Target Position
+            position VARCHAR(255),
             experience_years INT DEFAULT 0,
             contact_number VARCHAR(50),
             address TEXT,
@@ -60,6 +57,15 @@ class CandidateManager
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $this->conn->exec($sql);
+
+        // Notify table for Admin HR integration
+        $sqlNotif = "CREATE TABLE IF NOT EXISTS user_notifications (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            type VARCHAR(50),
+            data LONGTEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        $this->conn->exec($sqlNotif);
     }
 
     private function updateSchema(): void
@@ -131,11 +137,11 @@ class CandidateManager
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Applied', ?)");
 
         $stmt->execute([
-            $data['full_name'],
-            $data['email'],
-            $data['position'],
+            $data['full_name'] ?? '',
+            $data['email'] ?? '',
+            $data['position'] ?? '',
             $data['experience_years'] ?? 0,
-            $data['contact_number'],
+            $data['contact_number'] ?? '',
             $resume,
             $cert,
             $license,
@@ -146,13 +152,14 @@ class CandidateManager
 
         // LOG TO NOTIFICATIONS (HR Request Logic - for integration)
         try {
+            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
             $notifData = json_encode([
-                'name' => $data['full_name'],
-                'lastname' => '', // Full name split could go here
-                'email' => $data['email'],
-                'position' => $data['position'],
-                'phone' => $data['contact_number'],
-                'photo' => $imagePath
+                'name' => $nameParts[0] ?? '',
+                'lastname' => $nameParts[1] ?? '',
+                'email' => $data['email'] ?? '',
+                'position' => $data['position'] ?? '',
+                'phone' => $data['contact_number'] ?? '',
+                'photo' => $resume
             ]);
             $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
             $stmtNotif->execute([$notifData]);
@@ -163,13 +170,14 @@ class CandidateManager
 
     public function updateCandidate($data, $files)
     {
-        $id = $data['id'];
+        $id = $data['id'] ?? null;
+        if (!$id) return ['status' => 'error', 'message' => 'Candidate ID missing'];
         $current = $this->getCandidate($id);
 
         // Handle Files (Keep old if new not provided)
-        $resume = $this->uploadFile($files['resume'] ?? null, 'resumes/') ?: $current['resume_path'];
-        $cert = $this->uploadFile($files['certificates'] ?? null, 'certificates/') ?: $current['certificates_path'];
-        $license = $this->uploadFile($files['licenses'] ?? null, 'licenses/') ?: $current['licenses_path'];
+        $resume = $this->uploadFile($files['resume'] ?? null, 'resumes/') ?: ($current['resume_path'] ?? null);
+        $cert = $this->uploadFile($files['certificates'] ?? null, 'certificates/') ?: ($current['certificates_path'] ?? null);
+        $license = $this->uploadFile($files['licenses'] ?? null, 'licenses/') ?: ($current['licenses_path'] ?? null);
 
         $stmt = $this->conn->prepare("UPDATE candidates SET 
             full_name=?, email=?, position=?, experience_years=?, contact_number=?, 
@@ -178,24 +186,39 @@ class CandidateManager
             WHERE id=?");
 
         $stmt->execute([
-            $data['full_name'],
-            $data['email'],
-            $data['position'],
-            $data['experience_years'],
-            $data['contact_number'],
+            $data['full_name'] ?? '',
+            $data['email'] ?? '',
+            $data['position'] ?? '',
+            $data['experience_years'] ?? 0,
+            $data['contact_number'] ?? '',
             $resume,
             $cert,
             $license,
-            $data['skills'],
+            $data['skills'] ?? '',
             $data['skill_rating'] ?? 0,
             $data['background_status'] ?? 'Pending',
-            $data['status'],
-            $data['notes'],
+            $data['status'] ?? 'Applied',
+            $data['notes'] ?? '',
             !empty($data['interview_date']) ? $data['interview_date'] : null,
             $id
         ]);
 
-        return ['status' => 'success', 'message' => 'Candidate updated successfully'];
+        // LINK TO ADMIN HR PORTAL (Notification Logic)
+        try {
+            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
+            $notifData = json_encode([
+                'name' => $nameParts[0] ?? '',
+                'lastname' => $nameParts[1] ?? '',
+                'email' => $data['email'] ?? '',
+                'position' => $data['position'] ?? '',
+                'phone' => $data['contact_number'] ?? '',
+                'photo' => $resume
+            ]);
+            $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
+            $stmtNotif->execute([$notifData]);
+        } catch (Exception $e) {}
+
+        return ['status' => 'success', 'message' => 'Candidate updated & Admin HR notified'];
     }
 
     public function deleteCandidate($id)
@@ -224,13 +247,11 @@ class CandidateManager
 
         $filename = uniqid() . '_' . basename($file['name']);
 
-        // Save to Main/uploads directory: ../../Main/uploads/
-        // Base path is inside Super-admin/Modules/
-        $target_dir = $this->base_path . '../../Main/uploads/' . $subdir;
+        // Correct target: root/Main/uploads/
+        $target_dir = $this->base_path . 'Main' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $subdir;
 
-        // Ensure directory exists (just in case)
         if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0755, true);
+            @mkdir($target_dir, 0777, true);
         }
 
         $target = $target_dir . $filename;
@@ -248,22 +269,28 @@ $manager = new CandidateManager($conn);
 $message = '';
 $candidates = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    ob_start();
+    $response = ['status' => 'error', 'message' => 'Unknown error'];
     try {
         if ($_POST['action'] === 'add') {
-            echo json_encode($manager->addCandidate($_POST, $_FILES));
+            $response = $manager->addCandidate($_POST, $_FILES);
         } elseif ($_POST['action'] === 'update') {
-            echo json_encode($manager->updateCandidate($_POST, $_FILES));
+            $response = $manager->updateCandidate($_POST, $_FILES);
         } elseif ($_POST['action'] === 'delete') {
-            echo json_encode($manager->deleteCandidate($_POST['id']));
+            $response = $manager->deleteCandidate($_POST['id'] ?? 0);
         } elseif ($_POST['action'] === 'get') {
-            $data = $manager->getCandidate($_POST['id']);
-            echo json_encode(['status' => 'success', 'data' => $data]);
+            $data = $manager->getCandidate($_POST['id'] ?? 0);
+            $response = ['status' => 'success', 'data' => $data];
         }
     } catch (Exception $e) {
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        $response = ['status' => 'error', 'message' => $e->getMessage()];
     }
+    
+    // Clear any accidental output (notices, etc)
+    if (ob_get_length()) ob_clean();
+    header('Content-Type: application/json');
+    echo json_encode($response);
     exit;
 }
 
