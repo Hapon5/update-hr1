@@ -854,7 +854,7 @@ class CandidateManager
                 echo json_encode(['success' => false, 'message' => 'Incorrect PIN']);
             }
         } catch (Exception $e) {
-            http_response_code(500);
+            // Return 200 so the frontend can handle the error message gracefully without console errors
             echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
         }
         exit;
