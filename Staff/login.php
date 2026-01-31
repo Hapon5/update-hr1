@@ -16,15 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
+        // Check password (hash or plain text legacy)
+        $dbPassword = $user['Password'];
+        $passwordMatches = false;
+        if (strlen($dbPassword) > 20 && str_starts_with($dbPassword, '$')) {
+            $passwordMatches = password_verify($password, $dbPassword);
+        } else {
+            $passwordMatches = ($dbPassword === $password);
+        }
+
         // --- AUTO-FIX for Staff@gmail.com (If currently Admin/Type 1) ---
-        if ($user && strtolower($email) === 'staff@gmail.com' && $user['Account_type'] != 2 && password_verify($password, $user['Password'])) {
+        if ($user && strtolower($email) === 'staff@gmail.com' && $user['Account_type'] != 2 && $passwordMatches) {
             $update = $conn->prepare("UPDATE logintbl SET Account_type = 2 WHERE LoginID = ?");
             $update->execute([$user['LoginID']]);
             $user['Account_type'] = 2; // Refetch virtually
         }
         // ----------------------------------------------------------------
 
-        if ($user && password_verify($password, $user['Password'])) {
+        if ($user && $passwordMatches) {
             if ($user['Account_type'] == 2) {
                 $_SESSION['Email'] = $user['Email'];
                 $_SESSION['Account_type'] = 2; // Staff
