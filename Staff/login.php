@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($email) || empty($password)) {
         $error = "Please enter both email and password.";
     } else {
-        // Staff = Account Type 2
-        $stmt = $conn->prepare("SELECT * FROM logintbl WHERE Email = ? AND Account_type = 2");
+        // Fetch user by email only query
+        $stmt = $conn->prepare("SELECT * FROM logintbl WHERE Email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
