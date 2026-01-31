@@ -42,6 +42,27 @@ try {
         base64_image LONGTEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )");
+
+    // Self-Healing: Check if specific columns exist (in case table existed with old schema)
+    $checkCols = [
+        'date_hired' => "ALTER TABLE employees ADD COLUMN date_hired DATE",
+        'department' => "ALTER TABLE employees ADD COLUMN department VARCHAR(100)",
+        'salary' => "ALTER TABLE employees ADD COLUMN salary DECIMAL(10, 2)",
+        'base64_image' => "ALTER TABLE employees ADD COLUMN base64_image LONGTEXT"
+    ];
+
+    $existingCols = [];
+    $stmt = $conn->query("SHOW COLUMNS FROM employees");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $existingCols[] = $row['Field'];
+    }
+
+    foreach ($checkCols as $col => $alterCmd) {
+        if (!in_array($col, $existingCols)) {
+            $conn->exec($alterCmd);
+        }
+    }
+
 } catch (PDOException $e) {
     // Continue even if error (table might exist)
 }
