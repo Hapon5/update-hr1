@@ -202,14 +202,14 @@ try {
     include '../Components/header_admin.php';
     ?>
 
-    <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300 flex flex-col">
+    <div class="main-content min-h-screen pt-24 pb-8 px-4 sm:px-8 ml-64 transition-all duration-300">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-200">Performance & Appraisals</h1>
             <div id="datetime" class="text-gray-400 font-medium"></div>
         </div>
         <p class="text-gray-400 mb-8">Review and rate employee performance</p>
 
-        <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-700 flex-grow w-full">
+        <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-700 w-full">
             <div class="overflow-x-auto h-full">
                 <table class="min-w-full divide-y divide-gray-700">
                     <thead class="bg-gray-900">
