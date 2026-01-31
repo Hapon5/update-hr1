@@ -212,9 +212,10 @@ class CandidateManager
     private function syncWithRemote($data, $resumePath = null)
     {
         try {
-            $nameParts = explode(' ', $data['full_name'] ?? '', 2);
-            $firstName = $nameParts[0] ?? '';
-            $lastName = $nameParts[1] ?? '';
+            $fullName = trim($data['full_name'] ?? '');
+            $nameParts = explode(' ', $fullName, 2);
+            $firstName = $nameParts[0] ?? 'Candidate';
+            $lastName = $nameParts[1] ?? 'Applicant'; // Ensure lastname is never empty as it is required on remote
 
             $payload = [
                 'name'         => $firstName,
@@ -222,25 +223,58 @@ class CandidateManager
                 'email'        => $data['email'] ?? '',
                 'position'     => $data['position'] ?? '',
                 'phone'        => $data['contact_number'] ?? '',
-                'account_type' => 'Candidate',
-                'photo'        => $resumePath // Or path if remote handles it
+                'account_type' => 'Candidate'
             ];
 
-            // 1. Local Notification
+            // If we have a local path, don't send it as 'photo' unless it's a full URL or base64 
+            // since the remote Laravel side might expect a File or a valid File path.
+            // For now, let's keep it clean or send the filename.
+            if ($resumePath) {
+                $payload['photo_name'] = basename($resumePath);
+            }
+
+            // 1. Local Notification (Keep track of sync attempt)
             $stmtNotif = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('hr_request', ?)");
-            $stmtNotif->execute([json_encode($payload)]);
+            $stmtNotif->execute([json_encode(array_merge($payload, ['local_path' => $resumePath]))]);
 
             // 2. Remote API Call (cURL)
-            $ch = curl_init('https://admin.cranecali-ms.com/api/hr/employee');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            $response = curl_exec($ch);
-            curl_close($ch);
+            $urls = [
+                'https://admin.cranecali-ms.com/api/hr/employee'
+            ];
             
-            return $response;
+            // Add local debug receiver if it exists
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $debugUrl = "{$protocol}://{$host}/hr1/Debug/api_debug.php";
+            // $urls[] = $debugUrl; // Uncomment if you want to double-send to local debug
+
+            $results = [];
+            foreach ($urls as $url) {
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For local testing
+                
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $err = curl_error($ch);
+                curl_close($ch);
+
+                $results[$url] = [
+                    'code' => $httpCode,
+                    'response' => $response,
+                    'error' => $err
+                ];
+            }
+            
+            // Log the result of the sync for debugging
+            $stmtLog = $this->conn->prepare("INSERT INTO user_notifications (type, data) VALUES ('sync_debug', ?)");
+            $stmtLog->execute([json_encode(['payload' => $payload, 'results' => $results])]);
+
+            return $results;
         } catch (Exception $e) {
             return false;
         }
