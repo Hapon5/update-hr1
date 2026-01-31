@@ -51,6 +51,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_account'])) {
     }
 }
 
+// Handle Delete Account
+if (isset($_GET['delete'])) {
+    $deleteId = $_GET['delete'];
+    try {
+        // Prevent deleting yourself
+        $stmtEmail = $conn->prepare("SELECT Email FROM logintbl WHERE LoginID = ?");
+        $stmtEmail->execute([$deleteId]);
+        $row = $stmtEmail->fetch();
+        
+        if ($row && $row['Email'] !== $_SESSION['Email']) {
+            // Security: HR Admin (1) cannot delete Super Admin (0)
+            $stmtTarget = $conn->prepare("SELECT Account_type FROM logintbl WHERE LoginID = ?");
+            $stmtTarget->execute([$deleteId]);
+            $target = $stmtTarget->fetch();
+            
+            if ($_SESSION['Account_type'] == 1 && $target && $target['Account_type'] == 0) {
+                $error = "Access Denied: HR Admins cannot delete Super Admin accounts.";
+            } else {
+                $conn->beginTransaction();
+                // Delete from logintbl
+                $stmtDel = $conn->prepare("DELETE FROM logintbl WHERE LoginID = ?");
+                if ($stmtDel->execute([$deleteId])) {
+                    // Also delete from candidates if applicable
+                    $stmtDelCand = $conn->prepare("DELETE FROM candidates WHERE email = ?");
+                    $stmtDelCand->execute([$row['Email']]);
+                    
+                    $conn->commit();
+                    $msg = "<div class='bg-amber-500/10 text-amber-500 p-4 rounded-xl mb-6 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest text-center'>Account removed successfully.</div>";
+                }
+            }
+        } else {
+            $error = "Access Denied: Cannot delete the active session account.";
+        }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        $error = "Delete failed: " . $e->getMessage();
+    }
+}
+
 // Fetch all accounts
 $accounts = [];
 try {
@@ -193,11 +232,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                 <?php echo $roleInfo[0]; ?>
                                             </span>
                                         </td>
-                                        <td class="px-8 py-5 text-right">
-                                            <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-                                                <i class="fas fa-ellipsis-v text-xs"></i>
-                                            </button>
-                                        </td>
+                                         <td class="px-8 py-5 text-right">
+                                             <div class="flex justify-end gap-2">
+                                                 <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all">
+                                                     <i class="fas fa-edit text-[10px]"></i>
+                                                 </button>
+                                                 <a href="?delete=<?php echo $acc['LoginID']; ?>" 
+                                                    onclick="return confirm('Strict Warning: Are you sure you want to PERMANENTLY delete this account?')"
+                                                    class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center">
+                                                     <i class="fas fa-trash-alt text-[10px]"></i>
+                                                 </a>
+                                             </div>
+                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
