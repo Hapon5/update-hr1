@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading HR1 Crane System...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #2c2c2c 0%, #000000 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        /* Crane Container */
+        .crane-container {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            /* border: 1px solid rgba(0,0,0,0.1); */
+            /* Debugging */
+        }
+
+        /* Crane Variables */
+        :root {
+            --crane-color: #FFC107;
+            /* Standard Construction Yellow */
+            --crane-dark: #B08D55;
+            /* Darker shade for depth */
+            --metal-grey: #2e2e2e;
+            --cable-color: #888;
+        }
+
+        /* Tower (Vertical) */
+        .tower {
+            position: absolute;
+            bottom: 0;
+            left: 100px;
+            width: 40px;
+            height: 200px;
+            background:
+                linear-gradient(90deg, transparent 40%, var(--crane-dark) 40%, var(--crane-dark) 60%, transparent 60%),
+                repeating-linear-gradient(45deg, transparent, transparent 10px, var(--crane-color) 10px, var(--crane-color) 14px),
+                repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--crane-color) 10px, var(--crane-color) 14px);
+            border-left: 4px solid var(--crane-color);
+            border-right: 4px solid var(--crane-color);
+            z-index: 1;
+        }
+
+        /* Cab */
+        .cab {
+            position: absolute;
+            top: 80px;
+            left: 90px;
+            width: 50px;
+            height: 40px;
+            background-color: var(--crane-color);
+            z-index: 2;
+        }
+
+        .cab::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 25px;
+            height: 25px;
+            background: #a4d4ff;
+            /* Glass */
+            opacity: 0.6;
+            border: none;
+        }
+
+        /* Jib (Horizontal Arm) */
+        .jib {
+            position: absolute;
+            top: 70px;
+            left: 80px;
+            width: 240px;
+            height: 20px;
+            background:
+                repeating-linear-gradient(90deg, transparent, transparent 15px, var(--crane-dark) 15px, var(--crane-dark) 18px);
+            border-top: 3px solid var(--crane-color);
+            border-bottom: 3px solid var(--crane-color);
+            transform-origin: 20px 50%;
+            /* transform: rotate(-5deg); */
+            /* Can rotate if needed */
+            z-index: 2;
+        }
+
+        /* Counterweight */
+        .counterweight {
+            position: absolute;
+            top: 72px;
+            left: 40px;
+            width: 50px;
+            height: 25px;
+            background-color: #555;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        /* Top Peak */
+        .peak {
+            position: absolute;
+            top: 40px;
+            left: 100px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid var(--crane-color);
+            z-index: 1;
+        }
+
+        /* Cables from peak to jib */
+        .support-cable {
+            position: absolute;
+            top: 45px;
+            left: 120px;
+            width: 180px;
+            height: 2px;
+            background-color: var(--cable-color);
+            transform-origin: left top;
+            transform: rotate(10deg);
+        }
+
+        /* Trolley System */
+        .trolley-container {
+            position: absolute;
+            top: 70px;
+            left: 120px;
+            /* Start pos */
+            width: 20px;
+            height: 20px;
+            z-index: 3;
+            animation: trolleyMove 6s ease-in-out infinite;
+        }
+
+        .trolley {
+            width: 25px;
+            height: 12px;
+            background-color: var(--metal-grey);
+            border-radius: 2px;
+        }
+
+        /* Cable moving down */
+        .hoist-cable {
+            position: absolute;
+            top: 10px;
+            left: 11px;
+            width: 2px;
+            height: 60px;
+            /* Animate height */
+            background-color: #aaa;
+            transform-origin: top;
+            animation: cableDrop 6s ease-in-out infinite;
+        }
+
+        /* Hook Block */
+        .hook-block {
+            position: absolute;
+            bottom: 0;
+            left: -6px;
+            width: 14px;
+            height: 14px;
+            background-color: #fca311;
+            border: 2px solid #000;
+        }
+
+        /* The Hook */
+        .hook {
+            position: absolute;
+            bottom: -15px;
+            left: 1px;
+            width: 12px;
+            height: 18px;
+            border: 3px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 100px 100px;
+        }
+
+        /* Animations */
+        @keyframes trolleyMove {
+            0% {
+                left: 140px;
+            }
+
+            50% {
+                left: 260px;
+            }
+
+            100% {
+                left: 140px;
+            }
+        }
+
+        @keyframes cableDrop {
+            0% {
+                height: 40px;
+            }
+
+            50% {
+                height: 100px;
+            }
+
+            100% {
+                height: 40px;
+            }
+        }
+
+        /* Loading Text */
+        .loading-text {
+            margin-top: 2rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .loading-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #fff, #fca311, #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        .loading-sub {
+            color: #8892b0;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        /* Dots */
+        .dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #fca311;
+            border-radius: 50%;
+            margin: 0 4px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="crane-container">
+        <!-- The Crane Structure -->
+        <div class="tower"></div>
+        <div class="counterweight"></div>
+        <div class="peak"></div>
+        <div class="support-cable"></div>
+
+        <div class="jib"></div>
+        <div class="cab"></div>
+
+        <!-- Moving Parts -->
+        <div class="trolley-container">
+            <div class="trolley"></div>
+            <div class="hoist-cable">
+                <div class="hook-block">
+                    <div class="hook"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-text">
+        <h1 class="loading-title">Loading...</h1>
+        <div class="loading-sub">
+            Please wait
+            <div class="dots inline-block ml-2">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Redirect logic
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dest = urlParams.get('dest');
+
+            setTimeout(() => {
+                // Set flag to verify we passed through loading
+                sessionStorage.setItem('HR1_LOADED', 'true');
+
+                if (dest) {
+                    window.location.href = dest;
+                } else {
+                    window.location.href = 'login.php';
+                }
+            }, 3000); // 3 seconds wait time
+        });
+    </script>
+</body>
+
+</html>

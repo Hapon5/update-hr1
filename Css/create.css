@@ -1,0 +1,210 @@
+           
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+            * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            }
+            .sidebar {
+            position: fixed;
+            height: 100%;
+            width: 260px;
+            background: #d37a15ff;
+            padding: 15px;
+            z-index: 99;
+            }
+
+            #h2{
+                color: white;
+                margin-top: 20px;
+                margin-right: 5px;
+                margin-left: 10px;
+                display: flex;
+                align-items: center;
+            }
+
+
+
+
+            .sidebar a {
+            color: rgb(255, 166, 0);
+            text-decoration: none;
+            }
+            .menu-content {
+            position: relative;
+            height: 80%;
+            width: 100%;
+            margin-top: 40px;
+            overflow-y: scroll;
+            }
+            .menu-content::-webkit-scrollbar {
+            display: none;
+            }
+            .menu-items {
+            height: 100%;
+            width: 100%;
+            list-style: none;
+            transition: all 0.4s ease;
+            }
+            .submenu-active .menu-items {
+            transform: translateX(-56%);
+            }
+            .menu-title {
+            color: whitesmoke;
+            font-size: 18px;
+            padding: 15px 20px;
+            }
+            .item a,
+            .submenu-item {
+            padding: 20px;
+            display: inline-block;
+            width: 100%;
+            border-radius: 12px;
+            }
+            .item i {
+            font-size: 12px;
+            }
+
+            .item {
+            display: flex;
+            align-items: center; 
+            }
+
+            .icon {
+            color: white;
+            }
+            .icon i {
+            font-size: 24px;
+            }
+
+            .item a:hover,
+            .submenu-item:hover,
+            .submenu .menu-title:hover {
+            background: rgba(255, 255, 255, 0.1);
+            }
+
+
+
+
+            .submenu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #0a0a0aff;
+            cursor: pointer;
+            }
+            .submenu {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            right: calc(-100% - 26px);
+            height: calc(100% + 100vh);
+            background: #d37a15ff;
+            display: none;
+            }
+            .show-submenu ~ .submenu {
+            display: block;
+            }
+            .submenu .menu-title {
+            border-radius: 12px;
+            cursor: pointer;
+            }
+            .submenu .menu-title i {
+            margin-right: 10px;
+            }
+            .navbar,
+            .main {
+            left: 260px;
+            width: calc(100% - 260px);
+            transition: all 0.5s ease;
+            z-index: 1000;
+            }
+            .sidebar.close ~ .navbar,
+            .sidebar.close ~ .main {
+            left: 0;
+            width: 100%;
+            }
+            .navbar {
+            position: fixed;
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 25px;
+            background: #0a0a0aff;
+            cursor: pointer;
+            }
+            .navbar #sidebar-close {
+            cursor: pointer;
+            }
+            .main {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            z-index: 100;
+            background: #e7f2fd;
+            }
+            .main h1 {
+            color: #11101d;
+            font-size: 40px;
+            text-align: center;
+            }
+
+            .dropdown-content{
+            background-color: #d37a15ff;
+            
+            }
+
+
+
+
+
+            .main {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            display: grid;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 50px;
+            }
+
+            .important-announcement {
+            background-color: #d37a15ff;
+            color: #fff;
+            padding: 20px;
+            margin: 10px;
+            order: 2; 
+            
+            }
+            .announcement h2
+            {
+            padding: 20px;
+            }
+            .announcement p
+            {
+            padding: 20px;
+            }
+            .message {
+            background-color: #ecf0f1;
+            padding: 10px;
+            margin: 10px;
+            order: 3; 
+            }
+
+            .buttons {
+            margin: 10px;
+            order: 4; 
+            }
+
+            .button {
+            display: inline-block;
+            padding: 10px;
+            margin-right: 10px;
+            background-color: #2ecc71;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            }

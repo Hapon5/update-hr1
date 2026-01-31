@@ -1,0 +1,71 @@
+/* Header Styles */
+.admin-header {
+    background-color: #ffffff;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* subtle shadow line */
+    /* REMOVED: margin-bottom, negative margins */
+
+    /* Ensure it behaves well with the fixed positioning overrides */
+    height: 70px;
+    z-index: 999;
+    /* User requested fix for "drawing line"/readability - keep on top */
+}
+
+.title-header {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 400;
+    color: #333;
+    text-align: center;
+    line-height: 50px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+/* Center Title Logic */
+.header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+}
+
+.header-center h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+#sidebar-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s;
+}
+
+#sidebar-toggle:hover {
+    color: #000;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+#live-datetime {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
