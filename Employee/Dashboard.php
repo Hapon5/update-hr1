@@ -125,27 +125,31 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Profile Card -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                    <h3 class="font-bold text-gray-900">My Profile</h3>
+            <div class="bg-white rounded-[32px] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden group hover:border-indigo-500/30 transition-all duration-500">
+                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+                    <h3 class="font-black text-gray-900 uppercase tracking-tighter text-sm flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                        My Profile
+                    </h3>
+                    <a href="Myprofile.php" class="text-[10px] font-black text-indigo-600 hover:text-indigo-800 uppercase tracking-widest bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 transition-all hover:scale-105 active:scale-95">Edit Info</a>
                 </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div class="flex justify-between border-b border-gray-50 pb-2">
-                            <span class="text-gray-500">Full Name</span>
-                            <span class="font-medium"><?php echo htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']); ?></span>
+                <div class="p-8">
+                    <div class="space-y-5">
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']); ?></span>
                         </div>
-                        <div class="flex justify-between border-b border-gray-50 pb-2">
-                            <span class="text-gray-500">Position</span>
-                            <span class="font-medium"><?php echo htmlspecialchars($employee['position']); ?></span>
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Position</span>
+                            <span class="text-[11px] font-black text-indigo-500 uppercase tracking-tight bg-indigo-50 px-3 py-1 rounded-lg"><?php echo htmlspecialchars($employee['position']); ?></span>
                         </div>
-                        <div class="flex justify-between border-b border-gray-50 pb-2">
-                            <span class="text-gray-500">Department</span>
-                            <span class="font-medium"><?php echo htmlspecialchars($employee['department'] ?? 'General'); ?></span>
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Department</span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['department'] ?? 'General'); ?></span>
                         </div>
-                        <div class="flex justify-between border-b border-gray-50 pb-2">
-                            <span class="text-gray-500">Date Hired</span>
-                            <span class="font-medium"><?php echo htmlspecialchars($employee['date_hired'] ?? 'N/A'); ?></span>
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Date Hired</span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['date_hired'] ?? 'N/A'); ?></span>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,14 @@
 $root_path = $root_path ?? '../';
 $current_page = basename($_SERVER['PHP_SELF']);
 
+// Ensure database connection is available
+if (!isset($conn)) {
+    $conn_path = ($root_path === './' || $root_path === '') ? "Database/Connections.php" : $root_path . "Database/Connections.php";
+    if (file_exists($conn_path)) {
+        require_once $conn_path;
+    }
+}
+
 // Fetch user info for sidebar
 $sidebar_user = [
     'name' => 'HR Admin',

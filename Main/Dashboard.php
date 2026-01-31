@@ -1,6 +1,6 @@
 <?php
 session_start();
-// require_once "Connections.php"; // This should be uncommented on your live server
+require_once "../Database/Connections.php";
 
 // Make sure session exists
 if (!isset($_SESSION['Email']) || !isset($_SESSION['Account_type'])) {
