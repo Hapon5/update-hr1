@@ -586,8 +586,7 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                     <button type="button" onclick="closeModal()"
                         class="px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">Save
-                        Candidate</button>
+                        class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">Admin HR Portal</button>
                 </div>
             </form>
         </div>
