@@ -43,10 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Request to REMOVE connection to candidates table:
             // Insert into candidates table to store user name
-            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source) VALUES (:name, :email, 'new', 'Online Registration')");
+            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source, job_title) VALUES (:name, :email, 'new', 'Online Registration', :jobTitle)");
+            $jobTitle = ($accountType == '0' || $accountType == '1') ? 'Administrator' : 'Employee';
             $stmtCandidate->execute([
                 'name' => $name,
-                'email' => $email
+                'email' => $email,
+                'jobTitle' => $jobTitle
             ]);
 
             $conn->commit();

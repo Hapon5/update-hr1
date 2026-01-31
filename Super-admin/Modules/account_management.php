@@ -38,8 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_account'])) {
 
                 // 2. Insert into candidates or employees based on role? 
                 // For now, let's sync to candidates as it's the primary name source in this system
-                $stmtCand = $conn->prepare("INSERT INTO candidates (full_name, email, status) VALUES (?, ?, 'new')");
-                $stmtCand->execute([$name, $email]);
+                $stmtCand = $conn->prepare("INSERT INTO candidates (full_name, email, status, job_title) VALUES (?, ?, 'new', ?)");
+                $jobTitle = ($role == '0' || $role == '1') ? 'Administrator' : 'Employee';
+                $stmtCand->execute([$name, $email, $jobTitle]);
 
                 $conn->commit();
                 $msg = "<div class='bg-indigo-50 text-indigo-700 p-4 rounded-xl mb-6 shadow-sm border border-indigo-100 text-[10px] font-black uppercase tracking-widest text-center'>Account created successfully for $name!</div>";
