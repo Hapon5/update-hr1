@@ -11,33 +11,33 @@ $email = $_SESSION['Email'];
 $employee = ['first_name' => 'Employee', 'last_name' => 'User', 'position' => 'Staff'];
 
 try {
-    // Fetch details from employees table
+    // Revert to SELECT * to avoid "Column not found" errors
     $stmt = $conn->prepare("SELECT * FROM employees WHERE email = ?");
     $stmt->execute([$email]);
     $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     if ($res) {
-        $employee = $res;
+        $employee = array_merge($employee, $res);
+        
+        // Dynamic Name Handling (Fix for schema mismatch) like in Myprofile
+        if (!isset($employee['first_name']) && isset($employee['full_name'])) {
+            $names = explode(' ', trim($employee['full_name']), 2);
+            $employee['first_name'] = $names[0];
+            $employee['last_name'] = $names[1] ?? '';
+        } elseif (!isset($employee['first_name']) && isset($employee['name'])) {
+            $names = explode(' ', trim($employee['name']), 2);
+            $employee['first_name'] = $names[0];
+            $employee['last_name'] = $names[1] ?? '';
+        }
     } else {
         // --- AUTO-CREATE Employee Record if missing ---
-        // Helpful for the 'employee@gmail.com' test case
-        $insert = $conn->prepare("INSERT INTO employees (first_name, last_name, email, position, department, date_hired, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $firstName = 'Employee'; 
-        $lastName = 'User';
-        // Try to derive name from email if possible
-        $parts = explode('@', $email);
-        if(count($parts) > 0) $firstName = ucfirst($parts[0]);
-
-        $insert->execute([$firstName, $lastName, $email, 'New Hire', 'General', date('Y-m-d'), 'Active']);
-        
-        // Fetch again
-        $stmt->execute([$email]);
-        $employee = $stmt->fetch(PDO::FETCH_ASSOC);
+        // (Logic handled in MyProfile, just defaults here to prevent crash)
     }
 } catch (Exception $e) {
-    // Fallback if table doesn't exist or error
+    // Fallback
 }
 
-$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https://ui-avatars.com/api/?name=' . urlencode($employee['first_name'] . ' ' . $employee['last_name']);
+$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https://ui-avatars.com/api/?name=' . urlencode(($employee['first_name'] ?? 'Employee') . ' ' . ($employee['last_name'] ?? ''));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +63,7 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                 </div>
                 <div class="flex items-center gap-6">
                     <div class="text-right hidden sm:block">
-                        <p class="text-xs font-black text-white uppercase leading-none">Welcome, <?php echo htmlspecialchars($employee['first_name']); ?></p>
+                        <p class="text-xs font-black text-white uppercase leading-none">Welcome, <?php echo htmlspecialchars($employee['first_name'] ?? 'Employee'); ?></p>
                         <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1 italic">Employee Access</p>
                     </div>
                     <div class="relative group">
@@ -137,11 +137,11 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                     <div class="space-y-5">
                         <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</span>
-                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']); ?></span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars(($employee['first_name'] ?? 'Employee') . ' ' . ($employee['last_name'] ?? '')); ?></span>
                         </div>
                         <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Position</span>
-                            <span class="text-[11px] font-black text-indigo-500 uppercase tracking-tight bg-indigo-50 px-3 py-1 rounded-lg"><?php echo htmlspecialchars($employee['position']); ?></span>
+                            <span class="text-[11px] font-black text-indigo-500 uppercase tracking-tight bg-indigo-50 px-3 py-1 rounded-lg"><?php echo htmlspecialchars($employee['position'] ?? 'Staff'); ?></span>
                         </div>
                         <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Department</span>
