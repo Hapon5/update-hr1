@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
-$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https://ui-avatars.com/api/?name=' . urlencode($employee['first_name'] . ' ' . $employee['last_name']);
+$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https://ui-avatars.com/api/?name=' . urlencode(($employee['first_name'] ?? 'Guest') . ' ' . ($employee['last_name'] ?? ''));
 ?>
 
 <!DOCTYPE html>
@@ -115,8 +115,8 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
             <div class="pt-20 px-12 pb-12">
                 <div class="flex justify-between items-start mb-10">
                     <div>
-                        <h2 class="text-3xl font-black text-gray-900 tracking-tight uppercase"><?php echo htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']); ?></h2>
-                        <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.3em] mt-1 italic"><?php echo htmlspecialchars($employee['position']); ?></p>
+                        <h2 class="text-3xl font-black text-gray-900 tracking-tight uppercase"><?php echo htmlspecialchars(($employee['first_name'] ?? 'Guest') . ' ' . ($employee['last_name'] ?? '')); ?></h2>
+                        <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.3em] mt-1 italic"><?php echo htmlspecialchars($employee['position'] ?? 'Employee'); ?></p>
                     </div>
                     <span class="px-4 py-1.5 bg-green-50 text-green-600 text-[10px] font-black uppercase rounded-full border border-green-100 tracking-widest">Active Status</span>
                 </div>
@@ -128,7 +128,7 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                         
                         <div class="relative group">
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-                            <input type="text" value="<?php echo htmlspecialchars($employee['email']); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed select-none" readonly>
+                            <input type="text" value="<?php echo htmlspecialchars($employee['email'] ?? $email); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed select-none" readonly>
                             <div class="absolute right-4 top-[38px] text-gray-300 group-hover:text-gray-400 transition-colors">
                                 <i class="fas fa-lock"></i>
                             </div>
@@ -158,12 +158,12 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                         
                         <div>
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">First Name</label>
-                            <input type="text" name="first_name" value="<?php echo htmlspecialchars($employee['first_name']); ?>" class="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" required>
+                            <input type="text" name="first_name" value="<?php echo htmlspecialchars($employee['first_name'] ?? ''); ?>" class="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" required>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Last Name</label>
-                            <input type="text" name="last_name" value="<?php echo htmlspecialchars($employee['last_name']); ?>" class="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" required>
+                            <input type="text" name="last_name" value="<?php echo htmlspecialchars($employee['last_name'] ?? ''); ?>" class="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" required>
                         </div>
 
                         <div>
