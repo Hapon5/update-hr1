@@ -13,12 +13,23 @@ $sidebar_user = [
 if (isset($_SESSION['Email'])) {
     $email = $_SESSION['Email'];
     try {
-        $stmt = $conn->prepare("SELECT first_name, last_name, position, base64_image FROM employees WHERE email = ?");
+        // Use SELECT * to avoid column errors
+        $stmt = $conn->prepare("SELECT * FROM employees WHERE email = ?");
         $stmt->execute([$email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($row) {
-            $sidebar_user['name'] = $row['first_name'] . ' ' . $row['last_name'];
-            $sidebar_user['role'] = $row['position'];
+            // Dynamic Name Detection
+            if (isset($row['first_name'])) {
+                 $sidebar_user['name'] = $row['first_name'] . ' ' . ($row['last_name'] ?? '');
+            } elseif (isset($row['full_name'])) {
+                 $sidebar_user['name'] = $row['full_name'];
+            } elseif (isset($row['name'])) {
+                 $sidebar_user['name'] = $row['name'];
+            }
+
+            $sidebar_user['role'] = $row['position'] ?? 'Staff Member';
+            
             if (!empty($row['base64_image'])) {
                 $sidebar_user['photo'] = $row['base64_image'];
             }
