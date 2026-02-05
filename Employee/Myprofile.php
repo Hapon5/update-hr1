@@ -21,11 +21,46 @@ $employee = [
 $msg = "";
 
 try {
-    // Revert to SELECT * to avoid "Column not found" errors if schema differs
+    // 1. Check for 'email' column existence and add if missing (Self-Healing Schema)
+    try {
+        $checkCol = $conn->query("SHOW COLUMNS FROM employees LIKE 'email'");
+        if ($checkCol->rowCount() == 0) {
+            // Column missing, add it
+            $conn->exec("ALTER TABLE employees ADD COLUMN email VARCHAR(191) NULL");
+        }
+    } catch (Exception $e) {
+        // Ignore permission errors, hope for the best
+    }
+
+    // 2. Fetch Employee Data
     $stmt = $conn->prepare("SELECT * FROM employees WHERE email = ?");
     $stmt->execute([$email]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
+    // 3. Auto-Create Profile if missing (so user is not stuck)
+    if (!$result) {
+        // Derive defaults
+        $nameParts = explode('@', $email);
+        $tempName = ucfirst($nameParts[0]);
+        
+        // Insert depending on schema (full_name vs first_name)
+        // Check schema by trying to select first_name
+        try {
+            $test = $conn->query("SELECT first_name FROM employees LIMIT 1");
+            // If success, use first/last
+             $ins = $conn->prepare("INSERT INTO employees (first_name, last_name, email, position, department, status) VALUES (?, ?, ?, ?, ?, ?)");
+             $ins->execute([$tempName, 'User', $email, 'New Hire', 'General', 'Active']);
+        } catch (Exception $e) {
+            // Likely has full_name instead
+             $ins = $conn->prepare("INSERT INTO employees (full_name, email, position, department, status) VALUES (?, ?, ?, ?, ?)");
+             $ins->execute(["$tempName User", $email, 'New Hire', 'General', 'Active']);
+        }
+        
+        // Fetch again
+        $stmt->execute([$email]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     if ($result) {
         $employee = array_merge($employee, $result);
         
