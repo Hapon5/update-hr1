@@ -170,7 +170,7 @@ $candidates = $manager->getCandidates($search, $status);
     <?php include 'Components/sidebar.php'; ?>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-screen">
+    <div class="flex-1 flex flex-col h-screen ml-64">
         <!-- Topbar -->
         <header class="bg-white border-b border-gray-100 py-4 px-8 flex justify-between items-center shrink-0">
             <div>

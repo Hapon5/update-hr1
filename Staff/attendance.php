@@ -39,7 +39,7 @@ try {
     <?php include 'Components/sidebar.php'; ?>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col ml-64">
         <!-- Topbar -->
         <header class="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
             <div class="flex items-center">
