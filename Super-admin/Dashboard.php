@@ -232,6 +232,56 @@ try {
                 </a>
             </div>
 
+            <!-- Module Shortcuts -->
+            <div class="mb-8">
+                <h4 class="font-bold text-gray-800 uppercase text-xs tracking-widest mb-4">Module Shortcuts</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    
+                    <a href="../Employee/Dashboard.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">Employee Portal</h5>
+                    </a>
+
+                    <a href="../Modules/performance_and_appraisals.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">Performance</h5>
+                    </a>
+
+                    <a href="../Modules/safety_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-hard-hat"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">Safety</h5>
+                    </a>
+
+                    <a href="../Modules/recognition.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">Recognition</h5>
+                    </a>
+
+                    <a href="../Modules/account_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">Accounts</h5>
+                    </a>
+
+                    <a href="../Main/about_us.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-gray-50 flex items-center justify-center text-gray-600 group-hover:bg-gray-800 group-hover:text-white transition-colors mb-3">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-gray-700">About Us</h5>
+                    </a>
+
+                </div>
+            </div>
+
             <!-- Content Grid 1: Charts & Incidents -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
 

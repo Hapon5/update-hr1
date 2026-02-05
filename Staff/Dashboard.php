@@ -85,6 +85,31 @@ $email = $_SESSION['Email'];
                 </div>
             </div>
 
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <a href="Cadidate.php" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-100 group flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-user-tie text-xl"></i>
+                    </div>
+                    <div>
+                         <h3 class="font-bold text-gray-800">Candidate Pipeline</h3>
+                         <p class="text-xs text-gray-500 mt-1">Manage recruitment flow</p>
+                    </div>
+                    <i class="fas fa-chevron-right ml-auto text-gray-300"></i>
+                </a>
+
+                <a href="attendance.php" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-100 group flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-clipboard-list text-xl"></i>
+                    </div>
+                    <div>
+                         <h3 class="font-bold text-gray-800">Attendance Logs</h3>
+                         <p class="text-xs text-gray-500 mt-1">View tracking records</p>
+                    </div>
+                    <i class="fas fa-chevron-right ml-auto text-gray-300"></i>
+                </a>
+            </div>
+
             <!-- Recent Activity Table -->
             <div class="bg-white rounded-lg shadow-sm p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Applications</h3>
