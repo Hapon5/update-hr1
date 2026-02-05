@@ -403,16 +403,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between w-full mt-4 mb-6">
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox"
-                            class="h-4 w-4 text-black focus:ring-black border-gray-300 rounded">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
-                    </div>
-                    <div class="text-sm">
-                        <!-- Trigger Animation specific for mobile/layout logic if needed -->
-                    </div>
-                </div>
+                <div class="mb-6"></div>
 
                 <button type="submit"
                     class="bg-black text-white font-bold py-3 px-12 rounded-full tracking-wider uppercase transform transition-transform duration-80 active:scale-95 focus:outline-none w-full">
