@@ -50,21 +50,50 @@ try {
 }
 
 // Handle Update
+// Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $first_name = trim($_POST['first_name']);
     $last_name = trim($_POST['last_name']);
     $contact = trim($_POST['contact_number']);
     
+    // Determine which columns to update based on what we found in the SELECT phase
+    // Note: This relies on $employee being populated from the SELECT above.
+    
     try {
-        $update = $conn->prepare("UPDATE employees SET first_name = ?, last_name = ?, contact_number = ? WHERE email = ?");
-        if ($update->execute([$first_name, $last_name, $contact, $email])) {
-            $msg = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4 shadow-sm border border-green-200'>Profile updated successfully!</div>";
-            // Refresh data
-            $stmt->execute([$email]);
-            $employee = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (array_key_exists('first_name', $result ?? [])) {
+            // Standard Schema
+            $update = $conn->prepare("UPDATE employees SET first_name = ?, last_name = ?, contact_number = ? WHERE email = ?");
+            $params = [$first_name, $last_name, $contact, $email];
+        } elseif (array_key_exists('full_name', $result ?? [])) {
+            // Full Name Schema
+            $full_name = $first_name . ' ' . $last_name;
+            $update = $conn->prepare("UPDATE employees SET full_name = ?, contact_number = ? WHERE email = ?");
+            $params = [$full_name, $contact, $email];
+        } else {
+             // Fallback: Try standard, but it might fail if columns missing. 
+             // If we are here, SELECT * returned nothing or weird data.
+             $update = $conn->prepare("UPDATE employees SET first_name = ?, last_name = ?, contact_number = ? WHERE email = ?");
+             $params = [$first_name, $last_name, $contact, $email];
+        }
+
+        if ($update->execute($params)) {
+             $msg = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4 shadow-sm border border-green-200'>Profile updated successfully!</div>";
+             
+             // Refresh Data Logic
+             $stmt->execute([$email]);
+             $new_result = $stmt->fetch(PDO::FETCH_ASSOC);
+             if ($new_result) {
+                 $employee = array_merge($employee, $new_result);
+                 // Re-apply name logic
+                 if (!isset($employee['first_name']) && isset($employee['full_name'])) {
+                    $names = explode(' ', trim($employee['full_name']), 2);
+                    $employee['first_name'] = $names[0];
+                    $employee['last_name'] = $names[1] ?? '';
+                }
+             }
         }
     } catch (Exception $e) {
-        $msg = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>Update failed: " . $e->getMessage() . "</div>";
+        $msg = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>Update failed: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
 
