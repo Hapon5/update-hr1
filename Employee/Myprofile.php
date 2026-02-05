@@ -43,17 +43,25 @@ try {
         $nameParts = explode('@', $email);
         $tempName = ucfirst($nameParts[0]);
         
-        // Insert depending on schema (full_name vs first_name)
-        // Check schema by trying to select first_name
+        // Insert depending on schema (full_name vs first_name vs name)
         try {
-            $test = $conn->query("SELECT first_name FROM employees LIMIT 1");
-            // If success, use first/last
+             // 1. Try standard first_name/last_name
              $ins = $conn->prepare("INSERT INTO employees (first_name, last_name, email, position, department, status) VALUES (?, ?, ?, ?, ?, ?)");
              $ins->execute([$tempName, 'User', $email, 'New Hire', 'General', 'Active']);
-        } catch (Exception $e) {
-            // Likely has full_name instead
-             $ins = $conn->prepare("INSERT INTO employees (full_name, email, position, department, status) VALUES (?, ?, ?, ?, ?)");
-             $ins->execute(["$tempName User", $email, 'New Hire', 'General', 'Active']);
+        } catch (Exception $e1) {
+            try {
+                 // 2. Try full_name
+                 $ins = $conn->prepare("INSERT INTO employees (full_name, email, position, department, status) VALUES (?, ?, ?, ?, ?)");
+                 $ins->execute(["$tempName User", $email, 'New Hire', 'General', 'Active']);
+            } catch (Exception $e2) {
+                try {
+                     // 3. Try name (Legacy/Performance Manager Schema)
+                     $ins = $conn->prepare("INSERT INTO employees (name, email, position, department, status) VALUES (?, ?, ?, ?, ?)");
+                     $ins->execute(["$tempName User", $email, 'New Hire', 'General', 'Active']);
+                } catch (Exception $e3) {
+                     // If all fail, we can't insert. Page will load with 'Guest'.
+                }
+            }
         }
         
         // Fetch again
