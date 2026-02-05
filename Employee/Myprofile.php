@@ -21,13 +21,28 @@ $employee = [
 $msg = "";
 
 try {
-    // Select specific columns to ensure consistency
-    $stmt = $conn->prepare("SELECT first_name, last_name, email, position, department, contact_number, date_hired, base64_image FROM employees WHERE email = ?");
+    // Revert to SELECT * to avoid "Column not found" errors if schema differs
+    $stmt = $conn->prepare("SELECT * FROM employees WHERE email = ?");
     $stmt->execute([$email]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($result) {
         $employee = array_merge($employee, $result);
+        
+        // Dynamic Name Handling (Fix for schema mismatch)
+        if (!isset($employee['first_name']) && isset($employee['full_name'])) {
+            $names = explode(' ', trim($employee['full_name']), 2);
+            $employee['first_name'] = $names[0];
+            $employee['last_name'] = $names[1] ?? '';
+        } elseif (!isset($employee['first_name']) && isset($employee['name'])) {
+            $names = explode(' ', trim($employee['name']), 2);
+            $employee['first_name'] = $names[0];
+            $employee['last_name'] = $names[1] ?? '';
+        }
+
+        // Ensure defaults if still missing
+        $employee['first_name'] = $employee['first_name'] ?? 'Guest';
+        $employee['last_name'] = $employee['last_name'] ?? '';
     }
 } catch (Exception $e) {
     // Show detailed error for debugging
