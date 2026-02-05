@@ -422,10 +422,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     <a href="landing.php" class="text-sm text-gray-600 hover:text-black transition-colors">
                         <i class="fas fa-arrow-left mr-1"></i> Back to Home
                     </a>
-                    <button type="button" onclick="toggleVerifyModal()"
-                        class="text-xs text-indigo-600 font-semibold hover:underline">
-                        Verify Account (Enter Code)
-                    </button>
                 </div>
             </form>
         </div>
