@@ -109,22 +109,32 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                 <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Read-only Info -->
                     <div class="space-y-6">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Employment Details</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Employment Details (Read-Only)</p>
                         
-                        <div>
+                        <div class="relative group">
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-                            <input type="text" value="<?php echo htmlspecialchars($employee['email']); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed" readonly>
+                            <input type="text" value="<?php echo htmlspecialchars($employee['email']); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed select-none" readonly>
+                            <div class="absolute right-4 top-[38px] text-gray-300 group-hover:text-gray-400 transition-colors">
+                                <i class="fas fa-lock"></i>
+                            </div>
                         </div>
 
-                        <div>
+                        <div class="relative group">
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Department</label>
-                            <input type="text" value="<?php echo htmlspecialchars($employee['department'] ?? 'General'); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed" readonly>
+                            <input type="text" value="<?php echo htmlspecialchars($employee['department'] ?? 'General'); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed select-none" readonly>
+                            <div class="absolute right-4 top-[38px] text-gray-300 group-hover:text-gray-400 transition-colors">
+                                <i class="fas fa-lock"></i>
+                            </div>
                         </div>
 
-                        <div>
+                        <div class="relative group">
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Date Hired</label>
-                            <input type="text" value="<?php echo htmlspecialchars($employee['date_hired'] ?? 'N/A'); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed" readonly>
+                            <input type="text" value="<?php echo htmlspecialchars($employee['date_hired'] ?? 'N/A'); ?>" class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed select-none" readonly>
+                             <div class="absolute right-4 top-[38px] text-gray-300 group-hover:text-gray-400 transition-colors">
+                                <i class="fas fa-lock"></i>
+                            </div>
                         </div>
+                        <p class="text-xs text-indigo-400 italic mt-2"><i class="fas fa-info-circle mr-1"></i> Contact HR Admin to update these details.</p>
                     </div>
 
                     <!-- Editable Info -->

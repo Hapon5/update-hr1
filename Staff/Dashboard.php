@@ -85,7 +85,7 @@ $email = $_SESSION['Email'];
                 </div>
             </div>
 
-            <!-- Recent Activity Table Placeholder -->
+            <!-- Recent Activity Table -->
             <div class="bg-white rounded-lg shadow-sm p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Applications</h3>
                 <div class="overflow-x-auto">
@@ -100,20 +100,40 @@ $email = $_SESSION['Email'];
                             </tr>
                         </thead>
                         <tbody>
+                            <?php
+                            $stmt = $conn->query("SELECT * FROM candidates ORDER BY created_at DESC LIMIT 10");
+                            $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                            if ($candidates):
+                                foreach ($candidates as $candidate):
+                                    $statusColors = [
+                                        'new' => 'bg-blue-100 text-blue-800',
+                                        'reviewed' => 'bg-yellow-100 text-yellow-800',
+                                        'interviewed' => 'bg-purple-100 text-purple-800',
+                                        'hired' => 'bg-green-100 text-green-800',
+                                        'rejected' => 'bg-red-100 text-red-800'
+                                    ];
+                                    $statusClass = $statusColors[$candidate['status']] ?? 'bg-gray-100 text-gray-800';
+                            ?>
                             <tr>
-                                <td class="py-3 px-4 border-b">John Doe</td>
-                                <td class="py-3 px-4 border-b">Software Developer</td>
-                                <td class="py-3 px-4 border-b">Oct 24, 2025</td>
-                                <td class="py-3 px-4 border-b"><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span></td>
-                                <td class="py-3 px-4 border-b"><button class="text-indigo-600 hover:underline">View</button></td>
+                                <td class="py-3 px-4 border-b font-medium text-gray-900"><?php echo htmlspecialchars($candidate['full_name']); ?></td>
+                                <td class="py-3 px-4 border-b text-gray-600"><?php echo htmlspecialchars($candidate['position']); ?></td>
+                                <td class="py-3 px-4 border-b text-gray-500"><?php echo date('M d, Y', strtotime($candidate['created_at'])); ?></td>
+                                <td class="py-3 px-4 border-b">
+                                    <span class="<?php echo $statusClass; ?> text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wide">
+                                        <?php echo htmlspecialchars($candidate['status']); ?>
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 border-b">
+                                    <button class="text-indigo-600 hover:text-indigo-900 font-medium text-sm transition-colors">View Details</button>
+                                </td>
                             </tr>
-                             <tr>
-                                <td class="py-3 px-4 border-b">Jane Smith</td>
-                                <td class="py-3 px-4 border-b">HR Assistant</td>
-                                <td class="py-3 px-4 border-b">Oct 23, 2025</td>
-                                <td class="py-3 px-4 border-b"><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Interview</span></td>
-                                <td class="py-3 px-4 border-b"><button class="text-indigo-600 hover:underline">View</button></td>
+                            <?php endforeach; 
+                            else: ?>
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-gray-500">No applications found.</td>
                             </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>

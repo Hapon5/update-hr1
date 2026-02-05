@@ -129,10 +129,10 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Recognition</span>
         </a>
 
-        <a href="<?php echo $root_path; ?>Modules/learning.php"
-            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('learning.php', $current_page); ?>">
-            <i class="fas fa-shield-alt w-5 text-center <?php echo getIconColor('learning.php', $current_page); ?>"></i>
-            <span class="font-medium text-sm">Safety</span>
+        <a href="<?php echo $root_path; ?>Modules/shortcuts.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('shortcuts.php', $current_page); ?>">
+            <i class="fas fa-th-large w-5 text-center <?php echo getIconColor('shortcuts.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Shortcuts</span>
         </a>
 
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">System</p>
