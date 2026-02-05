@@ -8,15 +8,30 @@ if (!isset($_SESSION['Email']) || $_SESSION['Account_type'] != 3) {
 }
 
 $email = $_SESSION['Email'];
-$employee = [];
+$employee = [
+    'first_name' => 'Guest',
+    'last_name' => '',
+    'email' => $email,
+    'position' => 'Employee',
+    'department' => 'General',
+    'contact_number' => '',
+    'date_hired' => 'N/A',
+    'base64_image' => ''
+];
 $msg = "";
 
 try {
-    $stmt = $conn->prepare("SELECT * FROM employees WHERE email = ?");
+    // Select specific columns to ensure consistency
+    $stmt = $conn->prepare("SELECT first_name, last_name, email, position, department, contact_number, date_hired, base64_image FROM employees WHERE email = ?");
     $stmt->execute([$email]);
-    $employee = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+        $employee = array_merge($employee, $result);
+    }
 } catch (Exception $e) {
-    $msg = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>Error fetching data.</div>";
+    // Show detailed error for debugging
+    $msg = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
 }
 
 // Handle Update
