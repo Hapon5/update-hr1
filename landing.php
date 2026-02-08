@@ -80,7 +80,7 @@ try {
                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="./modules/job_posting.php"> Jobs </a>
+                  <a class="nav-link" href="careers.php"> Jobs </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="./modules/developer_quotes.php"> Developer Quotes </a>
@@ -254,7 +254,7 @@ try {
                       <p><strong>Salary Range:</strong> <?php echo htmlspecialchars($job['job_salary'] ?? ''); ?></p>
                       <p><strong>Job Feature:</strong> <?php echo htmlspecialchars($job['job_feature'] ?? ''); ?></p>
                     </div>
-                    <h3><a href="./modules/job_posting.php?job_id=<?php echo $job['job_id']; ?>"
+                    <h3><a href="careers.php?job_id=<?php echo $job['job_id']; ?>"
                         style="justify-content: center;">
                         Apply Now
                       </a></h3>

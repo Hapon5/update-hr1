@@ -1746,6 +1746,15 @@ if (isset($_SESSION['formResult'])) {
                                 </div>
                             </div>
                         </div>
+                    <!-- Sync to HR3 Button -->
+                        <div class="mt-3 w-full">
+                             <button onclick='openSyncToHR3(${JSON.stringify(candidate)})' 
+                                class="flex items-center justify-center w-full px-4 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-md group cursor-pointer">
+                                <i class="fas fa-sync-alt mr-2 group-hover:rotate-180 transition-transform duration-500"></i>
+                                <span class="font-semibold">Sync to HR3</span>
+                            </button>
+                        </div>
+
                     <!-- View Resume Button -->
                         ${candidate.resume_path ? `
                         <div class="mt-6 w-full pt-6 border-t border-gray-100">
@@ -2432,6 +2441,155 @@ if (isset($_SESSION['formResult'])) {
             }
         }
     </style>
+    <!-- HR3 Sync Modal -->
+    <div id="hr3SyncModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100">
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 p-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/30">
+                        <i class="fas fa-sync-alt text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Sync to HR3</h3>
+                        <p class="text-indigo-100 text-sm">Promote candidate to HR3 Employee Database</p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="hr3SyncForm" class="p-6 space-y-4">
+                <input type="hidden" id="hr3CandidateId">
+                <input type="hidden" id="hr3CandidateEmail">
+                <input type="hidden" id="hr3CandidateAddress">
+                <input type="hidden" id="hr3CandidateImagePath">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Employee ID</label>
+                        <input type="text" id="hr3EmployeeId" required placeholder="e.g. EMP-0001"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Department</label>
+                        <select id="hr3Department" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition-all">
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Sales">Sales</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Designated Position</label>
+                        <input type="text" id="hr3Position" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Hire Date</label>
+                        <input type="date" id="hr3HireDate" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Employment Type</label>
+                        <select id="hr3EmploymentType" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition-all">
+                            <option value="Regular">Regular</option>
+                            <option value="Probationary">Probationary</option>
+                            <option value="Contractual">Contractual</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 mt-2">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Emergency Contact Info</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Full Name</label>
+                            <input type="text" id="hr3EmergencyName" required
+                                class="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Phone Number</label>
+                            <input type="text" id="hr3EmergencyPhone" required
+                                class="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeModal('hr3SyncModal')"
+                        class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" id="hr3SubmitBtn"
+                        class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors shadow-lg shadow-indigo-600/30">
+                        <i class="fas fa-check-circle mr-2"></i> Confirm Sync
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openSyncToHR3(candidate) {
+            document.getElementById('hr3CandidateId').value = candidate.id;
+            document.getElementById('hr3CandidateEmail').value = candidate.email;
+            document.getElementById('hr3CandidateAddress').value = candidate.address || '';
+            document.getElementById('hr3CandidateImagePath').value = candidate.extracted_image_path || '';
+            document.getElementById('hr3Position').value = candidate.position || '';
+            document.getElementById('hr3HireDate').value = new Date().toISOString().split('T')[0];
+            
+            // Generate temporary ID
+            document.getElementById('hr3EmployeeId').value = 'EMP-' + String(candidate.id).padStart(4, '0');
+            
+            openModal('hr3SyncModal');
+        }
+
+        document.getElementById('hr3SyncForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('hr3SubmitBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Syncing...';
+            btn.disabled = true;
+
+            const data = {
+                id: document.getElementById('hr3CandidateId').value,
+                email: document.getElementById('hr3CandidateEmail').value,
+                employee_id: document.getElementById('hr3EmployeeId').value,
+                department: document.getElementById('hr3Department').value,
+                position: document.getElementById('hr3Position').value,
+                hire_date: document.getElementById('hr3HireDate').value,
+                employment_type: document.getElementById('hr3EmploymentType').value,
+                emergency_contact_name: document.getElementById('hr3EmergencyName').value,
+                emergency_contact_phone: document.getElementById('hr3EmergencyPhone').value,
+                address: document.getElementById('hr3CandidateAddress').value,
+                image_path: document.getElementById('hr3CandidateImagePath').value
+            };
+
+            try {
+                const response = await fetch('../integration/hr3_sync.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                    closeModal('hr3SyncModal');
+                } else {
+                    alert('❌ Sync failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Sync error:', error);
+                alert('An error occurred during sync. Please try again.');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 
 </html>
