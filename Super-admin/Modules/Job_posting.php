@@ -63,6 +63,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conn->prepare("INSERT INTO applications (job_id, applicant_name, email, phone, resume_path, application_type, status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')");
                 $stmt->execute([$job_id, $name, $email, $phone, $resume_path, $type]);
 
+                // SYNC TO CANDIDATES TABLE (SUPER ADMIN VIEW)
+                try {
+                    // Fetch Job Details
+                    $jStmt = $conn->prepare("SELECT title, position FROM job_postings WHERE id = ?");
+                    $jStmt->execute([$job_id]);
+                    $jobInfo = $jStmt->fetch(PDO::FETCH_ASSOC);
+                    $jTitle = $jobInfo['title'] ?? 'Online Application';
+                    $jPos = $jobInfo['position'] ?? 'Applicant';
+
+                    // Check if candidate exists
+                    $cCheck = $conn->prepare("SELECT id FROM candidates WHERE email = ?");
+                    $cCheck->execute([$email]);
+                    if (!$cCheck->fetch()) {
+                        // Insert into candidates
+                        // Resume path is '../../uploads/resumes/...'
+                        // Candidate Manager uses '../../Main/'. '../../Main/../../uploads' correctly resolves to '../uploads' from root perspective.
+                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, 'Applied', 'Online', NOW())");
+                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, $resume_path]);
+                    }
+                } catch (Exception $e) {
+                }
+
                 $response = ['status' => 'success', 'message' => 'Application submitted successfully!'];
             }
         }

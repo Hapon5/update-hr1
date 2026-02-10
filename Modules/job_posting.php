@@ -131,6 +131,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conn->prepare("INSERT INTO applications (job_id, applicant_name, email, phone, resume_path, application_type, status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')");
                 $stmt->execute([$job_id, $name, $email, $phone, $resume_path, $type]);
 
+                // SYNC TO CANDIDATES TABLE (SUPER ADMIN VIEW)
+                try {
+                    // Fetch Job Details
+                    $jStmt = $conn->prepare("SELECT title, position FROM job_postings WHERE id = ?");
+                    $jStmt->execute([$job_id]);
+                    $jobInfo = $jStmt->fetch(PDO::FETCH_ASSOC);
+                    $jTitle = $jobInfo['title'] ?? 'Walk-in';
+                    $jPos = $jobInfo['position'] ?? 'Walk-in';
+
+                    // Check if candidate exists
+                    $cCheck = $conn->prepare("SELECT id FROM candidates WHERE email = ?");
+                    $cCheck->execute([$email]);
+                    if (!$cCheck->fetch()) {
+                        // Insert into candidates
+                        // Note: resume_path might be relative '../uploads/...'. 
+                        // Candidates module uses '../../Main/' prefix. '../uploads' should resolve correctly via '../../Main/../uploads'
+                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, 'Applied', 'Walk-in', NOW())");
+                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, $resume_path]);
+                    }
+                } catch (Exception $e) {
+                    // Silent fail to avoid blocking application if sync fails
+                }
+
                 $response = ['status' => 'success', 'message' => 'Walk-in application submitted successfully!'];
             }
 
