@@ -46,17 +46,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
 
-        // Fix for missing AUTO_INCREMENT if tables were created manually
-        $conn->exec("ALTER TABLE job_postings MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
-        $conn->exec("ALTER TABLE applications MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
-        
-        // Ensure profile_image column exists
-        try {
-            $conn->query("SELECT profile_image FROM applications LIMIT 1");
-        } catch (Exception $e) {
-            $conn->exec("ALTER TABLE applications ADD COLUMN profile_image VARCHAR(255)");
-        }
+    // Fix for missing AUTO_INCREMENT if tables were created manually
+    // We strive to fix 'Field id doesn't have a default value' errors
+    try {
+        // Try modifying column to AUTO_INCREMENT (works if PK exists)
+        $conn->exec("ALTER TABLE job_postings MODIFY COLUMN id INT AUTO_INCREMENT");
+        $conn->exec("ALTER TABLE applications MODIFY COLUMN id INT AUTO_INCREMENT");
+        // Check candidates table as well since we insert into it
+        $conn->exec("ALTER TABLE candidates MODIFY COLUMN id INT AUTO_INCREMENT");
     } catch (PDOException $e) {
+        // If it failed, it might be because it's not a primary key yet. Try adding PRIMARY KEY.
+        try {
+            $conn->exec("ALTER TABLE job_postings MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+            $conn->exec("ALTER TABLE applications MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+            $conn->exec("ALTER TABLE candidates MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+        } catch (PDOException $e2) {}
+    }
+
+    // Ensure profile_image column exists
+    try {
+        $conn->query("SELECT profile_image FROM applications LIMIT 1");
+    } catch (Exception $e) {
+        $conn->exec("ALTER TABLE applications ADD COLUMN profile_image VARCHAR(255)");
     }
 
     try {
