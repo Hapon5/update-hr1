@@ -142,11 +142,38 @@ if ($totalIncidents > 0) {
                 <h1 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Safety Management</h1>
                 <p class="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-widest">Track incidents, monitor risks, and ensure workplace safety.</p>
             </div>
-            <button onclick="openModal('reportModal')"
-                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-950/40 transition-all flex items-center gap-2">
-                <i class="fas fa-exclamation-triangle"></i> Report Incident
-            </button>
+            <div class="flex gap-3">
+                <div class="flex bg-white rounded-lg p-1 border border-gray-100">
+                    <button onclick="switchView('feed')" id="viewFeed"
+                        class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-indigo-600 text-white shadow-md transition-all">
+                        <i class="fas fa-th-list mr-1"></i> Feed
+                    </button>
+                    <button onclick="switchView('table')" id="viewTable"
+                        class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md text-gray-400 hover:text-gray-600 transition-all">
+                        <i class="fas fa-table mr-1"></i> Table View
+                    </button>
+                </div>
+                <button onclick="openModal('reportModal')"
+                    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-950/40 transition-all flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle"></i> Report Incident
+                </button>
+            </div>
         </div>
+
+        <!-- Success/Error Messages -->
+        <?php if (isset($_SESSION['success_msg'])): ?>
+            <div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-3 animate-bounce">
+                <i class="fas fa-check-circle text-lg"></i>
+                <?= $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($error_msg)): ?>
+            <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-3">
+                <i class="fas fa-exclamation-circle text-lg"></i>
+                <?= $error_msg; ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -206,7 +233,7 @@ if ($totalIncidents > 0) {
                 </form>
             </div>
 
-            <div class="divide-y divide-gray-100">
+            <div id="feedLayout" class="divide-y divide-gray-100">
                 <?php if (count($incidents) > 0): ?>
                     <?php foreach ($incidents as $inc): ?>
                         <div class="p-6 hover:bg-gray-50 transition-colors border-l-4 border-l-<?= $inc['severity'] ?>">
@@ -255,6 +282,38 @@ if ($totalIncidents > 0) {
                         <p>No incidents found. Stay safe!</p>
                     </div>
                 <?php endif; ?>
+            </div>
+
+            <!-- Table Layout -->
+            <div id="tableLayout" class="hidden overflow-x-auto">
+                <table class="w-full text-left text-xs uppercase tracking-widest">
+                    <thead class="bg-gray-50 text-gray-400 font-bold border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4">Employee</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4">Type</th>
+                            <th class="px-6 py-4">Severity</th>
+                            <th class="px-6 py-4">Location</th>
+                            <th class="px-6 py-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php foreach ($incidents as $inc): ?>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-black text-gray-900"><?= htmlspecialchars($inc['employee_name']) ?></td>
+                            <td class="px-6 py-4 text-gray-400"><?= date('M d, Y', strtotime($inc['incident_date'])) ?></td>
+                            <td class="px-6 py-4 text-indigo-500"><?= htmlspecialchars($inc['incident_type']) ?></td>
+                            <td class="px-6 py-4 italic"><?= htmlspecialchars($inc['severity']) ?></td>
+                            <td class="px-6 py-4"><?= htmlspecialchars($inc['location']) ?></td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 rounded-full text-[9px] font-bold <?= $inc['status'] === 'Open' ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-500' ?>">
+                                    <?= $inc['status'] ?>
+                                </span>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -356,6 +415,25 @@ if ($totalIncidents > 0) {
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 300);
+        }
+
+        function switchView(view) {
+            const feed = document.getElementById('feedLayout');
+            const table = document.getElementById('tableLayout');
+            const btnFeed = document.getElementById('viewFeed');
+            const btnTable = document.getElementById('viewTable');
+
+            if (view === 'feed') {
+                feed.classList.remove('hidden');
+                table.classList.add('hidden');
+                btnFeed.className = "px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-indigo-600 text-white shadow-md transition-all";
+                btnTable.className = "px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md text-gray-400 hover:text-gray-600 transition-all";
+            } else {
+                feed.classList.add('hidden');
+                table.classList.remove('hidden');
+                btnTable.className = "px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-indigo-600 text-white shadow-md transition-all";
+                btnFeed.className = "px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md text-gray-400 hover:text-gray-600 transition-all";
+            }
         }
     </script>
 </body>

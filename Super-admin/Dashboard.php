@@ -251,21 +251,21 @@ try {
                         <h5 class="text-xs font-bold text-gray-700">Performance</h5>
                     </a>
 
-                    <a href="../Modules/safety_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                    <a href="Modules/safety_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
                         <div class="w-10 h-10 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors mb-3">
                             <i class="fas fa-hard-hat"></i>
                         </div>
                         <h5 class="text-xs font-bold text-gray-700">Safety</h5>
                     </a>
 
-                    <a href="../Modules/recognition.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                    <a href="Modules/recognition.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
                         <div class="w-10 h-10 mx-auto rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white transition-colors mb-3">
                             <i class="fas fa-trophy"></i>
                         </div>
                         <h5 class="text-xs font-bold text-gray-700">Recognition</h5>
                     </a>
 
-                    <a href="../Modules/account_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
+                    <a href="Modules/account_management.php" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all group text-center">
                         <div class="w-10 h-10 mx-auto rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors mb-3">
                             <i class="fas fa-users-cog"></i>
                         </div>

@@ -542,9 +542,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="pt-6 border-t border-gray-50 flex justify-end gap-3">
                     <button type="button" onclick="closeModal('scheduleModal')"
                         class="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase tracking-widest rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
-                    <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest">Save
-                        Schedule</button>
+                    <button type="submit" id="saveScheduleBtn"
+                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                        <span id="btnText">Save Schedule</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -724,15 +725,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Form Submissions
         document.getElementById('scheduleForm').onsubmit = function (e) {
             e.preventDefault();
+            const btn = document.getElementById('saveScheduleBtn');
+            const btnText = document.getElementById('btnText');
+            const originalHTML = btnText.innerHTML;
+
+            // Loading state
+            btn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+
             const formData = new FormData(this);
             fetch('', { method: 'POST', body: formData })
-                .then(r => r.json())
+                .then(r => {
+                    if (!r.ok) throw new Error('Network response was not ok');
+                    return r.json();
+                })
                 .then(res => {
                     if (res.status === 'success') {
-                        Swal.fire('Success', res.message, 'success').then(() => location.reload());
+                        Swal.fire({
+                            title: 'Success',
+                            text: res.message,
+                            icon: 'success',
+                            confirmButtonColor: '#6366f1'
+                        }).then(() => location.reload());
                     } else {
                         Swal.fire('Error', res.message, 'error');
+                        btn.disabled = false;
+                        btnText.innerHTML = originalHTML;
                     }
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    Swal.fire('Error', 'Connect failed or server error. Please try again.', 'error');
+                    btn.disabled = false;
+                    btnText.innerHTML = originalHTML;
                 });
         };
 

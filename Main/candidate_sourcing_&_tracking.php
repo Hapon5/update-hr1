@@ -69,7 +69,9 @@ class CandidateManager
             'extracted_image_path' => "VARCHAR(500) DEFAULT NULL AFTER resume_path",
             'source' => "VARCHAR(100) DEFAULT 'Direct Application' AFTER status",
             'skills' => "TEXT DEFAULT NULL AFTER source",
-            'notes' => "TEXT DEFAULT NULL AFTER skills"
+            'notes' => "TEXT DEFAULT NULL AFTER skills",
+            'manager_name' => "VARCHAR(255) DEFAULT NULL AFTER notes",
+            'work_location' => "VARCHAR(255) DEFAULT NULL AFTER manager_name"
         ];
 
         foreach ($columns as $column => $definition) {
@@ -188,8 +190,8 @@ class CandidateManager
 
         $stmt = $this->conn->prepare("INSERT INTO candidates 
             (full_name, job_title, position, experience_years, age, contact_number, 
-             email, address, resume_path, extracted_image_path, source, skills, notes, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+             email, address, resume_path, extracted_image_path, source, skills, notes, manager_name, work_location, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute([
             trim($data['full_name']),
@@ -205,6 +207,8 @@ class CandidateManager
             $data['source'] ?? 'Direct Application',
             trim($data['skills'] ?? ''),
             trim($data['notes'] ?? ''),
+            trim($data['manager_name'] ?? ''),
+            trim($data['work_location'] ?? ''),
             $data['status'] ?? 'new'
         ]);
 
@@ -258,7 +262,7 @@ class CandidateManager
         $stmt = $this->conn->prepare("UPDATE candidates SET 
             full_name=?, job_title=?, position=?, experience_years=?, age=?, 
             contact_number=?, email=?, address=?, resume_path=?, extracted_image_path=?, 
-            source=?, skills=?, notes=?, status=? WHERE id=?");
+            source=?, skills=?, notes=?, manager_name=?, work_location=?, status=? WHERE id=?");
 
         $stmt->execute([
             trim($data['full_name']),
@@ -274,6 +278,8 @@ class CandidateManager
             $data['source'] ?? 'Direct Application',
             trim($data['skills'] ?? ''),
             trim($data['notes'] ?? ''),
+            trim($data['manager_name'] ?? ''),
+            trim($data['work_location'] ?? ''),
             $data['status'] ?? 'new',
             $id
         ]);
@@ -1210,6 +1216,16 @@ if (isset($_SESSION['formResult'])) {
                                     <input type="number" name="age" id="age" min="18" required
                                         class="mt-1 w-full border border-gray-300 rounded-md py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700">Assigned Manager</label>
+                                    <input type="text" name="manager_name" id="managerName" placeholder="For HR3 Sync"
+                                        class="mt-1 w-full border border-gray-300 rounded-md py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700">Work Location</label>
+                                    <input type="text" name="work_location" id="workLocation" placeholder="For HR3 Sync"
+                                        class="mt-1 w-full border border-gray-300 rounded-md py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
                             </div>
 
                             <div class="space-y-4">
@@ -1297,6 +1313,9 @@ if (isset($_SESSION['formResult'])) {
                                 class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                                 Cancel
                             </button>
+                            <button type="button" id="syncToHR3EditBtn" class="hidden px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors shadow-sm">
+                                <i class="fas fa-sync-alt mr-2"></i> Sync to HR3
+                            </button>
                             <button type="submit" id="submitBtn"
                                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                                 Save Candidate
@@ -1368,6 +1387,10 @@ if (isset($_SESSION['formResult'])) {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('bg-green-50', 'border-green-300');
             });
+
+            // Hide Sync button by default
+            const syncBtn = document.getElementById('syncToHR3EditBtn');
+            if (syncBtn) syncBtn.classList.add('hidden');
         }
 
         document.getElementById('resumeInput').addEventListener('change', function () {
@@ -1608,7 +1631,18 @@ if (isset($_SESSION['formResult'])) {
             document.getElementById('status').value = candidate.status || 'new';
             document.getElementById('skills').value = candidate.skills || '';
             document.getElementById('notes').value = candidate.notes || '';
+            document.getElementById('managerName').value = candidate.manager_name || '';
+            document.getElementById('workLocation').value = candidate.work_location || '';
             document.getElementById('statusField').classList.remove('hidden');
+            
+            // Show Sync button only when editing
+            const syncBtn = document.getElementById('syncToHR3EditBtn');
+            syncBtn.classList.remove('hidden');
+            syncBtn.onclick = () => {
+                closeModal('candidateModal');
+                openSyncToHR3(candidate);
+            };
+
             document.getElementById('resumeInput').required = false;
 
             const img = document.getElementById('imagePreview');
@@ -1795,6 +1829,14 @@ if (isset($_SESSION['formResult'])) {
                                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-indigo-100 transition-colors">
                                     <span class="text-xs text-gray-500 block mb-1">Age</span>
                                     <span class="font-bold text-gray-800 text-sm block">${candidate.age || 'N/A'}</span>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-indigo-100 transition-colors">
+                                    <span class="text-xs text-gray-500 block mb-1">Assigned Manager</span>
+                                    <span class="font-bold text-gray-800 text-sm block truncate">${candidate.manager_name || 'Not Assigned'}</span>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-indigo-100 transition-colors">
+                                    <span class="text-xs text-gray-500 block mb-1">Work Location</span>
+                                    <span class="font-bold text-gray-800 text-sm block truncate">${candidate.work_location || 'Not Set'}</span>
                                 </div>
                             </div>
                         </div>
@@ -2498,6 +2540,16 @@ if (isset($_SESSION['formResult'])) {
                             <option value="Part-time">Part-time</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Manager Name</label>
+                        <input type="text" id="hr3ManagerName" required placeholder="e.g. John Manager"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Work Location</label>
+                        <input type="text" id="hr3WorkLocation" required placeholder="e.g. Main Office"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
                 </div>
 
                 <div class="border-t border-gray-100 pt-4 mt-2">
@@ -2538,6 +2590,8 @@ if (isset($_SESSION['formResult'])) {
             document.getElementById('hr3CandidateImagePath').value = candidate.extracted_image_path || '';
             document.getElementById('hr3Position').value = candidate.position || '';
             document.getElementById('hr3HireDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('hr3ManagerName').value = candidate.manager_name || '';
+            document.getElementById('hr3WorkLocation').value = candidate.work_location || '';
             
             // Generate temporary ID
             document.getElementById('hr3EmployeeId').value = 'EMP-' + String(candidate.id).padStart(4, '0');
@@ -2561,6 +2615,8 @@ if (isset($_SESSION['formResult'])) {
                 position: document.getElementById('hr3Position').value,
                 hire_date: document.getElementById('hr3HireDate').value,
                 employment_type: document.getElementById('hr3EmploymentType').value,
+                manager_name: document.getElementById('hr3ManagerName').value,
+                work_location: document.getElementById('hr3WorkLocation').value,
                 emergency_contact_name: document.getElementById('hr3EmergencyName').value,
                 emergency_contact_phone: document.getElementById('hr3EmergencyPhone').value,
                 address: document.getElementById('hr3CandidateAddress').value,

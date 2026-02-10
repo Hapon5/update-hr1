@@ -21,15 +21,22 @@ $employee = [
 $msg = "";
 
 try {
-    // 1. Check for 'email' column existence and add if missing (Self-Healing Schema)
-    try {
-        $checkCol = $conn->query("SHOW COLUMNS FROM employees LIKE 'email'");
-        if ($checkCol->rowCount() == 0) {
-            // Column missing, add it
-            $conn->exec("ALTER TABLE employees ADD COLUMN email VARCHAR(191) NULL");
-        }
-    } catch (Exception $e) {
-        // Ignore permission errors, hope for the best
+    // 1. Self-Healing Schema: Ensure all required columns exist
+    $required_columns = [
+        'email' => "VARCHAR(191) NULL",
+        'first_name' => "VARCHAR(100) DEFAULT 'Guest'",
+        'last_name' => "VARCHAR(100) DEFAULT ''",
+        'contact_number' => "VARCHAR(50) DEFAULT ''",
+        'status' => "VARCHAR(50) DEFAULT 'Active'"
+    ];
+
+    foreach ($required_columns as $col => $def) {
+        try {
+            $checkCol = $conn->query("SHOW COLUMNS FROM employees LIKE '$col'");
+            if ($checkCol->rowCount() == 0) {
+                $conn->exec("ALTER TABLE employees ADD COLUMN $col $def");
+            }
+        } catch (Exception $e) {}
     }
 
     // 2. Fetch Employee Data
@@ -103,20 +110,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     // Note: This relies on $employee being populated from the SELECT above.
     
     try {
-        if (array_key_exists('first_name', $result ?? [])) {
-            // Standard Schema
+        // Fetch current schema columns to be sure
+        $stmt_cols = $conn->query("DESCRIBE employees");
+        $all_cols = $stmt_cols->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (in_array('first_name', $all_cols)) {
+            // Standard Schema (Now guaranteed by self-healing at top)
             $update = $conn->prepare("UPDATE employees SET first_name = ?, last_name = ?, contact_number = ? WHERE email = ?");
             $params = [$first_name, $last_name, $contact, $email];
-        } elseif (array_key_exists('full_name', $result ?? [])) {
+        } elseif (in_array('full_name', $all_cols)) {
             // Full Name Schema
             $full_name = $first_name . ' ' . $last_name;
             $update = $conn->prepare("UPDATE employees SET full_name = ?, contact_number = ? WHERE email = ?");
             $params = [$full_name, $contact, $email];
         } else {
-             // Fallback: Try standard, but it might fail if columns missing. 
-             // If we are here, SELECT * returned nothing or weird data.
-             $update = $conn->prepare("UPDATE employees SET first_name = ?, last_name = ?, contact_number = ? WHERE email = ?");
-             $params = [$first_name, $last_name, $contact, $email];
+             // Fallback to name
+             $full_name = $first_name . ' ' . $last_name;
+             $update = $conn->prepare("UPDATE employees SET name = ?, contact_number = ? WHERE email = ?");
+             $params = [$full_name, $contact, $email];
         }
 
         if ($update->execute($params)) {

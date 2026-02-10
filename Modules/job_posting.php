@@ -16,8 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     $response = [];
 
-    // Ensure applications table exists (Quick check)
+    // Ensure tables exist and have correct structure
     try {
+        // Job Postings Table
+        $conn->exec("CREATE TABLE IF NOT EXISTS job_postings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            position VARCHAR(255) NOT NULL,
+            location VARCHAR(255),
+            requirements TEXT,
+            contact VARCHAR(100),
+            platform VARCHAR(100),
+            date_posted DATE,
+            status ENUM('active', 'inactive') DEFAULT 'active',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+
+        // Applications Table
         $conn->exec("CREATE TABLE IF NOT EXISTS applications (
             id INT AUTO_INCREMENT PRIMARY KEY,
             job_id INT,
@@ -27,12 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             resume_path VARCHAR(255),
             application_type ENUM('Online', 'Walk-in') DEFAULT 'Online',
             status VARCHAR(50) DEFAULT 'Pending',
-            status VARCHAR(50) DEFAULT 'Pending',
             profile_image VARCHAR(255),
             applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
 
-        // Ensure profile_image column exists (for existing tables)
+        // Fix for missing AUTO_INCREMENT if tables were created manually
+        $conn->exec("ALTER TABLE job_postings MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+        $conn->exec("ALTER TABLE applications MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+        
+        // Ensure profile_image column exists
         try {
             $conn->query("SELECT profile_image FROM applications LIMIT 1");
         } catch (Exception $e) {
@@ -253,6 +271,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         tailwind.config = {
@@ -822,20 +842,29 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 jobsTable.classList.remove('hidden');
                 appsTable.classList.add('hidden');
 
-                tabJobs.className = "pb-3 px-2 text-indigo-600 font-semibold border-b-2 border-indigo-600 transition-colors";
-                tabApps.className = "pb-3 px-2 text-gray-500 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
+                tabJobs.className = "pb-3 px-2 text-indigo-600 font-bold border-b-2 border-indigo-600 transition-colors";
+                tabApps.className = "pb-3 px-2 text-gray-400 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
 
                 addJobBtn.classList.remove('hidden');
+                // Save state to URL or local storage if needed
+                localStorage.setItem('job_posting_tab', 'jobs');
             } else {
                 jobsTable.classList.add('hidden');
                 appsTable.classList.remove('hidden');
 
-                tabApps.className = "pb-3 px-2 text-indigo-600 font-semibold border-b-2 border-indigo-600 transition-colors";
-                tabJobs.className = "pb-3 px-2 text-gray-500 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
+                tabApps.className = "pb-3 px-2 text-indigo-600 font-bold border-b-2 border-indigo-600 transition-colors";
+                tabJobs.className = "pb-3 px-2 text-gray-400 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
 
                 addJobBtn.classList.add('hidden');
+                localStorage.setItem('job_posting_tab', 'apps');
             }
         }
+
+        // Restore tab on load
+        window.addEventListener('load', () => {
+            const savedTab = localStorage.getItem('job_posting_tab');
+            if (savedTab) switchTab(savedTab);
+        });
 
         // --- Modals Logic ---
         const jobModal = document.getElementById('jobModal');
@@ -859,12 +888,34 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
         // Handle Add/Edit Job Submit
         jobForm.addEventListener('submit', function (e) {
             e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+
             const formData = new FormData(jobForm);
             fetch('job_posting.php', { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
-                    alert(data.message);
-                    if (data.status === 'success') location.reload();
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonColor: '#6366f1'
+                        }).then(() => {
+                            localStorage.setItem('job_posting_tab', 'jobs');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = 'Save Posting';
+                    }
+                })
+                .catch(err => {
+                    Swal.fire('Error', 'Connection failed', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Save Posting';
                 });
         });
 
@@ -1023,17 +1074,34 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
         // Handle Application Submit
         document.getElementById('applicationForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
             const fd = new FormData(this);
             fetch('job_posting.php', { method: 'POST', body: fd })
                 .then(res => res.json())
                 .then(data => {
-                    alert(data.message);
                     if (data.status === 'success') {
-                        appModal.classList.add('hidden');
-                        // location.reload(); // Optional
-                        switchTab('apps'); // Switch to apps tab to see new entry
-                        setTimeout(() => location.reload(), 500);
+                        Swal.fire({
+                            title: 'Submitted!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonColor: '#10b981'
+                        }).then(() => {
+                            localStorage.setItem('job_posting_tab', 'apps');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = 'Submit Application';
                     }
+                })
+                .catch(err => {
+                    Swal.fire('Error', 'Connection failed', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Submit Application';
                 });
         });
 
