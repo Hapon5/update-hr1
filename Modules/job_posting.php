@@ -585,14 +585,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
 
     <!-- MODAL: ADD/EDIT JOB -->
     <div id="jobModal"
-        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm z-50">
+        class="fixed inset-0 bg-black/60 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-sm">
         <div
-            class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-100">
-            <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col transform transition-all scale-100">
+            <div class="flex items-center justify-between p-6 border-b border-gray-100 flex-shrink-0">
                 <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Add New Job Posting</h3>
                 <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <form id="jobForm" class="p-6 space-y-5">
+            <div class="overflow-y-auto custom-scrollbar p-6">
+                <form id="jobForm" class="space-y-5">
                 <input type="hidden" id="formAction" name="action" value="add">
                 <input type="hidden" id="jobId" name="id">
 
@@ -651,25 +652,26 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                         <label
                             class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Requirements</label>
                         <textarea id="jobRequirements" name="requirements" rows="4"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"></textarea>
                     </div>
                 </div>
 
-                <div class="flex justify-end pt-4 border-t border-gray-100 gap-3">
+                <div class="flex justify-end pt-4 border-t border-gray-100 gap-3 mt-4">
                     <button type="button" id="cancelBtn"
                         class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">Cancel</button>
                     <button type="submit"
                         class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors shadow-sm">Save
                         Posting</button>
                 </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- MODAL: WALK-IN APPLICATION (Shared Logic) -->
     <!-- PIN Verification Modal -->
     <div id="pinModal"
-        class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        class="fixed inset-0 bg-black/60 hidden z-[1050] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-xl max-w-xs w-full overflow-hidden transform transition-all scale-100">
             <div class="p-6 text-center">
                 <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -703,8 +705,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
     </div>
 
     <div id="applicationModal"
-        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-start justify-center pt-24 p-4 backdrop-blur-sm z-50">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        class="fixed inset-0 bg-black/60 hidden z-[1000] flex items-start justify-center pt-10 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex items-center justify-between p-6 border-b border-gray-100">
                 <h3 id="appModalTitle" class="text-xl font-bold text-gray-800">Walk-In Application</h3>
                 <button id="closeAppModal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
@@ -796,7 +798,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
 
     <!-- MODAL: VIEW PROFILE -->
     <div id="profileModal"
-        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm z-50">
+        class="fixed inset-0 bg-black/60 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
             <div class="flex items-center justify-between p-4 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-800">Applicant Profile</h3>

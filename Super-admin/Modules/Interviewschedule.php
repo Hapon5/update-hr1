@@ -422,13 +422,14 @@ $employees = $conn->query("SELECT id, name, position FROM employees ORDER BY nam
     </div>
 
     <!-- Schedule Modal -->
-    <div id="scheduleModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-50">
-            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50">
+    <div id="scheduleModal" class="fixed inset-0 bg-black/60 hidden z-[1050] flex items-center justify-center p-4 backdrop-blur-sm">
+         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col transform transition-all scale-100">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50 flex-shrink-0">
                 <h3 id="modalTitle" class="text-xl font-black text-gray-900 uppercase tracking-tight">Schedule Interview</h3>
                 <button onclick="closeModal('scheduleModal')" class="text-gray-400 hover:text-gray-600 transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
+            <div class="overflow-y-auto custom-scrollbar p-0">
             <form id="scheduleForm" class="p-6 space-y-4">
                 <input type="hidden" name="action" value="save_interview">
                 <input type="hidden" name="id" id="intId">
@@ -549,17 +550,19 @@ $employees = $conn->query("SELECT id, name, position FROM employees ORDER BY nam
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
     <!-- Feedback Modal -->
-    <div id="feedbackModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-50">
-            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50">
+    <div id="feedbackModal" class="fixed inset-0 bg-black/60 hidden z-[1050] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col transform transition-all scale-100 border border-gray-50">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50 flex-shrink-0">
                 <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">Interview Evaluation</h3>
                 <button onclick="closeModal('feedbackModal')" class="text-gray-400 hover:text-gray-600 transition-colors"><i
                         class="fas fa-times"></i></button>
             </div>
+            <div class="overflow-y-auto custom-scrollbar p-0">
             <form id="feedbackForm" class="p-6 space-y-4">
                 <input type="hidden" name="action" value="save_feedback">
                 <input type="hidden" name="id" id="feedIntId">
@@ -599,6 +602,7 @@ $employees = $conn->query("SELECT id, name, position FROM employees ORDER BY nam
                         Evaluation</button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
