@@ -49,17 +49,7 @@ function getCount($conn, $sql, $params = [])
     }
 }
 
-// Stats
-$total_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews");
-$scheduled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='scheduled'");
-$completed_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='completed'");
-$cancelled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='cancelled'");
-
-// Fetch Candidates for dropdown
-$candidates = $conn->query("SELECT id, full_name, email, job_title FROM candidates ORDER BY full_name ASC")->fetchAll();
-
-// Fetch Employees for Interviewer dropdown
-$employees = $conn->query("SELECT id, name, position FROM employees ORDER BY name ASC")->fetchAll();
+// Stats & Dropdown queries moved to bottom to optimize AJAX performance
 
 // AJAX Handlers
 if (isset($_GET['action'])) {
@@ -163,6 +153,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
+// Stats
+$total_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews");
+$scheduled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='scheduled'");
+$completed_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='completed'");
+$cancelled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='cancelled'");
+
+// Fetch Candidates for dropdown
+$candidates = $conn->query("SELECT id, full_name, email, job_title FROM candidates ORDER BY full_name ASC")->fetchAll();
+
+// Fetch Employees for Interviewer dropdown
+$employees = $conn->query("SELECT id, name, position FROM employees ORDER BY name ASC")->fetchAll();
 ?>
 
 <!DOCTYPE html>
