@@ -37,7 +37,23 @@ try {
     // Fallback
 }
 
-$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https://ui-avatars.com/api/?name=' . urlencode(($employee['first_name'] ?? 'Employee') . ' ' . ($employee['last_name'] ?? ''));
+$photo = !empty($employee['base64_image']) ? $employee['base64_image'] : '';
+
+// Fallback to Candidate Photo if Employee photo is empty
+if (empty($photo)) {
+    try {
+        $cStmt = $conn->prepare("SELECT extracted_image_path FROM candidates WHERE email = ?");
+        $cStmt->execute([$email]);
+        $cand = $cStmt->fetch();
+        if ($cand && !empty($cand['extracted_image_path'])) {
+            $photo = '../Main/' . $cand['extracted_image_path'];
+        }
+    } catch (Exception $e) {}
+}
+
+if (empty($photo)) {
+    $photo = 'https://ui-avatars.com/api/?name=' . urlencode(($employee['first_name'] ?? 'Employee') . ' ' . ($employee['last_name'] ?? ''));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,9 +97,21 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p class="text-gray-500">Overview of your employment status</p>
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <p class="text-gray-500">Overview of your employment status</p>
+            </div>
+            <a href="https://hr3.cranecali-ms.com/" target="_blank" 
+               class="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-3 rounded-2xl hover:from-indigo-700 hover:to-blue-700 transition-all shadow-lg shadow-indigo-500/20 group">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fas fa-external-link-alt text-sm"></i>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70">External Portal</p>
+                    <p class="text-sm font-bold tracking-tight">HR3 Central System</p>
+                </div>
+            </a>
         </div>
 
         <!-- Stats Grid -->
@@ -151,6 +179,29 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Date Hired</span>
                             <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['date_hired'] ?? 'N/A'); ?></span>
                         </div>
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors border-t border-gray-50 pt-4">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Age</span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['age'] ?? '0'); ?> Years</span>
+                        </div>
+                        <div class="flex justify-between items-center group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Experience</span>
+                            <span class="text-sm font-bold text-gray-800 tracking-tight"><?php echo htmlspecialchars($employee['experience_years'] ?? '0'); ?> Years</span>
+                        </div>
+                        <div class="flex flex-col gap-2 group/item hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Key Skills</span>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                <?php 
+                                $skills = explode(',', $employee['skills'] ?? '');
+                                if (empty(trim($employee['skills'] ?? ''))) {
+                                    echo '<span class="text-xs text-gray-400 italic">No skills listed</span>';
+                                } else {
+                                    foreach($skills as $skill) {
+                                        echo '<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-bold uppercase tracking-tight">' . htmlspecialchars(trim($skill)) . '</span>';
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -191,5 +242,7 @@ $photo = !empty($employee['base64_image']) ? $employee['base64_image'] : 'https:
             </div>
         </div>
     </main>
+    <!-- Security Blackout & Auto-Logout -->
+    <script src="../Js/security.js"></script>
 </body>
 </html>

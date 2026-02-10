@@ -120,3 +120,6 @@
         }
     });
 </script>
+
+<!-- Security Blackout & Auto-Logout -->
+<script src="../Js/security.js"></script>

@@ -53,6 +53,7 @@ class CandidateManager
             source VARCHAR(100) DEFAULT 'Direct',
             skills TEXT,
             notes TEXT,
+            is_archived TINYINT(1) DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
@@ -76,7 +77,8 @@ class CandidateManager
             'interview_date' => "DATETIME DEFAULT NULL",
             'skill_rating' => "INT DEFAULT 0", // 1-5
             'background_status' => "ENUM('Pending', 'In Progress', 'Cleared', 'Flagged') DEFAULT 'Pending'",
-            'interview_status' => "ENUM('Pending', 'Scheduled', 'Completed', 'Cancelled') DEFAULT 'Pending'"
+            'interview_status' => "ENUM('Pending', 'Scheduled', 'Completed', 'Cancelled') DEFAULT 'Pending'",
+            'is_archived' => "TINYINT(1) DEFAULT 0"
         ];
 
         // Ensure status is VARCHAR(50) for flexibility (fixes truncation issues)
@@ -96,10 +98,10 @@ class CandidateManager
 
     // --- CRUD OPERATIONS ---
 
-    public function getCandidates($search = '', $status = '')
+    public function getCandidates($search = '', $status = '', $showArchived = 0)
     {
-        $sql = "SELECT * FROM candidates WHERE 1=1";
-        $params = [];
+        $sql = "SELECT * FROM candidates WHERE is_archived = ?";
+        $params = [$showArchived];
         if (!empty($search)) {
             $sql .= " AND (full_name LIKE ? OR email LIKE ? OR position LIKE ?)";
             $params[] = "%$search%";
@@ -107,8 +109,7 @@ class CandidateManager
             $params[] = "%$search%";
         }
 
-        // Exclude 'Online Registration' entries as requested (Only show actual job applicants)
-        $sql .= " AND source != 'Online Registration'";
+        // Include all entries (Actual job applicants + Online Registrations/Employees)
 
         if (!empty($status) && $status !== 'All') {
             $sql .= " AND status = ?";
@@ -202,11 +203,18 @@ class CandidateManager
         return ['status' => 'success', 'message' => 'Candidate updated & Admin HR notified'];
     }
 
-    public function deleteCandidate($id)
+    public function archiveCandidate($id)
     {
-        $stmt = $this->conn->prepare("DELETE FROM candidates WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
         $stmt->execute([$id]);
-        return ['status' => 'success', 'message' => 'Candidate deleted'];
+        return ['status' => 'success', 'message' => 'Candidate archived'];
+    }
+
+    public function restoreCandidate($id)
+    {
+        $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 0 WHERE id = ?");
+        $stmt->execute([$id]);
+        return ['status' => 'success', 'message' => 'Candidate restored'];
     }
 
     private function syncWithRemote($data, $resumePath = null)
@@ -329,8 +337,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $response = $manager->addCandidate($_POST, $_FILES);
         } elseif ($_POST['action'] === 'update') {
             $response = $manager->updateCandidate($_POST, $_FILES);
-        } elseif ($_POST['action'] === 'delete') {
-            $response = $manager->deleteCandidate($_POST['id'] ?? 0);
+        } elseif ($_POST['action'] === 'archive') {
+            $response = $manager->archiveCandidate($_POST['id'] ?? 0);
+        } elseif ($_POST['action'] === 'restore') {
+            $response = $manager->restoreCandidate($_POST['id'] ?? 0);
         } elseif ($_POST['action'] === 'get') {
             $data = $manager->getCandidate($_POST['id'] ?? 0);
             $response = ['status' => 'success', 'data' => $data];
@@ -349,7 +359,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Fetch for Display
 $search = $_GET['search'] ?? '';
 $filterStatus = $_GET['status'] ?? '';
-$candidates = $manager->getCandidates($search, $filterStatus);
+$showArchived = isset($_GET['view_archived']) && $_GET['view_archived'] == '1' ? 1 : 0;
+$candidates = $manager->getCandidates($search, $filterStatus, $showArchived);
 
 ?>
 <!DOCTYPE html>
@@ -405,14 +416,15 @@ $candidates = $manager->getCandidates($search, $filterStatus);
             class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="relative w-full md:w-96">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <form method="GET" class="w-full">
+                <form method="GET" class="flex gap-2 w-full">
                     <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
                         placeholder="Search candidates..."
                         class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm text-gray-800">
+                    <input type="hidden" name="view_archived" value="<?= $showArchived ?>">
                 </form>
             </div>
             <div class="flex gap-3 w-full md:w-auto">
-                <form method="GET" id="filterForm">
+                <form method="GET" id="filterForm" class="flex items-center gap-3">
                     <select name="status" onchange="this.form.submit()"
                         class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800">
                         <option value="All">All Status</option>
@@ -424,6 +436,11 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                         }
                         ?>
                     </select>
+                    
+                    <div class="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg whitespace-nowrap">
+                        <input type="checkbox" id="viewArchived" name="view_archived" value="1" <?= $showArchived ? 'checked' : '' ?> onchange="this.form.submit()" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <label for="viewArchived" class="text-sm font-medium text-gray-700 cursor-pointer">View Archived</label>
+                    </div>
                 </form>
             </div>
         </div>
@@ -455,6 +472,7 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                                                 alt="Profile"
                                                 class="w-10 h-10 rounded-full object-cover border border-gray-200">
                                         <?php else: ?>
+                                            <div
                                                 class="w-10 h-10 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-500/20 shadow-lg">
                                                 <?= strtoupper(substr($c['full_name'], 0, 1)) ?>
                                             </div>
@@ -515,15 +533,22 @@ $candidates = $manager->getCandidates($search, $filterStatus);
                                 <td class="px-6 py-4 text-center">
                                     <div
                                         class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onclick="editCandidate(<?= $c['id'] ?>)"
+                                         <button onclick="editCandidate(<?= $c['id'] ?>)"
                                             class="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
                                             title="Edit / View Details">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button onclick="deleteCandidate(<?= $c['id'] ?>)"
-                                            class="p-2 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <?php if ($showArchived): ?>
+                                            <button onclick="restoreCandidate(<?= $c['id'] ?>)"
+                                                class="p-2 text-gray-400 hover:text-green-600 transition-colors" title="Restore">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        <?php else: ?>
+                                            <button onclick="archiveCandidate(<?= $c['id'] ?>)"
+                                                class="p-2 text-gray-400 hover:text-red-600 transition-colors" title="Archive">
+                                                <i class="fas fa-archive"></i>
+                                            </button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -681,56 +706,104 @@ $candidates = $manager->getCandidates($search, $filterStatus);
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal"
-        class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 transform transition-all border border-gray-100">
-            <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-50 mb-4 border border-red-100">
-                    <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+    <!-- MODAL: ARCHIVE CONFIRMATION -->
+    <div id="archiveModal" class="fixed inset-0 bg-black/50 hidden z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100 border border-gray-100">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-archive text-3xl"></i>
                 </div>
-                <h3 class="text-lg leading-6 font-bold text-gray-900 uppercase tracking-widest" id="modal-title">Delete Candidate</h3>
-                <div class="mt-2 text-center text-xs text-gray-500">
-                    Are you sure you want to delete this candidate? This action cannot be undone.
+                <h3 class="text-xl font-bold text-gray-900 mb-2 uppercase tracking-widest">Archive Candidate?</h3>
+                <p class="text-gray-500 text-sm mb-8 font-light">Are you sure you want to archive this candidate? You can restore them later.</p>
+                <div class="flex flex-col gap-3">
+                    <button type="button" onclick="closeArchiveModal()"
+                        class="w-full inline-flex justify-center rounded-lg border border-gray-200 px-4 py-2.5 bg-white text-xs font-bold uppercase tracking-widest text-gray-700 hover:bg-gray-50 transition-colors outline-none leading-none">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="confirmArchive()"
+                        class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-md px-4 py-2.5 bg-red-600 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors outline-none">
+                        Archive
+                    </button>
                 </div>
-            </div>
-            <div class="mt-8 flex gap-3">
-                <button type="button" onclick="closeDeleteModal()"
-                    class="w-full inline-flex justify-center rounded-lg border border-gray-200 shadow-sm px-4 py-2.5 bg-gray-100 text-xs font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-200 transition-colors outline-none">
-                    Cancel
-                </button>
-                <button type="button" onclick="confirmDelete()"
-                    class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-md px-4 py-2.5 bg-red-600 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors outline-none">
-                    Delete
-                </button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL: RESTORE CONFIRMATION -->
+    <div id="restoreModal" class="fixed inset-0 bg-black/50 hidden z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100 border border-gray-100">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-undo text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2 uppercase tracking-widest">Restore Candidate?</h3>
+                <p class="text-gray-500 text-sm mb-8 font-light">Are you sure you want to restore this candidate to the active list?</p>
+                <div class="flex flex-col gap-3">
+                    <button type="button" onclick="closeRestoreModal()"
+                        class="w-full inline-flex justify-center rounded-lg border border-gray-200 px-4 py-2.5 bg-white text-xs font-bold uppercase tracking-widest text-gray-700 hover:bg-gray-50 transition-colors outline-none leading-none">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="confirmRestore()"
+                        class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-md px-4 py-2.5 bg-green-600 text-xs font-bold uppercase tracking-widest text-white hover:bg-green-700 transition-colors outline-none">
+                        Restore
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- SCRIPT -->
     <script>
         const modal = document.getElementById('candidateModal');
         const form = document.getElementById('candidateForm');
-        let candidateToDeleteId = null;
+        let candidateToArchiveId = null;
+        let candidateToRestoreId = null;
 
         // ... [Previous functions] ...
 
-        function deleteCandidate(id) {
-            candidateToDeleteId = id;
-            document.getElementById('deleteModal').classList.remove('hidden');
+        function archiveCandidate(id) {
+            candidateToArchiveId = id;
+            document.getElementById('archiveModal').classList.remove('hidden');
         }
 
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            candidateToDeleteId = null;
+        function restoreCandidate(id) {
+            candidateToRestoreId = id;
+            document.getElementById('restoreModal').classList.remove('hidden');
         }
 
-        function confirmDelete() {
-            if (!candidateToDeleteId) return;
+        function closeArchiveModal() {
+            document.getElementById('archiveModal').classList.add('hidden');
+            candidateToArchiveId = null;
+        }
+
+        function closeRestoreModal() {
+            document.getElementById('restoreModal').classList.add('hidden');
+            candidateToRestoreId = null;
+        }
+
+        function confirmArchive() {
+            if (!candidateToArchiveId) return;
 
             const fd = new FormData();
-            fd.append('action', 'delete');
-            fd.append('id', candidateToDeleteId);
+            fd.append('action', 'archive');
+            fd.append('id', candidateToArchiveId);
+
+            fetch('', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                });
+        }
+
+        function confirmRestore() {
+            if (!candidateToRestoreId) return;
+
+            const fd = new FormData();
+            fd.append('action', 'restore');
+            fd.append('id', candidateToRestoreId);
 
             fetch('', { method: 'POST', body: fd })
                 .then(r => r.json())

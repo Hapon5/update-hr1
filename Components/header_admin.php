@@ -179,3 +179,6 @@ $root_path = $root_path ?? '../';
         }
     });
 </script>
+
+<!-- Security Blackout & Auto-Logout -->
+<script src="<?php echo $root_path; ?>Js/security.js"></script>

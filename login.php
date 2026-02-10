@@ -91,42 +91,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 }
 
                 if ($passwordMatches) {
-                    // Login successful
-                    session_regenerate_id(true);
-                    $_SESSION['Email'] = $user['Email'];
-                    $_SESSION['Account_type'] = $accountType;
+                    // Pre-login successful, now require OTP
+                    $otpCode = rand(100000, 999999);
+                    
+                    // Store in session
+                    $_SESSION['pending_otp_user'] = [
+                        'Email' => $user['Email'],
+                        'Account_type' => $accountType,
+                        'otp' => $otpCode,
+                        'otp_expiry' => time() + (5 * 60), // 5 minutes expiry
+                        'last_sent' => time()
+                    ];
 
-                    // Fetch Global Name (User's Name)
-                    // Check candidates table first (as Registration flow saves here)
+                    // Send OTP Email
+                    // Fetch Name for the email
                     $stmtName = $conn->prepare("SELECT full_name FROM candidates WHERE email = :email LIMIT 1");
                     $stmtName->execute(['email' => $user['Email']]);
                     $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
+                    $userName = $nameRow ? $nameRow['full_name'] : "User";
 
-                    if ($nameRow) {
-                        $_SESSION['GlobalName'] = $nameRow['full_name'];
+                    if (sendVerificationEmail($user['Email'], $userName, $otpCode)) {
+                        header('Location: OTP_Verify.php');
+                        exit;
                     } else {
-                        // Fallback or check other tables if needed
-                        $_SESSION['GlobalName'] = "System User";
+                        $loginError = "Failed to send OTP. Please try again.";
                     }
-
-                    // Route based on account type
-                    if ($accountType == 1) {
-                        // HR Admin
-                        header('Location: Main/Dashboard.php');
-                    } elseif ($accountType == 0) {
-                        // Applicant / User
-                        header('Location: Super-admin/Dashboard.php');
-                    } elseif ($accountType == 2) {
-                        // Staff
-                        header('Location: Staff/Dashboard.php');
-                    } elseif ($accountType == 3) {
-                        // Employee
-                        header('Location: Employee/Dashboard.php');
-                    } else {
-                        // Default Fallback
-                        header('Location: landing.php');
-                    }
-                    exit;
                 } else {
                     $passwordErr = "Incorrect password";
                 }

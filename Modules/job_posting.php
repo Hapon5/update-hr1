@@ -405,6 +405,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                     class="flex items-center gap-2 bg-gray-800 text-white px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-all shadow-sm font-medium">
                     <i class="fas fa-briefcase"></i> Add Job Posting
                 </button>
+                <a href="https://hr4.cranecali-ms.com/" target="_blank"
+                    class="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition-all shadow-sm font-medium">
+                    <i class="fas fa-paper-plane"></i> Request to HR4
+                </a>
                 <button id="walkInBtn"
                     class="flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-lg hover:bg-emerald-600 transition-all shadow-sm font-medium">
                     <i class="fas fa-user-plus"></i> Walk-In Application

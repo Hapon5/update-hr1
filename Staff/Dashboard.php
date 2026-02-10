@@ -166,5 +166,7 @@ $email = $_SESSION['Email'];
 
         </main>
     </div>
+    <!-- Security Blackout & Auto-Logout -->
+    <script src="../Js/security.js"></script>
 </body>
 </html>

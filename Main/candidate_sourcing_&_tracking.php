@@ -56,6 +56,7 @@ class CandidateManager
             source VARCHAR(100) DEFAULT 'Direct Application',
             skills TEXT DEFAULT NULL,
             notes TEXT DEFAULT NULL,
+            is_archived TINYINT(1) DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_status (status),
@@ -70,7 +71,8 @@ class CandidateManager
             'source' => "VARCHAR(100) DEFAULT 'Direct Application' AFTER status",
             'skills' => "TEXT DEFAULT NULL AFTER source",
             'notes' => "TEXT DEFAULT NULL AFTER skills",
-            'manager_name' => "VARCHAR(255) DEFAULT NULL AFTER notes",
+            'is_archived' => "TINYINT(1) DEFAULT 0 AFTER notes",
+            'manager_name' => "VARCHAR(255) DEFAULT NULL AFTER is_archived",
             'work_location' => "VARCHAR(255) DEFAULT NULL AFTER manager_name"
         ];
 
@@ -91,6 +93,36 @@ class CandidateManager
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'check_pin') {
             $this->checkPin();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'archive') {
+            try {
+                $id = intval($_POST['id']);
+                $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
+                $stmt->execute([$id]);
+                $_SESSION['formResult'] = ['message' => "Candidate archived successfully!"];
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            } catch (Exception $e) {
+                $_SESSION['formResult'] = ['error' => $e->getMessage()];
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            }
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'restore') {
+            try {
+                $id = intval($_POST['id']);
+                $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 0 WHERE id = ?");
+                $stmt->execute([$id]);
+                $_SESSION['formResult'] = ['message' => "Candidate restored successfully!"];
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            } catch (Exception $e) {
+                $_SESSION['formResult'] = ['error' => $e->getMessage()];
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            }
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -785,10 +817,10 @@ class CandidateManager
         }
     }
 
-    public function getCandidates(string $search = '', string $status = ''): array
+    public function getCandidates(string $search = '', string $status = '', int $showArchived = 0): array
     {
-        $sql = "SELECT * FROM candidates WHERE 1=1 AND (source IS NULL OR source != 'Online Registration')";
-        $params = [];
+        $sql = "SELECT * FROM candidates WHERE is_archived = ?";
+        $params = [$showArchived];
 
         if ($search) {
             $sql .= " AND (full_name LIKE ? OR email LIKE ? OR job_title LIKE ?)";
@@ -904,7 +936,8 @@ class CandidateManager
 try {
     $manager = new CandidateManager($conn);
     $formResult = $manager->handleRequests();
-    $candidates = $manager->getCandidates($_GET['search'] ?? '', $_GET['status'] ?? '');
+    $showArchived = isset($_GET['view_archived']) && $_GET['view_archived'] == '1' ? 1 : 0;
+    $candidates = $manager->getCandidates($_GET['search'] ?? '', $_GET['status'] ?? '', $showArchived);
 } catch (Exception $e) {
     $formResult = ['error' => 'An error occurred. Please try again.'];
     $candidates = [];
@@ -1043,6 +1076,11 @@ if (isset($_SESSION['formResult'])) {
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    
+                    <div class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                        <input type="checkbox" id="viewArchived" name="view_archived" value="1" <?php echo $showArchived ? 'checked' : ''; ?> onchange="this.form.submit()" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="viewArchived" class="text-sm font-medium text-gray-700 cursor-pointer">View Archived</label>
+                    </div>
                 </form>
                 <button type="button" onclick="openModal('candidateModal')"
                     class="relative z-10 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 shadow-sm whitespace-nowrap cursor-pointer">
@@ -1130,24 +1168,33 @@ if (isset($_SESSION['formResult'])) {
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <div class="flex items-center justify-center gap-3">
-                                                <button
-                                                    onclick='showPinModalForCandidate(<?php echo json_encode($candidate, JSON_HEX_APOS); ?>)'
-                                                    class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors shadow-sm"
-                                                    title="View Profile">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button
-                                                    onclick='editCandidate(<?php echo json_encode($candidate, JSON_HEX_APOS); ?>)'
-                                                    class="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-colors shadow-sm"
-                                                    title="Edit Candidate">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button
-                                                    onclick="openDeleteModal(<?php echo $candidate['id']; ?>)"
-                                                    class="w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors shadow-sm"
-                                                    title="Delete Candidate">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
+                                                 <?php if ($candidate['is_archived']): ?>
+                                                    <button
+                                                        onclick="openRestoreModal(<?php echo $candidate['id']; ?>)"
+                                                        class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 hover:bg-amber-100 flex items-center justify-center transition-colors shadow-sm"
+                                                        title="Restore Candidate">
+                                                        <i class="fas fa-undo"></i>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button
+                                                        onclick='showPinModalForCandidate(<?php echo json_encode($candidate, JSON_HEX_APOS); ?>)'
+                                                        class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors shadow-sm"
+                                                        title="View Profile">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button
+                                                        onclick='editCandidate(<?php echo json_encode($candidate, JSON_HEX_APOS); ?>)'
+                                                        class="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-colors shadow-sm"
+                                                        title="Edit Candidate">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button
+                                                        onclick="openArchiveModal(<?php echo $candidate['id']; ?>)"
+                                                        class="w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors shadow-sm"
+                                                        title="Archive Candidate">
+                                                        <i class="fas fa-archive"></i>
+                                                    </button>
+                                                <?php endif; ?>
                                             </div>
                                         </td>
                                     </tr>
@@ -1352,9 +1399,14 @@ if (isset($_SESSION['formResult'])) {
             }
         }
 
-        function openDeleteModal(id) {
-            document.getElementById('deleteCandidateId').value = id;
-            document.getElementById('deleteModal').classList.remove('hidden');
+        function openArchiveModal(id) {
+            document.getElementById('archiveCandidateId').value = id;
+            document.getElementById('archiveModal').classList.remove('hidden');
+        }
+
+        function openRestoreModal(id) {
+            document.getElementById('restoreCandidateId').value = id;
+            document.getElementById('restoreModal').classList.remove('hidden');
         }
 
         function resetForm() {
@@ -2260,28 +2312,57 @@ if (isset($_SESSION['formResult'])) {
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+    <!-- Archive Confirmation Modal -->
+    <div id="archiveModal" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
             <div class="p-6 text-center">
                 <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-trash-alt text-2xl text-red-600"></i>
+                    <i class="fas fa-archive text-2xl text-red-600"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Candidate?</h3>
-                <p class="text-gray-500 text-sm mb-6">Are you sure you want to delete this candidate? This action cannot be undone.</p>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Archive Candidate?</h3>
+                <p class="text-gray-500 text-sm mb-6">Are you sure you want to archive this candidate? You can still restore them later from the archived view.</p>
                 
-                <form method="POST" id="deleteForm">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" id="deleteCandidateId">
+                <form method="POST">
+                    <input type="hidden" name="action" value="archive">
+                    <input type="hidden" name="id" id="archiveCandidateId">
                     
                     <div class="flex gap-3">
-                        <button type="button" onclick="closeModal('deleteModal')"
+                        <button type="button" onclick="closeModal('archiveModal')"
                             class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors">
                             Cancel
                         </button>
                         <button type="submit"
                             class="flex-1 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-medium transition-colors shadow-lg shadow-red-600/30">
-                            Delete
+                            Archive
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Confirmation Modal -->
+    <div id="restoreModal" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-undo text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Restore Candidate?</h3>
+                <p class="text-gray-500 text-sm mb-6">Are you sure you want to restore this candidate to the active list?</p>
+                
+                <form method="POST">
+                    <input type="hidden" name="action" value="restore">
+                    <input type="hidden" name="id" id="restoreCandidateId">
+                    
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeModal('restoreModal')"
+                            class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium transition-colors shadow-lg shadow-blue-600/30">
+                            Restore
                         </button>
                     </div>
                 </form>
