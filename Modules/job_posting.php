@@ -69,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         $conn->exec("ALTER TABLE applications ADD COLUMN profile_image VARCHAR(255)");
     }
+    } catch (PDOException $e) {
+    }
 
     try {
         if (isset($_POST['action'])) {
