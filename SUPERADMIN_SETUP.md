@@ -79,6 +79,9 @@ Stores user profile information:
 
 ## Troubleshooting
 
+### Issue: "Field 'position' doesn't have a default value"
+**Solution**: This error has been fixed. The system now automatically provides default values for all required database fields (experience_years, age, contact_number, address). If you still encounter this error, ensure you're using the latest version of `create_superadmin.php`.
+
 ### Issue: "Email is already registered"
 **Solution**: The email is already in use. Use a different email or delete the existing account from the database.
 
@@ -119,5 +122,36 @@ http://localhost/hr1/login.php
 
 For issues or questions, contact your system administrator.
 
-**Created**: February 11, 2026
-**Version**: 1.0
+**Created**: February 11, 2026  
+**Version**: 1.1  
+**Last Updated**: February 12, 2026
+
+---
+
+## Changelog
+
+### Version 1.1 (February 12, 2026)
+**Fixed**: Database error "Field 'position' doesn't have a default value"
+
+**Changes Made:**
+- Updated all INSERT statements to the `candidates` table to include all required NOT NULL fields
+- Added default values for: `experience_years` (0), `age` (0), `contact_number` ('N/A'), `address` ('N/A')
+- Ensured `position` field is always provided with appropriate value
+
+**Files Updated:**
+1. `create_superadmin.php` - Super admin account creation
+2. `Super-admin/Modules/Job_posting.php` - Online job applications
+3. `Modules/job_posting.php` - Walk-in job applications  
+4. `login.php` - User registration verification
+5. `Employee/Verification.php` - Employee registration
+
+**Database Schema:**
+The `candidates` table requires these NOT NULL fields:
+- `full_name` - Candidate's full name
+- `job_title` - Job title or role
+- `position` - Position applied for
+- `experience_years` - Years of experience (default: 0)
+- `age` - Candidate's age (default: 0)
+- `contact_number` - Phone number (default: 'N/A')
+- `address` - Address (default: 'N/A')
+

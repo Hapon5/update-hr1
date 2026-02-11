@@ -166,8 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Insert into candidates
                         // Note: resume_path might be relative '../uploads/...'. 
                         // Candidates module uses '../../Main/' prefix. '../uploads' should resolve correctly via '../../Main/../uploads'
-                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, 'Applied', 'Walk-in', NOW())");
-                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, $resume_path]);
+                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, experience_years, age, address, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Applied', 'Walk-in', NOW())");
+                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, 0, 0, 'N/A', $resume_path]);
                     }
                 } catch (Exception $e) {
                     // Silent fail to avoid blocking application if sync fails

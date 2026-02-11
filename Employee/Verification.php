@@ -27,8 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->execute([$email, $hashedPassword, $accountType]);
 
             // Sync name to candidates
-            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source) VALUES (?, ?, 'new', 'Employee Registration')");
-            $stmtCandidate->execute([$name, $email]);
+            $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, job_title, position, experience_years, age, contact_number, address, status, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', 'Employee Registration')");
+            $stmtCandidate->execute([$name, $email, 'Employee', 'Employee', 0, 0, 'N/A', 'N/A']);
 
             $conn->commit();
 

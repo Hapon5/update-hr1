@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Insert into candidates
                         // Resume path is '../../uploads/resumes/...'
                         // Candidate Manager uses '../../Main/'. '../../Main/../../uploads' correctly resolves to '../uploads' from root perspective.
-                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, 'Applied', 'Online', NOW())");
-                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, $resume_path]);
+                        $cStmt = $conn->prepare("INSERT INTO candidates (full_name, email, contact_number, position, job_title, experience_years, age, address, resume_path, status, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Applied', 'Online', NOW())");
+                        $cStmt->execute([$name, $email, $phone, $jPos, $jTitle, 0, 0, 'N/A', $resume_path]);
                     }
                 } catch (Exception $e) {
                 }
