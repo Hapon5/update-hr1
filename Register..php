@@ -43,8 +43,8 @@ function sendVerificationEmail($email, $name, $code)
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
         $mail->Password = 'oothfogbgznnfkdp'; // New App Password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
 
         // Bypassing SSL verification for environments with old CA certificates
         $mail->SMTPOptions = array(
