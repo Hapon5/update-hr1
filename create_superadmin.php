@@ -60,10 +60,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ]);
                 
                 // Insert into candidates table (for profile)
-                $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source) VALUES (:name, :email, 'new', 'Super Admin Setup')");
+                $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, job_title, status, source) VALUES (:name, :email, :job_title, 'new', 'Super Admin Setup')");
                 $stmtCandidate->execute([
                     'name' => $name,
-                    'email' => $email
+                    'email' => $email,
+                    'job_title' => 'Super Admin'
                 ]);
                 
                 $conn->commit();

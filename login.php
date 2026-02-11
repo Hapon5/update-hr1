@@ -156,10 +156,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 ]);
 
                 // Insert into candidates (linked by email)
-                $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source) VALUES (:name, :email, 'new', 'Online Registration')");
+                $jobTitle = $accountType == 0 ? 'Super Admin' : ($accountType == 1 ? 'HR Admin' : ($accountType == 2 ? 'Staff' : 'Employee'));
+                $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, job_title, status, source) VALUES (:name, :email, :job_title, 'new', 'Online Registration')");
                 $stmtCandidate->execute([
                     'name' => $name,
-                    'email' => $email
+                    'email' => $email,
+                    'job_title' => $jobTitle
                 ]);
 
                 $conn->commit();
