@@ -227,7 +227,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 mb-1" id="listTitle">System Accounts</h3>
                                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">System Overview</p>
                             </div>
-                            <span class="px-4 py-2 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase rounded-xl border border-indigo-100 shadow-sm" id="recordCount"><?php echo count($accounts); ?> Records</span>
+                            <div class="flex gap-2">
+                                <a href="recycle_bin.php?tab=accounts" class="px-4 py-2 bg-amber-50 text-amber-600 hover:bg-amber-100 text-[10px] font-black uppercase rounded-xl border border-amber-100 shadow-sm transition-all flex items-center gap-2">
+                                    <i class="fas fa-box-archive"></i> Archived Bin
+                                </a>
+                                <span class="px-4 py-2 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase rounded-xl border border-indigo-100 shadow-sm" id="recordCount"><?php echo count($accounts); ?> Records</span>
+                            </div>
                         </div>
                         
                         <div class="overflow-x-auto custom-scrollbar">

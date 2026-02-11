@@ -309,16 +309,26 @@ $root_path = '../../';
             // Hide all
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('button[id^="tab-"]').forEach(el => {
-                el.classList.remove('text-indigo-600', 'border-indigo-600');
+                el.classList.remove('text-indigo-600', 'border-indigo-600', 'border-b-2');
                 el.classList.add('text-gray-400', 'border-transparent');
             });
 
             // Show selected
-            document.getElementById('content-' + tab).classList.remove('hidden');
+            const content = document.getElementById('content-' + tab);
             const btn = document.getElementById('tab-' + tab);
-            btn.classList.remove('text-gray-400', 'border-transparent');
-            btn.classList.add('text-indigo-600', 'border-indigo-600');
+            
+            if (content && btn) {
+                content.classList.remove('hidden');
+                btn.classList.remove('text-gray-400', 'border-transparent');
+                btn.classList.add('text-indigo-600', 'border-indigo-600', 'border-b-2');
+            }
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab') || 'interviews';
+            switchTab(tab);
+        });
 
         function restoreItem(type, id) {
             Swal.fire({

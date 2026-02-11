@@ -408,7 +408,11 @@ $candidates = $manager->getCandidates($search, $filterStatus, $showArchived);
                 <h1 class="text-2xl font-bold text-gray-900 uppercase tracking-tight">Candidate Tracking</h1>
                 <p class="text-gray-500 text-sm mt-1">Manage and track candidate applications across the pipeline.</p>
             </div>
-            
+            <a href="recycle_bin.php?tab=candidates" 
+               class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-600 border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-gray-50 hover:text-indigo-600 transition-all">
+                <i class="fas fa-box-archive"></i>
+                <span>Archived Bin</span>
+            </a>
         </div>
 
         <!-- Filters -->
