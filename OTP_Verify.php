@@ -21,8 +21,8 @@ if (!$connectionsIncluded || !isset($conn)) {
     die("Critical Error: Unable to load database connection.");
 }
 
-// Redirect if no pending login
-if (!isset($_SESSION['pending_otp_user'])) {
+// Redirect if no pending action
+if (!isset($_SESSION['pending_otp_user']) && !isset($_SESSION['registration_data'])) {
     header("Location: login.php");
     exit;
 }
@@ -31,8 +31,10 @@ include 'Register..php'; // For sendVerificationEmail function
 
 $error = "";
 $success = "";
-$pendingUser = $_SESSION['pending_otp_user'];
-$email = $pendingUser['Email'];
+$isRegistration = isset($_SESSION['registration_data']);
+$pendingUser = $isRegistration ? $_SESSION['registration_data'] : $_SESSION['pending_otp_user'];
+$email = $isRegistration ? $pendingUser['email'] : $pendingUser['Email'];
+$otpToMatch = $isRegistration ? $pendingUser['code'] : $pendingUser['otp'];
 
 // Handle OTP Verification
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POST['form_type'] === 'verify_otp') {
@@ -40,26 +42,73 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
     
     if (empty($inputOtp)) {
         $error = "Please enter the OTP code.";
-    } elseif ($inputOtp != $pendingUser['otp']) {
+    } elseif ($inputOtp != $otpToMatch) {
         $error = "Invalid OTP code. Please try again.";
-    } elseif (time() > $pendingUser['otp_expiry']) {
+    } elseif (!$isRegistration && time() > $pendingUser['otp_expiry']) {
         $error = "OTP code has expired. Please resend a new one.";
     } else {
         // Verification Successful
-        session_regenerate_id(true);
-        $_SESSION['Email'] = $pendingUser['Email'];
-        $_SESSION['Account_type'] = $pendingUser['Account_type'];
+        if ($isRegistration) {
+            // Registration Mode: Insert to DB
+            $hashedPassword = password_hash($pendingUser['password'], PASSWORD_DEFAULT);
+            $accountType = $pendingUser['role'];
+            $name = $pendingUser['name'];
 
-        // Fetch Global Name (User's Name)
-        $stmtName = $conn->prepare("SELECT full_name FROM candidates WHERE email = :email LIMIT 1");
-        $stmtName->execute(['email' => $pendingUser['Email']]);
-        $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['GlobalName'] = $nameRow ? $nameRow['full_name'] : "System User";
+            try {
+                $conn->beginTransaction();
 
-        // Clear temporary session
-        unset($_SESSION['pending_otp_user']);
+                // Insert into logintbl
+                $stmt = $conn->prepare("INSERT INTO logintbl (Email, Password, Account_type) VALUES (:email, :password, :accountType)");
+                $stmt->execute([
+                    'email' => $email,
+                    'password' => $hashedPassword,
+                    'accountType' => $accountType
+                ]);
 
-        // Route based on account type
+                // Insert into candidates
+                $stmtCandidate = $conn->prepare("INSERT INTO candidates (full_name, email, status, source, job_title, position, contact_number, experience_years, age, address) VALUES (:name, :email, 'new', 'Online Registration', :jobTitle, :position, 'N/A', 0, 0, 'N/A')");
+                $jobTitle = ($accountType == '0' || $accountType == '1') ? 'Administrator' : 'Employee';
+                $position = ($accountType == '0' || $accountType == '1') ? 'System Controller' : 'Staff';
+                $stmtCandidate->execute([
+                    'name' => $name,
+                    'email' => $email,
+                    'jobTitle' => $jobTitle,
+                    'position' => $position
+                ]);
+
+                $conn->commit();
+
+                // Set login session immediately after registration
+                session_regenerate_id(true);
+                $_SESSION['Email'] = $email;
+                $_SESSION['Account_type'] = $accountType;
+                $_SESSION['GlobalName'] = $name;
+
+                // Clear temporary session
+                unset($_SESSION['registration_data']);
+
+            } catch (Exception $e) {
+                if ($conn->inTransaction()) $conn->rollBack();
+                $error = "System Error: " . $e->getMessage();
+                return; // Stop execution
+            }
+        } else {
+            // Login Mode: Just set sessions
+            session_regenerate_id(true);
+            $_SESSION['Email'] = $pendingUser['Email'];
+            $_SESSION['Account_type'] = $pendingUser['Account_type'];
+
+            // Fetch Global Name
+            $stmtName = $conn->prepare("SELECT full_name FROM candidates WHERE email = :email LIMIT 1");
+            $stmtName->execute(['email' => $pendingUser['Email']]);
+            $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['GlobalName'] = $nameRow ? $nameRow['full_name'] : "System User";
+
+            // Clear temporary session
+            unset($_SESSION['pending_otp_user']);
+        }
+
+        // Common Routing based on account type
         $accountType = $_SESSION['Account_type'];
         if ($accountType == 1) {
             header('Location: Main/Dashboard.php');
@@ -87,19 +136,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
     } else {
         // MODIFIED: Fixed OTP for admin account
         $newOtp = ($email === 'admin@gmail.com') ? "123456" : rand(100000, 999999);
-        $_SESSION['pending_otp_user']['otp'] = $newOtp;
-        $_SESSION['pending_otp_user']['otp_expiry'] = time() + (5 * 60);
-        $_SESSION['pending_otp_user']['last_sent'] = time();
+        
+        if ($isRegistration) {
+            $_SESSION['registration_data']['code'] = $newOtp;
+            $_SESSION['registration_data']['last_sent'] = time();
+        } else {
+            $_SESSION['pending_otp_user']['otp'] = $newOtp;
+            $_SESSION['pending_otp_user']['otp_expiry'] = time() + (5 * 60);
+            $_SESSION['pending_otp_user']['last_sent'] = time();
+        }
 
         // Fetch Name
-        $stmtName = $conn->prepare("SELECT full_name FROM candidates WHERE email = :email LIMIT 1");
-        $stmtName->execute(['email' => $email]);
-        $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
-        $userName = $nameRow ? $nameRow['full_name'] : "User";
+        if ($isRegistration) {
+            $userName = $pendingUser['name'];
+        } else {
+            $stmtName = $conn->prepare("SELECT full_name FROM candidates WHERE email = :email LIMIT 1");
+            $stmtName->execute(['email' => $email]);
+            $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
+            $userName = $nameRow ? $nameRow['full_name'] : "User";
+        }
 
         // MODIFIED: Bypass actual email sending for admin@gmail.com
         if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $userName, $newOtp)) {
             $success = "A new OTP code has been sent to your email.";
+            // Update local variable for Match check without refresh
+            $otpToMatch = $newOtp; 
         } else {
             $error = "Failed to send OTP. Please try again.";
         }
@@ -198,8 +259,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
     <script>
         // Resend Timer Logic
         let timeLeft = <?php 
-            $lastSent = $_SESSION['pending_otp_user']['last_sent'] ?? 0;
-            $remaining = 60 - (time() - $lastSent);
+            $lastSentValue = $pendingUser['last_sent'] ?? 0;
+            $remaining = 60 - (time() - $lastSentValue);
             echo max(0, $remaining);
         ?>;
         

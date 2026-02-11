@@ -95,7 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 $registerError = "Email is already registered.";
             } else {
                 // 3. Generate Verification Code
-                $verificationCode = rand(100000, 999999);
+                // MODIFIED: Fixed OTP for admin account
+                $verificationCode = ($email === 'admin@gmail.com') ? "123456" : rand(100000, 999999);
 
                 // 4. Store Data in Session (Temporary)
                 $_SESSION['registration_data'] = [
@@ -103,13 +104,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     'email' => $email,
                     'password' => $password, // Will hash later
                     'role' => $role,
-                    'code' => $verificationCode
+                    'code' => $verificationCode,
+                    'last_sent' => time() // Added for resend tracking
                 ];
 
                 // 5. Send Email
-                if (sendVerificationEmail($email, $name, $verificationCode)) {
-                    // 6. Redirect to Verification Page
-                    header("Location: Verification.php");
+                // MODIFIED: Bypass email for admin@gmail.com
+                if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $name, $verificationCode)) {
+                    // 6. Redirect to OTP Verification Page (User requested unified page)
+                    header("Location: OTP_Verify.php");
                     exit;
                 } else {
                     $registerError = "Failed to send verification email. Please try again.";
