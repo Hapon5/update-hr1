@@ -43,8 +43,8 @@ function sendVerificationEmail($email, $name, $code)
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
         $mail->Password = 'bivb opss calj bfsd'; // App Password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
 
         $mail->setFrom('linbilcelestre31@gmail.com', 'HR1-CRANE Verification');
         $mail->addAddress($email, $name);
