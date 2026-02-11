@@ -20,8 +20,8 @@ function sendInterviewEmail($toEmail, $toName, $subject, $body)
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
         $mail->Password = 'oothfogbgznnfkdp';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
 
         // Bypassing SSL verification
         $mail->SMTPOptions = array(
@@ -42,6 +42,7 @@ function sendInterviewEmail($toEmail, $toName, $subject, $body)
         return true;
     } catch (Exception $e) {
         error_log("Mailer Error: " . $mail->ErrorInfo);
+        $_SESSION['last_mail_error'] = $mail->ErrorInfo;
         return false;
     }
 }

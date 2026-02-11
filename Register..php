@@ -43,8 +43,8 @@ function sendVerificationEmail($email, $name, $code)
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
         $mail->Password = 'oothfogbgznnfkdp'; // New App Password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
 
         // Bypassing SSL verification for environments with old CA certificates
         $mail->SMTPOptions = array(
@@ -79,17 +79,10 @@ function sendVerificationEmail($email, $name, $code)
         }
         return false;
     } catch (Exception $e) {
-        // FALLBACK: Try built-in PHP mail() if SMTP fails
-        $to = $email;
-        $subject = 'Verification Code - HR1 CRANE';
-        $message = "Your verification code is: $code";
-        
-        // IMPORTANT: Use a domain-based email as 'From' so the server won't block it
-        $headers = "From: noreply@cranecali-ms.com\r\n" .
-                   "Reply-To: noreply@cranecali-ms.com\r\n" .
-                   "X-Mailer: PHP/" . phpversion();
-        
-        return @mail($to, $subject, $message, $headers);
+        // Log the error for debugging
+        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        $_SESSION['last_mail_error'] = $mail->ErrorInfo; 
+        return false;
     }
 }
 
@@ -135,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     header("Location: OTP_Verify.php");
                     exit;
                 } else {
-                    $registerError = "Failed to send verification email. Please check your SMTP settings or server mail logs.";
+                    $registerError = "Failed to send verification email. Error: " . ($_SESSION['last_mail_error'] ?? 'Check SMTP settings.');
                 }
             }
         } catch (Exception $e) {

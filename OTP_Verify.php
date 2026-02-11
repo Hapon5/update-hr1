@@ -162,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
             // Update local variable for Match check without refresh
             $otpToMatch = $newOtp; 
         } else {
-            $error = "Failed to send OTP. Please try again.";
+            $error = "Failed to send OTP. Error: " . ($_SESSION['last_mail_error'] ?? 'Check connection/SMTP settings.');
         }
     }
 }
