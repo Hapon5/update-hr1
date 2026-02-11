@@ -23,8 +23,8 @@ try {
     $mail->SMTPAuth   = true;
     $mail->Username   = 'linbilcelestre31@gmail.com';
     $mail->Password   = 'oothfogbgznnfkdp';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = 465;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = 587;
 
     // Bypassing SSL verification
     $mail->SMTPOptions = array(
