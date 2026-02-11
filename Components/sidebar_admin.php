@@ -114,6 +114,13 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Interviews</span>
         </a>
 
+        <a href="<?php echo $root_path; ?>Modules/recruitment_process.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('recruitment_process.php', $current_page); ?>">
+            <i
+                class="fas fa-clipboard-check w-5 text-center <?php echo getIconColor('recruitment_process.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Recruitment Process</span>
+        </a>
+
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Operations</p>
 
         <a href="<?php echo $root_path; ?>Modules/performance_and_appraisals.php"
@@ -129,10 +136,30 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Recognition</span>
         </a>
 
-        <a href="<?php echo $root_path; ?>Modules/shortcuts.php"
-            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('shortcuts.php', $current_page); ?>">
-            <i class="fas fa-th-large w-5 text-center <?php echo getIconColor('shortcuts.php', $current_page); ?>"></i>
-            <span class="font-medium text-sm">Shortcuts</span>
+        <a href="<?php echo $root_path; ?>Modules/fleet_management.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('fleet_management.php', $current_page); ?>">
+            <i class="fas fa-truck w-5 text-center <?php echo getIconColor('fleet_management.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Fleet Management</span>
+        </a>
+
+        <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Data & Reports</p>
+
+        <a href="<?php echo $root_path; ?>Modules/data_analytics.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('data_analytics.php', $current_page); ?>">
+            <i class="fas fa-chart-pie w-5 text-center <?php echo getIconColor('data_analytics.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Data Analytics</span>
+        </a>
+
+        <a href="<?php echo $root_path; ?>Modules/applicant_consent.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('applicant_consent.php', $current_page); ?>">
+            <i class="fas fa-file-contract w-5 text-center <?php echo getIconColor('applicant_consent.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Applicant Records</span>
+        </a>
+
+        <a href="<?php echo $root_path; ?>Modules/applicant_progress.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('applicant_progress.php', $current_page); ?>">
+            <i class="fas fa-tasks w-5 text-center <?php echo getIconColor('applicant_progress.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Applicant Progress</span>
         </a>
 
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">System</p>
