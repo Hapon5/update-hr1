@@ -219,6 +219,65 @@ if ($totalIncidents > 0) {
             </div>
         </div>
 
+        <!-- PPE Safety Standards Section -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shadow-sm border border-indigo-100">
+                    <i class="fas fa-hard-hat text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">PPE Safety Standards</h2>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Mandatory Basic Safety Tools & Equipment</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <!-- Helmet -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-lg hover:shadow-indigo-500/5 transition-all group hover:-translate-y-1 cursor-default">
+                    <div class="w-16 h-16 mx-auto bg-yellow-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-yellow-100">
+                        <i class="fas fa-hard-hat text-3xl text-yellow-500"></i>
+                    </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-900 mb-1">Safety Helmet</h3>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Head Protection</p>
+                </div>
+
+                <!-- Vest -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-lg hover:shadow-orange-500/5 transition-all group hover:-translate-y-1 cursor-default">
+                    <div class="w-16 h-16 mx-auto bg-orange-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-orange-100">
+                        <i class="fas fa-vest text-3xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-900 mb-1">High-Vis Vest</h3>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Visibility</p>
+                </div>
+
+                <!-- Gloves -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-lg hover:shadow-blue-500/5 transition-all group hover:-translate-y-1 cursor-default">
+                    <div class="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-blue-100">
+                        <i class="fas fa-hands text-3xl text-blue-500"></i>
+                    </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-900 mb-1">Safety Gloves</h3>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Hand Protection</p>
+                </div>
+
+                <!-- Goggles -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-lg hover:shadow-purple-500/5 transition-all group hover:-translate-y-1 cursor-default">
+                    <div class="w-16 h-16 mx-auto bg-purple-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-purple-100">
+                        <i class="fas fa-glasses text-3xl text-purple-500"></i>
+                    </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-900 mb-1">Safety Goggles</h3>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Eye Protection</p>
+                </div>
+
+                <!-- Boots -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-lg hover:shadow-gray-500/5 transition-all group hover:-translate-y-1 cursor-default">
+                    <div class="w-16 h-16 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-gray-100">
+                        <i class="fas fa-shoe-prints text-3xl text-gray-600"></i>
+                    </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-900 mb-1">Safety Boots</h3>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Foot Protection</p>
+                </div>
+            </div>
+
         <!-- Recent Incidents Feed -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center bg-gray-50 gap-4">
