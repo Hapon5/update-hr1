@@ -111,15 +111,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
                     $userName = $nameRow ? $nameRow['full_name'] : "User";
 
-                    // MODIFIED: Proceed only if email sent OR if it's the admin@gmail.com bypass
-                    $mailSent = ($Email === 'admin@gmail.com' || sendVerificationEmail($user['Email'], $userName, $otpCode));
-                    
-                    if (!$mailSent) {
-                        $_SESSION['otp_send_failed'] = true;
+                    // MODIFIED: Proceed ONLY if email sent OR if it's the admin@gmail.com bypass
+                    if ($Email === 'admin@gmail.com' || sendVerificationEmail($user['Email'], $userName, $otpCode)) {
+                        header('Location: OTP_Verify.php');
+                        exit;
+                    } else {
+                        $loginError = "Failed to send OTP. Please check your SMTP settings or server mail logs.";
                     }
-                    
-                    header('Location: OTP_Verify.php');
-                    exit;
                 } else {
                     $passwordErr = "Incorrect password";
                 }
