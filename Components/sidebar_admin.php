@@ -94,12 +94,6 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Dashboard</span>
         </a>
 
-        <a href="<?php echo $root_path; ?>Employee/Dashboard.php"
-            class="flex items-center gap-3 px-4 py-2.5 group hover:bg-indigo-600/20 text-indigo-400/80 hover:text-indigo-400 transition-all rounded-xl mt-1">
-            <i class="fas fa-user-circle w-5 text-center"></i>
-            <span class="font-medium text-sm">Employee Portal</span>
-        </a>
-
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Recruitment</p>
 
         <a href="<?php echo $root_path; ?>Modules/job_posting.php"
