@@ -130,11 +130,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
 // Handle OTP Resend
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POST['form_type'] === 'resend_otp') {
     $currentTime = time();
-    $lastSent = $pendingUser['last_sent'] ?? 0;
     
-    if ($currentTime - $lastSent < 60) {
-        $secondsRemaining = 60 - ($currentTime - $lastSent);
-        $error = "Please wait $secondsRemaining seconds before resending.";
+    // MODIFIED: Removed 60-second wait. User can resend immediately.
+    if (false) { // Condition disabled
     } else {
         // MODIFIED: Fixed OTP for admin account
         $newOtp = ($email === 'admin@gmail.com') ? "123456" : rand(100000, 999999);
@@ -204,12 +202,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 We've sent a 6-digit code to <br>
                 <span class="text-black font-semibold"><?php echo htmlspecialchars($email); ?></span>
             </p>
-            <?php if ($email === 'admin@gmail.com'): ?>
-                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                    <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Testing Mode Code:</p>
-                    <p class="text-2xl font-black text-blue-700 tracking-[0.2em]">123456</p>
-                </div>
-            <?php endif; ?>
         </div>
 
         <?php if ($error): ?>
@@ -247,8 +239,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 <p class="text-sm text-gray-500 font-medium">
                     Didn't receive the code? <br>
                     <button type="submit" id="resendBtn" 
-                        class="text-black font-bold hover:underline mt-2 disabled:text-gray-400 disabled:no-underline transition-all">
-                        Resend Code <span id="timer"></span>
+                        class="text-black font-bold hover:underline mt-2 transition-all">
+                        Resend Code
                     </button>
                 </p>
             </form>
@@ -259,29 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
     </div>
 
     <script>
-        // Resend Timer Logic
-        let timeLeft = <?php 
-            $lastSentValue = $pendingUser['last_sent'] ?? 0;
-            $remaining = 60 - (time() - $lastSentValue);
-            echo max(0, $remaining);
-        ?>;
-        
-        const resendBtn = document.getElementById('resendBtn');
-        const timerSpan = document.getElementById('timer');
-
-        function updateTimer() {
-            if (timeLeft > 0) {
-                resendBtn.disabled = true;
-                timerSpan.textContent = `(${timeLeft}s)`;
-                timeLeft--;
-                setTimeout(updateTimer, 1000);
-            } else {
-                resendBtn.disabled = false;
-                timerSpan.textContent = "";
-            }
-        }
-
-        updateTimer();
+        // MODIFIED: Timer removed.
     </script>
 </body>
 </html>
