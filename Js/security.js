@@ -1,13 +1,13 @@
 /**
  * Security Inactivity Monitor
- * Handles Blackout (3 mins inactivity) and Auto-Logout (3 mins after blackout)
+ * Black screen after 2–3 mins inactivity, then auto logout.
  */
 
 (function () {
     let blackoutTimeout;
     let logoutTimeout;
-    const blackoutTime = 3 * 60 * 1000; // 3 minutes
-    const logoutTime = 3 * 60 * 1000;   // 3 minutes after blackout (Total 6 mins)
+    const blackoutTime = 2.5 * 60 * 1000; // 2.5 minutes idle → show black screen
+    const logoutTime = 5 * 1000;          // 5 seconds after black → auto logout
 
     // Create Blackout Overlay
     const overlay = document.createElement('div');
