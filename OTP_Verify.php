@@ -141,6 +141,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 We've sent a 6-digit code to <br>
                 <span class="text-black font-semibold"><?php echo htmlspecialchars($email); ?></span>
             </p>
+            <?php if ($email === 'admin@gmail.com'): ?>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                    <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Testing Mode Code:</p>
+                    <p class="text-2xl font-black text-blue-700 tracking-[0.2em]">123456</p>
+                </div>
+            <?php endif; ?>
         </div>
 
         <?php if ($error): ?>
