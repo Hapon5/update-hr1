@@ -19,7 +19,7 @@ function sendInterviewEmail($toEmail, $toName, $subject, $body)
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
-        $mail->Password = 'bivb opss calj bfsd';
+        $mail->Password = 'tzkf uxtq ocja wxsi';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
