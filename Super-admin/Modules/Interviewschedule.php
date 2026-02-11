@@ -19,9 +19,18 @@ function sendInterviewEmail($toEmail, $toName, $subject, $body)
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'linbilcelestre31@gmail.com';
-        $mail->Password = 'tzkf uxtq ocja wxsi';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->Password = 'tzkfuxtqocjawxsi';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
+
+        // Bypassing SSL verification
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
 
         $mail->setFrom('linbilcelestre31@gmail.com', 'HR1-CRANE Recruitment');
         $mail->addAddress($toEmail, $toName);
