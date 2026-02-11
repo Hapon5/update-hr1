@@ -201,11 +201,11 @@ function getIconColor($pageName, $current_page)
 
     <!-- Footer / Logout -->
     <div class="px-4 py-6 border-t border-white/5 flex-shrink-0">
-        <a href="<?php echo $root_path; ?>logout.php"
-            class="flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-all duration-200 group">
+        <button onclick="confirmLogout()"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-all duration-200 group w-full text-left">
             <i class="fas fa-sign-out-alt w-5 text-center group-hover:scale-110 transition-transform"></i>
             <span class="font-semibold text-sm">Logout</span>
-        </a>
+        </button>
     </div>
 </aside>
 
@@ -241,7 +241,19 @@ function getIconColor($pageName, $current_page)
 </div>
 
 <!-- Idle Screensaver (Black Screen) -->
-<div id="idleScreensaver" class="idle-screensaver"></div>
+<!-- Idle Screensaver (Black Screen) -->
+<div id="idleScreensaver" class="idle-screensaver flex items-center justify-center backdrop-blur-sm">
+    <div class="screensaver-modal bg-gray-900/90 border border-gray-700/50 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 transform scale-90 opacity-0 transition-all duration-300 delay-100">
+        <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4 ring-1 ring-indigo-500/20">
+            <i class="fas fa-moon text-2xl text-indigo-400"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2 tracking-tight">System Halted</h3>
+        <p class="text-gray-400 mb-6 text-sm leading-relaxed">System is in idle mode to save resources.</p>
+        <button id="exitScreensaverBtn" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-indigo-600/20">
+            Exit
+        </button>
+    </div>
+</div>
 
 <style>
     .custom-scrollbar::-webkit-scrollbar {
@@ -259,6 +271,16 @@ function getIconColor($pageName, $current_page)
 
     .custom-scrollbar:hover::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
+    }
+
+    .idle-screensaver.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .idle-screensaver.active .screensaver-modal {
+        transform: scale(1);
+        opacity: 1;
     }
 
     /* Sidebar Toggle Support */
@@ -304,7 +326,7 @@ function getIconColor($pageName, $current_page)
         let idleTimer;
 
         // Configuration
-        const IDLE_TIMEOUT = 10000; // 10 seconds
+        const IDLE_TIMEOUT = 120000; // 2 minutes
 
         // --------------------------------------------------------
         // IDLE SCREENSAVER LOGIC
@@ -317,12 +339,20 @@ function getIconColor($pageName, $current_page)
         }
 
         function resetIdleTimer() {
-            // Hide screensaver if active
-            if (screensaver.classList.contains('active')) {
-                screensaver.classList.remove('active');
+            // Only reset timer if screensaver is NOT active
+            if (!screensaver.classList.contains('active')) {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(showScreensaver, IDLE_TIMEOUT);
             }
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(showScreensaver, IDLE_TIMEOUT);
+        }
+
+        // Exit Screensaver Logic
+        const exitBtn = document.getElementById('exitScreensaverBtn');
+        if (exitBtn) {
+            exitBtn.addEventListener('click', () => {
+                screensaver.classList.remove('active');
+                resetIdleTimer();
+            });
         }
 
         // Initialize and listen
@@ -366,4 +396,30 @@ function getIconColor($pageName, $current_page)
             });
         });
     });
+
+    function confirmLogout() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Logout?',
+                text: "Are you sure you want to end your session?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#f3f4f6',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    cancelButton: 'text-gray-800'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?php echo $root_path; ?>logout.php';
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '<?php echo $root_path; ?>logout.php';
+            }
+        }
+    }
 </script>

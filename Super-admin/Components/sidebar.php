@@ -166,11 +166,11 @@ function getIconColor($pageName, $current_page)
 
     <!-- Footer / Logout -->
     <div class="px-4 py-6 border-t border-gray-800 flex-shrink-0">
-        <a href="<?php echo $root_path; ?>logout.php"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group">
+        <button onclick="confirmLogout()"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group w-full text-left">
             <i class="fas fa-sign-out-alt w-5 text-center group-hover:scale-110 transition-transform"></i>
             <span class="font-semibold text-sm">Logout</span>
-        </a>
+        </button>
     </div>
 </aside>
 
@@ -342,5 +342,32 @@ function getIconColor($pageName, $current_page)
                 }, 3000);
             });
         });
+        });
     });
+
+    function confirmLogout() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Logout?',
+                text: "Are you sure you want to end your session?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#f3f4f6',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    cancelButton: 'text-gray-800'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?php echo $root_path; ?>logout.php';
+                }
+            });
+        } else {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '<?php echo $root_path; ?>logout.php';
+            }
+        }
+    }
 </script>
