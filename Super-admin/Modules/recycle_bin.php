@@ -114,7 +114,18 @@ $root_path = '../../';
 </head>
 <body class="bg-[#f8f9fa] text-gray-800 font-sans">
 
-    <?php include '../Components/sidebar.php'; ?>
+    <?php 
+    // Dynamic Sidebar Inclusion
+    if (isset($_SESSION['Account_type']) && $_SESSION['Account_type'] == 0) {
+        // Super Admin
+        include '../Components/sidebar.php'; 
+    } else {
+        // Admin / Standard
+        // Path adjustment needed since we are in Super-admin/Modules
+        // Admin sidebar is in ../../Components/sidebar_admin.php
+        include '../../Components/sidebar_admin.php';
+    }
+    ?>
 
     <div class="ml-64 transition-all duration-300 min-h-screen flex flex-col">
         <?php include '../Components/header.php'; ?>

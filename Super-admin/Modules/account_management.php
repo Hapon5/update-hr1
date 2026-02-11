@@ -139,7 +139,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </head>
 <body class="min-h-screen">
 
-    <?php include '../Components/sidebar.php'; ?>
+    <?php 
+    if (isset($_SESSION['Account_type']) && $_SESSION['Account_type'] == 0) {
+        
+        include '../Components/sidebar.php'; 
+    } else {
+        
+        include '../../Components/sidebar_admin.php'; 
+    }
+    ?>
     <?php include '../Components/header.php'; ?>
 
     <main class="ml-64 pt-28 px-8 pb-12 transition-all duration-300" id="mainContent">

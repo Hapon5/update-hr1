@@ -130,7 +130,16 @@ if ($totalIncidents > 0) {
 
     <?php
     $root_path = '../../';
-    include '../Components/sidebar.php';
+    // Dynamic Sidebar Inclusion
+    if (isset($_SESSION['Account_type']) && $_SESSION['Account_type'] == 0) {
+        // Super Admin
+        include '../Components/sidebar.php'; 
+    } else {
+        // Admin / Standard
+        // Path adjustment needed since we are in Super-admin/Modules
+        // Admin sidebar is in ../../Components/sidebar_admin.php
+        include '../../Components/sidebar_admin.php';
+    }
     include '../Components/header.php';
     ?>
 

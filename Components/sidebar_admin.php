@@ -145,6 +145,12 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Fleet Management</span>
         </a>
 
+        <a href="<?php echo $root_path; ?>Super-admin/Modules/safety_management.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('safety_management.php', $current_page); ?>">
+            <i class="fas fa-hard-hat w-5 text-center <?php echo getIconColor('safety_management.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Safety Module</span>
+        </a>
+
         <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Data & Reports</p>
 
         <a href="<?php echo $root_path; ?>Modules/data_analytics.php"
@@ -169,8 +175,20 @@ function getIconColor($pageName, $current_page)
 
         <a href="<?php echo $root_path; ?>Super-admin/Modules/account_management.php"
             class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('account_management.php', $current_page); ?>">
-            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('account_management.php', $current_page); ?>"></i>
-            <span class="font-medium text-sm">Accounts</span>
+            <i class="fas fa-users-cog w-5 text-center <?php echo getIconColor('account_management.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Account List</span>
+        </a>
+
+        <a href="<?php echo $root_path; ?>Employee/login.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('login.php', $current_page); ?>">
+            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('login.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Account</span>
+        </a>
+
+        <a href="<?php echo $root_path; ?>Super-admin/Modules/recycle_bin.php"
+            class="flex items-center gap-3 px-4 py-2.5 group <?php echo isActive('recycle_bin.php', $current_page); ?>">
+            <i class="fas fa-trash-restore w-5 text-center <?php echo getIconColor('recycle_bin.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Recycle Bin</span>
         </a>
 
         <a href="<?php echo $root_path; ?>Main/about_us.php"
