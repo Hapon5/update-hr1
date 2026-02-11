@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0f0f0f;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     </style>
 </head>
-<body>
+<body class="bg-black text-white">
     <div class="w-full max-w-md px-6">
         <!-- Logo -->
         <div class="text-center mb-8">
@@ -118,11 +118,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <img src="Image/logo.png" alt="HR1 Logo" class="w-16 h-16">
             </div>
             <h1 class="text-4xl font-bold text-white mb-2">HR1 System</h1>
-            <p class="text-white/80 text-sm">Super Admin Account Setup</p>
+            <p class="text-gray-300 text-sm">Super Admin Account Setup</p>
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 text-gray-900">
             <?php if (!empty($message)): ?>
                 <div class="mb-6 p-4 rounded-xl <?php echo $messageType === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'; ?>">
                     <div class="flex items-center gap-3">
@@ -135,60 +135,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <form method="POST" action="">
                 <!-- Full Name -->
                 <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <i class="fas fa-user mr-2 text-indigo-500"></i>Full Name
+                    <label class="block text-sm font-bold text-gray-800 mb-2">
+                        <i class="fas fa-user mr-2 text-gray-700"></i>Full Name
                     </label>
                     <input type="text" name="name" value="<?php echo htmlspecialchars($name ?? ''); ?>" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-800 focus:border-gray-800 outline-none transition-all text-gray-900"
                         placeholder="Enter your full name">
                 </div>
 
                 <!-- Email -->
                 <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <i class="fas fa-envelope mr-2 text-indigo-500"></i>Email Address
+                    <label class="block text-sm font-bold text-gray-800 mb-2">
+                        <i class="fas fa-envelope mr-2 text-gray-700"></i>Email Address
                     </label>
                     <input type="email" name="email" value="<?php echo htmlspecialchars($email ?? ''); ?>" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-800 focus:border-gray-800 outline-none transition-all text-gray-900"
                         placeholder="Enter your email">
                 </div>
 
                 <!-- Password -->
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <i class="fas fa-lock mr-2 text-indigo-500"></i>Password
+                    <label class="block text-sm font-bold text-gray-800 mb-2">
+                        <i class="fas fa-lock mr-2 text-gray-700"></i>Password
                     </label>
                     <div class="relative">
                         <input type="password" name="password" id="password" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all pr-12"
+                            class="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-800 focus:border-gray-800 outline-none transition-all pr-12 text-gray-900"
                             placeholder="Enter your password">
                         <button type="button" onclick="togglePassword()" 
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 transition-colors">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Account Type Info -->
-                <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+                <div class="mb-6 p-4 bg-gray-100 border border-gray-200 rounded-xl">
                     <div class="flex items-start gap-3">
-                        <i class="fas fa-crown text-indigo-600 text-lg mt-0.5"></i>
+                        <i class="fas fa-crown text-gray-700 text-lg mt-0.5"></i>
                         <div>
-                            <p class="text-sm font-bold text-indigo-900 mb-1">Super Admin Account</p>
-                            <p class="text-xs text-indigo-700">This account will have full system access with all administrative privileges.</p>
+                            <p class="text-sm font-bold text-gray-900 mb-1">Super Admin Account</p>
+                            <p class="text-xs text-gray-700">This account will have full system access with all administrative privileges.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                     <i class="fas fa-user-plus mr-2"></i>Create Super Admin Account
                 </button>
 
                 <!-- Back to Login -->
                 <div class="mt-6 text-center">
-                    <a href="login.php" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors">
+                    <a href="login.php" class="text-sm text-gray-700 hover:text-black font-medium transition-colors">
                         <i class="fas fa-arrow-left mr-2"></i>Back to Login
                     </a>
                 </div>
@@ -197,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <!-- Security Notice -->
         <div class="mt-6 text-center">
-            <p class="text-white/70 text-xs">
+            <p class="text-gray-400 text-xs">
                 <i class="fas fa-shield-alt mr-1"></i>
                 This page should be removed after initial setup for security purposes.
             </p>

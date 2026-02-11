@@ -1181,9 +1181,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 });
         });
 
-        // View Job Details (Secured)
+        // View Job Details (no PIN required)
+        // Eye icon in the table will open the details modal directly.
         window.viewJob = function (id) {
-            showPinModalForJob(id);
+            openJobModal(id);
         };
 
         window.openJobModal = function (id) {
