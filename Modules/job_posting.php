@@ -23,12 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             position VARCHAR(255) NOT NULL,
+            department VARCHAR(255),
             location VARCHAR(255),
             requirements TEXT,
             contact VARCHAR(100),
             platform VARCHAR(100),
             date_posted DATE,
-            status ENUM('active', 'inactive') DEFAULT 'active',
+            date_closing DATE,
+            status ENUM('active', 'inactive', 'in_development') DEFAULT 'active',
             is_archived TINYINT(1) DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )");
@@ -51,6 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Add is_archived column if it doesn't exist (migration)
         try { $conn->exec("ALTER TABLE job_postings ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
         try { $conn->exec("ALTER TABLE applications ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+        // Add department and date_closing if missing
+        try { $conn->exec("ALTER TABLE job_postings ADD COLUMN department VARCHAR(255)"); } catch (Exception $e) {}
+        try { $conn->exec("ALTER TABLE job_postings ADD COLUMN date_closing DATE"); } catch (Exception $e) {}
+        // Allow In-Development status (black badge)
+        try { $conn->exec("ALTER TABLE job_postings MODIFY COLUMN status ENUM('active', 'inactive', 'in_development') DEFAULT 'active'"); } catch (Exception $e) {}
 
     // Fix for missing AUTO_INCREMENT if tables were created manually
     // We strive to fix 'Field id doesn't have a default value' errors
@@ -105,21 +112,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($_POST['action'] === 'add' || $_POST['action'] === 'edit') {
                 $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
                 $position = filter_input(INPUT_POST, 'position', FILTER_SANITIZE_STRING);
+                $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_STRING);
                 $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
                 $requirements = filter_input(INPUT_POST, 'requirements', FILTER_SANITIZE_STRING);
                 $contact = filter_input(INPUT_POST, 'contact', FILTER_SANITIZE_STRING);
                 $platform = filter_input(INPUT_POST, 'platform', FILTER_SANITIZE_STRING);
                 $date_posted = $_POST['date_posted'];
+                $date_closing = !empty($_POST['date_closing']) ? $_POST['date_closing'] : null;
                 $status = $_POST['status'];
 
                 if ($_POST['action'] === 'add') {
-                    $stmt = $conn->prepare("INSERT INTO job_postings (title, position, location, requirements, contact, platform, date_posted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->execute([$title, $position, $location, $requirements, $contact, $platform, $date_posted, $status]);
+                    $stmt = $conn->prepare("INSERT INTO job_postings (title, position, department, location, requirements, contact, platform, date_posted, date_closing, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->execute([$title, $position, $department, $location, $requirements, $contact, $platform, $date_posted, $date_closing, $status]);
                     $response = ['status' => 'success', 'message' => 'Job posting added successfully!'];
                 } elseif ($_POST['action'] === 'edit' && !empty($_POST['id'])) {
                     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-                    $stmt = $conn->prepare("UPDATE job_postings SET title=?, position=?, location=?, requirements=?, contact=?, platform=?, date_posted=?, status=? WHERE id=?");
-                    $stmt->execute([$title, $position, $location, $requirements, $contact, $platform, $date_posted, $status, $id]);
+                    $stmt = $conn->prepare("UPDATE job_postings SET title=?, position=?, department=?, location=?, requirements=?, contact=?, platform=?, date_posted=?, date_closing=?, status=? WHERE id=?");
+                    $stmt->execute([$title, $position, $department, $location, $requirements, $contact, $platform, $date_posted, $date_closing, $status, $id]);
                     $response = ['status' => 'success', 'message' => 'Job posting updated successfully!'];
                 }
             }
@@ -272,6 +281,15 @@ try {
     $stmt = $conn->prepare("SELECT * FROM job_postings WHERE is_archived = 0 ORDER BY created_at DESC");
     $stmt->execute();
     $job_postings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Seed sample data when empty (Sales Representative, Sales Manager - like reference)
+    if (empty($job_postings)) {
+        $sample_req = "Are you a dynamic and results-oriented individual with a passion for sales and business development?";
+        $conn->exec("INSERT INTO job_postings (title, position, department, location, requirements, date_posted, date_closing, status) VALUES
+            ('Sales Representative', 'Sales Representative', 'Sales', 'N/A', '$sample_req', '2023-09-11', '2023-10-13', 'active'),
+            ('Sales Manager', 'Sales Manager', 'Sales', 'N/A', '$sample_req', '2023-09-11', '2023-10-20', 'active')");
+        $stmt->execute();
+        $job_postings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } catch (PDOException $e) {
     $job_postings = [];
 }
@@ -446,11 +464,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 <table class="min-w-full">
                     <thead class="bg-gray-900 text-white text-xs uppercase font-bold tracking-wider">
                         <tr>
-                            <th class="px-6 py-4 text-left">Title & Position</th>
-                            <th class="px-6 py-4 text-left">Location</th>
-                            <th class="px-6 py-4 text-left">Date Posted</th>
-                            <th class="px-6 py-4 text-center">Platform</th>
+                            <th class="px-6 py-4 text-left">Job</th>
+                            <th class="px-6 py-4 text-left">Department</th>
                             <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4 text-left">Date Opening</th>
+                            <th class="px-6 py-4 text-left">Date Closing</th>
                             <th class="px-6 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
@@ -460,30 +478,25 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                 <td colspan="6" class="px-6 py-8 text-center text-gray-500">No job postings found.</td>
                             </tr>
                         <?php else:
-                            foreach ($job_postings as $job): ?>
+                            foreach ($job_postings as $job):
+                                $statusLabel = $job['status'] === 'active' ? 'Open' : ($job['status'] === 'in_development' ? 'In-Development' : 'Closed');
+                                $statusClass = $job['status'] === 'active' ? 'bg-green-100 text-green-700' : ($job['status'] === 'in_development' ? 'bg-gray-900 text-white' : 'bg-red-100 text-red-700');
+                        ?>
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-800"><?= htmlspecialchars($job['title']) ?></div>
-                                        <div class="text-xs text-gray-500 font-medium mt-0.5">
-                                            <?= htmlspecialchars($job['position']) ?>
-                                        </div>
+                                        <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-md"><?= htmlspecialchars($job['title']) ?></span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-md"><?= htmlspecialchars($job['department'] ?? $job['location'] ?? '—') ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold <?= $statusClass ?>"><?= $statusLabel ?></span>
                                     </td>
                                     <td class="px-6 py-4 text-gray-600">
-                                        <?= htmlspecialchars($job['location']) ?>
+                                        <?= !empty($job['date_posted']) ? date('F j, Y', strtotime($job['date_posted'])) : (isset($job['created_at']) ? date('F j, Y', strtotime($job['created_at'])) : '—') ?>
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500">
-                                        <?= date('M d, Y', strtotime($job['created_at'])) ?>
-                                    </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span class="inline-block bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-md">
-                                            <?= htmlspecialchars($job['platform'] ?: 'General') ?>
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold <?= $job['status'] == 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' ?>">
-                                            <?= ucfirst($job['status']) ?>
-                                        </span>
+                                    <td class="px-6 py-4 text-gray-600">
+                                        <?= !empty($job['date_closing']) ? date('F j, Y', strtotime($job['date_closing'])) : '—' ?>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex justify-center items-center gap-3">
@@ -554,7 +567,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                         <?= date('M d, Y', strtotime($app['applied_at'])) ?>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">
+                                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-gray-900 text-white">
                                             <?= htmlspecialchars($app['status']) ?>
                                         </span>
                                     </td>
@@ -626,10 +639,16 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                     </div>
                     <div>
                         <label
+                            class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Department</label>
+                        <input type="text" id="jobDepartment" name="department"
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                            placeholder="e.g. Sales">
+                    </div>
+                    <div>
+                        <label
                             class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Location</label>
                         <input type="text" id="jobLocation" name="location"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                            required>
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label
@@ -646,18 +665,25 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Date
-                            Posted</label>
+                            Opening</label>
                         <input type="date" id="jobDate" name="date_posted"
                             class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                             required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Date
+                            Closing</label>
+                        <input type="date" id="jobDateClosing" name="date_closing"
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                     </div>
                     <div class="sm:col-span-2">
                         <label
                             class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Status</label>
                         <select id="jobStatus" name="status"
                             class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="in_development">In-Development</option>
+                            <option value="active">Open</option>
+                            <option value="inactive">Closed</option>
                         </select>
                     </div>
                     <div class="sm:col-span-2">
@@ -980,12 +1006,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
 
                         document.getElementById('jobTitle').value = job.title;
                         document.getElementById('jobPosition').value = job.position;
-                        document.getElementById('jobLocation').value = job.location;
-                        document.getElementById('jobPlatform').value = job.platform;
-                        document.getElementById('jobContact').value = job.contact;
-                        document.getElementById('jobDate').value = job.date_posted_formatted; // Ensure YYYY-MM-DD
+                        document.getElementById('jobDepartment').value = job.department || '';
+                        document.getElementById('jobLocation').value = job.location || '';
+                        document.getElementById('jobPlatform').value = job.platform || '';
+                        document.getElementById('jobContact').value = job.contact || '';
+                        document.getElementById('jobDate').value = job.date_posted_formatted;
+                        document.getElementById('jobDateClosing').value = job.date_closing || '';
                         document.getElementById('jobStatus').value = job.status;
-                        document.getElementById('jobRequirements').value = job.requirements;
+                        document.getElementById('jobRequirements').value = job.requirements || '';
 
                         jobModal.classList.remove('hidden');
                     } else alert(data.message);
@@ -1164,22 +1192,26 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 .then(data => {
                     if (data.status === 'success') {
                         const job = data.data;
+                        const statusLabel = job.status === 'active' ? 'Open' : (job.status === 'in_development' ? 'In-Development' : 'Closed');
+                        const statusClass = job.status === 'active' ? 'bg-green-100 text-green-700' : (job.status === 'in_development' ? 'bg-gray-900 text-white' : 'bg-red-100 text-red-700');
                         document.getElementById('jobDetails').innerHTML = `
                         <div class="space-y-4 text-gray-700">
                              <div class="flex justify-between items-start">
                                 <h2 class="text-2xl font-bold text-gray-900">${job.title}</h2>
-                                <span class="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wide">${job.status}</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${statusClass}">${statusLabel}</span>
                              </div>
                              <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-sm mt-4">
                                 <div><span class="block text-xs font-semibold text-gray-500 uppercase">Position</span> <span class="font-medium">${job.position}</span></div>
-                                <div><span class="block text-xs font-semibold text-gray-500 uppercase">Location</span> <span class="font-medium">${job.location}</span></div>
+                                <div><span class="block text-xs font-semibold text-gray-500 uppercase">Department</span> <span class="font-medium">${job.department || 'N/A'}</span></div>
+                                <div><span class="block text-xs font-semibold text-gray-500 uppercase">Location</span> <span class="font-medium">${job.location || 'N/A'}</span></div>
                                 <div><span class="block text-xs font-semibold text-gray-500 uppercase">Platform</span> <span class="font-medium">${job.platform || 'N/A'}</span></div>
                                 <div><span class="block text-xs font-semibold text-gray-500 uppercase">Contact</span> <span class="font-medium">${job.contact || 'N/A'}</span></div>
-                                <div class="col-span-2"><span class="block text-xs font-semibold text-gray-500 uppercase">Date Posted</span> <span class="font-medium">${job.date_posted_formatted}</span></div>
+                                <div><span class="block text-xs font-semibold text-gray-500 uppercase">Date Opening</span> <span class="font-medium">${job.date_posted_formatted || 'N/A'}</span></div>
+                                <div><span class="block text-xs font-semibold text-gray-500 uppercase">Date Closing</span> <span class="font-medium">${job.date_closing || 'N/A'}</span></div>
                              </div>
                              <div class="pt-4 border-t border-gray-100">
                                 <h4 class="text-sm font-bold text-gray-800 uppercase mb-2">Requirements</h4>
-                                <div class="bg-gray-50 p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap text-gray-600 border border-gray-100">${job.requirements}</div>
+                                <div class="bg-gray-50 p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap text-gray-600 border border-gray-100">${job.requirements || '—'}</div>
                              </div>
                         </div>
                     `;
