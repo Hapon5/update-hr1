@@ -209,9 +209,10 @@ echo ' ';
       color: green;
     }
 
-    .delete-btn {
-      color: red;
-    }
+    .filter-archived-btn { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f3f4f6; color: #4b5563; }
+    .filter-archived-btn:hover { background: #e5e7eb; }
+    .filter-archived-btn.active { background: #111827; color: #fff; border-color: #111827; }
+    .delete-btn, .archive-btn { color: #b45309; }
 
     .container {
       background: #ffffff;
@@ -300,6 +301,12 @@ echo ' ';
           <i class="fas fa-search"></i>
           <input type="text" id="searchInput" placeholder="Search Employee..." class="search-bar">
         </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:12px;">
+          <span style="font-weight:600;font-size:14px;">Show:</span>
+          <button type="button" id="filterActive" class="filter-archived-btn active">Active</button>
+          <button type="button" id="filterArchived" class="filter-archived-btn">Archived</button>
+        </div>
+        </div>
       </div>
       <!-- Table -->
       <table id="jobsTable" border="1" cellspacing="0" cellpadding="10">
@@ -385,6 +392,7 @@ echo ' ';
         // Add New Row
         const table = document.getElementById("jobsTable").getElementsByTagName('tbody')[0];
         const newRow = table.insertRow();
+        newRow.setAttribute('data-archived', '0');
         newRow.innerHTML = `
             <td>${title}</td>
             <td>${position}</td>
@@ -395,7 +403,7 @@ echo ' ';
             <td>${date}</td>
             <td>
                 <span class="action-btn edit-btn" onclick="editRow(this)">Edit</span>
-                <span class="action-btn delete-btn" onclick="deleteRow(this)">Delete</span>
+                <span class="action-btn archive-btn" onclick="archiveRow(this)">Archive</span>
             </td>
         `;
       } else {
@@ -447,13 +455,30 @@ echo ' ';
       openModal(true);
     }
 
-    // Delete Row
-    function deleteRow(element) {
-      if (confirm("Are you sure you want to delete this job posting?")) {
+    // Archive Row
+    function archiveRow(element) {
+      if (confirm("Archive this record? You can view it under Archived filter.")) {
         const row = element.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        row.setAttribute('data-archived', '1');
+        row.style.display = 'none';
+        applyArchiveFilter(window.currentArchiveFilter || 'active');
       }
     }
+    window.currentArchiveFilter = 'active';
+    function applyArchiveFilter(filter) {
+      window.currentArchiveFilter = filter;
+      const rows = document.querySelectorAll("#jobsTable tbody tr");
+      rows.forEach(row => {
+        const archived = row.getAttribute('data-archived') === '1';
+        const show = (filter === 'active' && !archived) || (filter === 'archived' && archived);
+        row.style.display = show ? '' : 'none';
+      });
+      var fa = document.getElementById('filterActive'); var fb = document.getElementById('filterArchived');
+      if (fa) fa.classList.toggle('active', filter === 'active');
+      if (fb) fb.classList.toggle('active', filter === 'archived');
+    }
+    document.getElementById('filterActive').onclick = function() { applyArchiveFilter('active'); };
+    document.getElementById('filterArchived').onclick = function() { applyArchiveFilter('archived'); };
 
     // Close Modal if click outside
     window.onclick = function (event) {

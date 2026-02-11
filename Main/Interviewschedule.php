@@ -76,11 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action_delete'])) {
 }
 
 
+// Archive filter: active | archived
+$view_archived = isset($_GET['view_archived']) && $_GET['view_archived'] == '1' ? 1 : 0;
+
 // Fetch all interviews for page load
 try {
     $filter = isset($_GET['status']) ? $_GET['status'] : '';
-    $q = 'SELECT * FROM interviews WHERE is_archived = 0';
-    $params = [];
+    $q = 'SELECT * FROM interviews WHERE is_archived = ?';
+    $params = [$view_archived];
     if ($filter !== '' && $filter !== 'all') {
         $q .= ' AND status = ?';
         $params[] = $filter;
@@ -144,7 +147,11 @@ try {
                     <button id="scheduleBtn" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                         <i class="fas fa-plus mr-2"></i> Schedule Interview
                     </button>
-                    <!-- Filter... -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold text-gray-600">Show:</span>
+                        <a href="?view_archived=0<?= isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '' ?>" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= !$view_archived ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Active</a>
+                        <a href="?view_archived=1<?= isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '' ?>" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $view_archived ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Archived</a>
+                    </div>
                 </div>
             </div>
 
@@ -182,7 +189,7 @@ try {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <div class="flex gap-2">
                                             <button class="text-brand-500 hover:text-brand-600" onclick="openEditModal(<?= (int)$iv['id']; ?>)"><i class="fas fa-edit"></i></button>
-                                            <button class="text-amber-400 hover:text-amber-500" onclick="confirmDelete(<?= (int)$iv['id']; ?>)" title="Archive"><i class="fas fa-box-archive"></i></button>
+                                            <button class="text-amber-400 hover:text-amber-500" onclick="confirmArchive(<?= (int)$iv['id']; ?>)" title="Archive"><i class="fas fa-box-archive"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -317,8 +324,8 @@ try {
             });
         }
         
-        function confirmDelete(id) {
-            if (confirm('Archive Interview: Are you sure you want to move this interview to archives?')) {
+        function confirmArchive(id) {
+            if (confirm('Archive this interview? You can view it under Archived.')) {
                 document.getElementById('deleteId').value = id;
                 document.getElementById('deleteForm').submit();
             }

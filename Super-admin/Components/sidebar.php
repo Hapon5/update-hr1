@@ -155,10 +155,12 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Account List</span>
         </a>
 
-        <a href="<?php echo $root_path; ?>Employee/login.php"
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('login.php', $current_page); ?>">
-            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('login.php', $current_page); ?>"></i>
-            <span class="font-medium text-sm">Account</span>
+
+
+        <a href="<?php echo $root_path; ?>Super-admin/Modules/recycle_bin.php"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('recycle_bin.php', $current_page); ?>">
+            <i class="fas fa-trash-restore w-5 text-center <?php echo getIconColor('recycle_bin.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Recycle Bin</span>
         </a>
     </nav>
 
@@ -204,7 +206,19 @@ function getIconColor($pageName, $current_page)
 </div>
 
 <!-- Idle Screensaver (Black Screen) -->
-<div id="idleScreensaver" class="idle-screensaver"></div>
+<!-- Idle Screensaver (Black Screen) -->
+<div id="idleScreensaver" class="idle-screensaver flex items-center justify-center backdrop-blur-sm">
+    <div class="screensaver-modal bg-gray-900/90 border border-gray-700/50 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 transform scale-90 opacity-0 transition-all duration-300 delay-100">
+        <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4 ring-1 ring-indigo-500/20">
+            <i class="fas fa-moon text-2xl text-indigo-400"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2 tracking-tight">System Halted</h3>
+        <p class="text-gray-400 mb-6 text-sm leading-relaxed">System is in idle mode to save resources.</p>
+        <button id="exitScreensaverBtn" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-indigo-600/20">
+            Exit
+        </button>
+    </div>
+</div>
 
 <style>
     .custom-scrollbar::-webkit-scrollbar {
@@ -244,6 +258,11 @@ function getIconColor($pageName, $current_page)
         opacity: 1;
         visibility: visible;
     }
+
+    .idle-screensaver.active .screensaver-modal {
+        transform: scale(1);
+        opacity: 1;
+    }
 </style>
 
 <script>
@@ -253,7 +272,7 @@ function getIconColor($pageName, $current_page)
         let idleTimer;
 
         // Configuration
-        const IDLE_TIMEOUT = 10000; // 10 seconds
+        const IDLE_TIMEOUT = 120000; // 2 minutes
 
         // --------------------------------------------------------
         // IDLE SCREENSAVER LOGIC
@@ -266,12 +285,21 @@ function getIconColor($pageName, $current_page)
         }
 
         function resetIdleTimer() {
-            // Hide screensaver if active
-            if (screensaver.classList.contains('active')) {
-                screensaver.classList.remove('active');
+            // Only reset timer if screensaver is NOT active
+            // If active, we wait for explicit exit
+            if (!screensaver.classList.contains('active')) {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(showScreensaver, IDLE_TIMEOUT);
             }
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(showScreensaver, IDLE_TIMEOUT);
+        }
+
+        // Exit Screensaver Logic
+        const exitBtn = document.getElementById('exitScreensaverBtn');
+        if (exitBtn) {
+            exitBtn.addEventListener('click', () => {
+                screensaver.classList.remove('active');
+                resetIdleTimer();
+            });
         }
 
         // Initialize and listen
