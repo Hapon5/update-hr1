@@ -85,12 +85,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit();
 }
 
+// Ensure candidates has is_archived
+try { $conn->exec("ALTER TABLE candidates ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+
+// Archive candidate (admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'archive_candidate' && !empty($_POST['id'])) {
+    header('Content-Type: application/json');
+    try {
+        $stmt = $conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
+        $stmt->execute([(int)$_POST['id']]);
+        echo json_encode(['status' => 'success', 'message' => 'Candidate archived.']);
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// Archive filter: active | archived
+$archive_filter = isset($_GET['archive_filter']) && $_GET['archive_filter'] === 'archived' ? 'archived' : 'active';
+$is_archived = $archive_filter === 'archived' ? 1 : 0;
+$where_archived = "c.is_archived = " . (int)$is_archived;
+$where_status = $is_archived ? "1=1" : "c.status NOT IN ('rejected', 'hired')";
+
 // Fetch Candidates joined with Assessment Data
 $query = "SELECT c.id, c.full_name, c.email, c.position, c.created_at, c.extracted_image_path, c.source,
                  rp.license_number, rp.license_expiry, rp.fit_to_work_status, rp.assessment_date, rp.verification_method
           FROM candidates c
           LEFT JOIN recruitment_process rp ON c.id = rp.candidate_id
-          WHERE c.is_archived = 0 AND c.status NOT IN ('rejected', 'hired')
+          WHERE $where_archived AND $where_status
           ORDER BY c.created_at DESC";
 $candidates = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
@@ -137,14 +159,21 @@ $candidates = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
                 <h1 class="text-2xl font-bold text-gray-900">Recruitment Process</h1>
                 <p class="text-sm text-gray-500 mt-1">Detailed processing of applicants (Verification & Assessment)</p>
             </div>
-            <div class="flex gap-2">
-                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span class="text-xs font-semibold text-gray-600">License Valid</span>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-600">Show:</span>
+                    <a href="?archive_filter=active" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $archive_filter === 'active' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Active</a>
+                    <a href="?archive_filter=archived" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $archive_filter === 'archived' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Archived</a>
                 </div>
-                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span class="text-xs font-semibold text-gray-600">License Expired</span>
+                <div class="flex gap-2">
+                    <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-xs font-semibold text-gray-600">License Valid</span>
+                    </div>
+                    <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-xs font-semibold text-gray-600">License Expired</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -158,9 +187,8 @@ $candidates = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
                     <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Pending Assessment</h2>
                     <div class="space-y-3 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
                         <?php foreach($candidates as $c): ?>
-                            <div onclick="selectCandidate(<?= htmlspecialchars(json_encode($c)) ?>)" 
-                                 class="p-4 rounded-xl border border-gray-100 hover:border-indigo-500 hover:shadow-md cursor-pointer transition-all bg-white group hover:bg-indigo-50/30">
-                                <div class="flex items-center gap-3">
+                            <div class="p-4 rounded-xl border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all bg-white group hover:bg-indigo-50/30 flex items-center gap-2">
+                                <div onclick="selectCandidate(<?= htmlspecialchars(json_encode($c)) ?>)" class="flex-1 flex items-center gap-3 min-w-0 cursor-pointer">
                                     <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border border-gray-300">
                                         <?php if($c['extracted_image_path']): ?>
                                             <img src="../Main/<?= $c['extracted_image_path'] ?>" class="w-full h-full object-cover">
@@ -177,8 +205,13 @@ $candidates = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
                                         if($c['fit_to_work_status'] == 'Fit') $statusClass = 'status-fit';
                                         if($c['fit_to_work_status'] == 'Unfit') $statusClass = 'status-unfit';
                                     ?>
-                                    <span class="w-2 h-2 rounded-full <?= $c['fit_to_work_status'] == 'Fit' ? 'bg-green-500' : ($c['fit_to_work_status'] == 'Unfit' ? 'bg-red-500' : 'bg-gray-300') ?>"></span>
+                                    <span class="w-2 h-2 rounded-full flex-shrink-0 <?= $c['fit_to_work_status'] == 'Fit' ? 'bg-green-500' : ($c['fit_to_work_status'] == 'Unfit' ? 'bg-red-500' : 'bg-gray-300') ?>"></span>
                                 </div>
+                                <?php if ($archive_filter === 'active'): ?>
+                                <button type="button" onclick="event.stopPropagation(); archiveCandidate(<?= (int)$c['id'] ?>)" class="flex-shrink-0 text-gray-400 hover:text-orange-500 p-1.5 rounded-lg hover:bg-orange-50" title="Archive">
+                                    <i class="fas fa-box-archive text-xs"></i>
+                                </button>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                         <?php if(empty($candidates)): ?>
@@ -440,6 +473,19 @@ $candidates = $conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(20px)';
             }, 3000);
+        }
+
+        function archiveCandidate(id) {
+            if (!confirm('Archive this candidate? You can view under Archived filter.')) return;
+            const fd = new FormData();
+            fd.append('action', 'archive_candidate');
+            fd.append('id', id);
+            fetch('recruitment_process.php', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.message || (data.status === 'success' ? 'Archived.' : 'Error'), data.status === 'success' ? 'success' : 'error');
+                    if (data.status === 'success') setTimeout(() => location.reload(), 1000);
+                });
         }
     </script>
 </body>

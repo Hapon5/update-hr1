@@ -276,28 +276,34 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_job' && isset($_GET['id'])
     exit();
 }
 
-// Fetch all jobs
+// Archive filter: active | archived (admin only)
+$job_filter = isset($_GET['job_filter']) && $_GET['job_filter'] === 'archived' ? 'archived' : 'active';
+$app_filter = isset($_GET['app_filter']) && $_GET['app_filter'] === 'archived' ? 'archived' : 'active';
+$job_archived = $job_filter === 'archived' ? 1 : 0;
+$app_archived = $app_filter === 'archived' ? 1 : 0;
+
+// Fetch jobs (active or archived)
 try {
-    $stmt = $conn->prepare("SELECT * FROM job_postings WHERE is_archived = 0 ORDER BY created_at DESC");
-    $stmt->execute();
+    $stmt = $conn->prepare("SELECT * FROM job_postings WHERE is_archived = ? ORDER BY created_at DESC");
+    $stmt->execute([$job_archived]);
     $job_postings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // Seed sample data when empty (Sales Representative, Sales Manager - like reference)
-    if (empty($job_postings)) {
+    // Seed sample data only when active and empty
+    if ($job_archived === 0 && empty($job_postings)) {
         $sample_req = "Are you a dynamic and results-oriented individual with a passion for sales and business development?";
         $conn->exec("INSERT INTO job_postings (title, position, department, location, requirements, date_posted, date_closing, status) VALUES
             ('Sales Representative', 'Sales Representative', 'Sales', 'N/A', '$sample_req', '2023-09-11', '2023-10-13', 'active'),
             ('Sales Manager', 'Sales Manager', 'Sales', 'N/A', '$sample_req', '2023-09-11', '2023-10-20', 'active')");
-        $stmt->execute();
+        $stmt->execute([0]);
         $job_postings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 } catch (PDOException $e) {
     $job_postings = [];
 }
 
-// Fetch Applications
+// Fetch Applications (active or archived)
 try {
-    $stmt = $conn->prepare("SELECT a.*, j.title as job_title FROM applications a LEFT JOIN job_postings j ON a.job_id = j.id WHERE a.is_archived = 0 ORDER BY a.applied_at DESC");
-    $stmt->execute();
+    $stmt = $conn->prepare("SELECT a.*, j.title as job_title FROM applications a LEFT JOIN job_postings j ON a.job_id = j.id WHERE a.is_archived = ? ORDER BY a.applied_at DESC");
+    $stmt->execute([$app_archived]);
     $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $applications = [];
@@ -458,6 +464,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
             </button>
         </div>
 
+        <!-- Jobs filter: Active | Archived -->
+        <div id="jobsFilterBar" class="flex items-center gap-2 mb-4">
+            <span class="text-sm font-semibold text-gray-600">Show:</span>
+            <a href="?job_filter=active<?= isset($_GET['app_filter']) ? '&app_filter=' . urlencode($_GET['app_filter']) : '' ?>"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $job_filter === 'active' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Active</a>
+            <a href="?job_filter=archived<?= isset($_GET['app_filter']) ? '&app_filter=' . urlencode($_GET['app_filter']) : '' ?>"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $job_filter === 'archived' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Archived</a>
+        </div>
+
         <!-- JOBS TABLE -->
         <div id="jobsTableContainer" class="bg-white shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
@@ -509,7 +524,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                                 class="text-gray-400 hover:text-blue-600 transition-colors" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteJob(<?= $job['id'] ?>)"
+                                            <button onclick="archiveJob(<?= $job['id'] ?>)"
                                                 class="text-gray-400 hover:text-orange-500 transition-colors" title="Archive">
                                                 <i class="fas fa-box-archive"></i>
                                             </button>
@@ -520,6 +535,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Applications filter: Active | Archived -->
+        <div id="appsFilterBar" class="hidden flex items-center gap-2 mb-4">
+            <span class="text-sm font-semibold text-gray-600">Show:</span>
+            <a href="?app_filter=active<?= isset($_GET['job_filter']) ? '&job_filter=' . urlencode($_GET['job_filter']) : '' ?>"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $app_filter === 'active' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Active</a>
+            <a href="?app_filter=archived<?= isset($_GET['job_filter']) ? '&job_filter=' . urlencode($_GET['job_filter']) : '' ?>"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $app_filter === 'archived' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">Archived</a>
         </div>
 
         <!-- APPLICATIONS TABLE -->
@@ -593,7 +617,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                                 class="text-gray-400 hover:text-blue-600 transition-colors" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteApplication(<?= $app['id'] ?>)"
+                                            <button onclick="archiveApplication(<?= $app['id'] ?>)"
                                                 class="text-gray-400 hover:text-orange-500 transition-colors" title="Archive">
                                                 <i class="fas fa-box-archive"></i>
                                             </button>
@@ -910,21 +934,25 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
             const tabJobs = document.getElementById('tabJobs');
             const tabApps = document.getElementById('tabApps');
             const addJobBtn = document.getElementById('addJobBtn');
-            const walkInBtn = document.getElementById('walkInBtn');
+            const jobsFilterBar = document.getElementById('jobsFilterBar');
+            const appsFilterBar = document.getElementById('appsFilterBar');
 
             if (tabName === 'jobs') {
                 jobsTable.classList.remove('hidden');
                 appsTable.classList.add('hidden');
+                if (jobsFilterBar) jobsFilterBar.classList.remove('hidden');
+                if (appsFilterBar) appsFilterBar.classList.add('hidden');
 
                 tabJobs.className = "pb-3 px-2 text-indigo-600 font-bold border-b-2 border-indigo-600 transition-colors";
                 tabApps.className = "pb-3 px-2 text-gray-400 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
 
                 addJobBtn.classList.remove('hidden');
-                // Save state to URL or local storage if needed
                 localStorage.setItem('job_posting_tab', 'jobs');
             } else {
                 jobsTable.classList.add('hidden');
                 appsTable.classList.remove('hidden');
+                if (jobsFilterBar) jobsFilterBar.classList.add('hidden');
+                if (appsFilterBar) appsFilterBar.classList.remove('hidden');
 
                 tabApps.className = "pb-3 px-2 text-indigo-600 font-bold border-b-2 border-indigo-600 transition-colors";
                 tabJobs.className = "pb-3 px-2 text-gray-400 font-medium hover:text-indigo-600 border-b-2 border-transparent transition-colors";
@@ -1020,9 +1048,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 });
         }
 
-        // Delete Job
-        window.deleteJob = function (id) {
-            if (confirm('Are you sure you want to delete this job posting? This cannot be undone.')) {
+        // Archive Job
+        window.archiveJob = function (id) {
+            if (confirm('Archive this job posting? You can view it under Archived filter.')) {
                 const fd = new FormData();
                 fd.append('action_delete', 'delete');
                 fd.append('id', id);
@@ -1132,9 +1160,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                 });
         }
 
-        // Delete Application
-        window.deleteApplication = function (id) {
-            if (confirm('Delete this application record?')) {
+        // Archive Application
+        window.archiveApplication = function (id) {
+            if (confirm('Archive this application? You can view it under Archived filter.')) {
                 const fd = new FormData();
                 fd.append('action_delete_app', 'delete');
                 fd.append('id', id);

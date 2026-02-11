@@ -2,33 +2,48 @@
 session_start();
 include("../Database/Connections.php");
 
-// Fetch candidates
-$statusFilter = $_GET['status'] ?? 'All';
+// Ensure candidates has is_archived
+try { $conn->exec("ALTER TABLE candidates ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+
+// Archive filter: active | archived
+$archive_filter = isset($_GET['archive_filter']) && $_GET['archive_filter'] === 'archived' ? 'archived' : 'active';
+$is_archived = $archive_filter === 'archived' ? 1 : 0;
+
+// Handle archive candidate (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'archive_candidate' && !empty($_POST['id'])) {
+    header('Content-Type: application/json');
+    try {
+        $stmt = $conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
+        $stmt->execute([(int)$_POST['id']]);
+        echo json_encode(['status' => 'success', 'message' => 'Candidate archived.']);
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+    exit;
+}
 
 // Fetch candidates with error handling
 $candidates = [];
 try {
-    // Check if interview_schedule table exists to avoid SQL errors on JOIN
     $tableExists = $conn->query("SHOW TABLES LIKE 'interview_schedule'")->rowCount() > 0;
-
     if ($tableExists) {
         $sql = "SELECT c.*, i.interview_status, i.date_time as interview_date 
                 FROM candidates c 
                 LEFT JOIN interview_schedule i ON i.candidate_id = c.id
-                WHERE c.is_archived = 0 ORDER BY c.created_at DESC";
+                WHERE c.is_archived = ? ORDER BY c.created_at DESC";
     } else {
-        // Fallback if interview module isn't active yet
         $sql = "SELECT c.*, NULL as interview_status, NULL as interview_date 
                 FROM candidates c 
-                WHERE c.is_archived = 0 ORDER BY c.created_at DESC";
+                WHERE c.is_archived = ? ORDER BY c.created_at DESC";
     }
-    
-    $candidates = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$is_archived]);
+    $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    // If table check fails or other DB error, try simplest query
     try {
-        $candidates = $conn->query("SELECT * FROM candidates WHERE is_archived = 0")->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare("SELECT * FROM candidates WHERE is_archived = ?");
+        $stmt->execute([$is_archived]);
+        $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $ex) {
         $candidates = [];
     }
@@ -82,9 +97,16 @@ try {
                 <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Status Pipeline (Screening &rarr; Hired)</p>
             </div>
             
-            <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 flex items-center gap-3">
-                <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Live Updates</span>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-slate-600">Show:</span>
+                    <a href="?archive_filter=active" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $archive_filter === 'active' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">Active</a>
+                    <a href="?archive_filter=archived" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $archive_filter === 'archived' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">Archived</a>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Live Updates</span>
+                </div>
             </div>
         </div>
 
@@ -95,6 +117,9 @@ try {
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Candidate</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] w-1/2">Pipeline Progress</th>
                         <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Current Status</th>
+                        <?php if ($archive_filter === 'active'): ?>
+                        <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
@@ -170,11 +195,34 @@ try {
                                 <?= $statusText ?>
                             </span>
                         </td>
+                        <?php if ($archive_filter === 'active'): ?>
+                        <td class="px-8 py-6 text-right">
+                            <button type="button" onclick="archiveCandidate(<?= (int)$c['id'] ?>)" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-orange-500 transition-colors flex items-center gap-1 ml-auto" title="Archive">
+                                <i class="fas fa-box-archive"></i> Archive
+                            </button>
+                        </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
+    <script>
+        function archiveCandidate(id) {
+            if (!confirm('Archive this candidate? You can view under Archived filter.')) return;
+            const fd = new FormData();
+            fd.append('action', 'archive_candidate');
+            fd.append('id', id);
+            fetch('applicant_progress.php', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                        location.reload();
+                    } else alert(data.message || 'Error');
+                });
+        }
+    </script>
 </body>
 </html>

@@ -513,9 +513,15 @@ try {
         <?php include '../Components/header_admin.php'; ?>
 
         <header class="dashboard-header">
-
-            <h1><i class="fas fa-trophy"></i> Employee Recognition</h1>
-            <p>Recognize and celebrate outstanding employee contributions</p>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <div>
+                    <h1><i class="fas fa-trophy"></i> Employee Recognition</h1>
+                    <p>Recognize and celebrate outstanding employee contributions</p>
+                </div>
+                <a href="recognition_report.php" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-black font-medium transition-colors no-underline">
+                    <i class="fas fa-file-alt"></i> Generate Report
+                </a>
+            </div>
 
             <?php if ($success_message): ?>
                 <div class="alert alert-success">

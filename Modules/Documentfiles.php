@@ -22,9 +22,11 @@ echo ' ';
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
   <link rel="stylesheet" href="../css/Documentfiles.css">
-
-
-
+  <style>
+    .filter-btn { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f3f4f6; color: #4b5563; }
+    .filter-btn:hover { background: #e5e7eb; }
+    .filter-btn.active { background: #111827; color: #fff; border-color: #111827; }
+  </style>
 </head>
 
 <body>
@@ -118,6 +120,11 @@ echo ' ';
           <i class="fas fa-search"></i>
           <input type="text" id="searchInput" placeholder="Search Employee..." class="search-bar">
         </div>
+        <div class="filter-archived" style="display:flex; align-items:center; gap:8px; margin-left:12px;">
+          <span style="font-weight:600; font-size:14px;">Show:</span>
+          <button type="button" id="filterActive" class="filter-btn active">Active</button>
+          <button type="button" id="filterArchived" class="filter-btn">Archived</button>
+        </div>
       </div>
       <!-- Table -->
       <table id="jobsTable" border="1" cellspacing="0" cellpadding="10">
@@ -202,6 +209,7 @@ echo ' ';
         // Add New Row
         const table = document.getElementById("jobsTable").getElementsByTagName('tbody')[0];
         const newRow = table.insertRow();
+        newRow.setAttribute('data-archived', '0');
         newRow.innerHTML = `
             <td>${title}</td>
             <td>${position}</td>
@@ -212,7 +220,7 @@ echo ' ';
             <td>${date}</td>
             <td>
                 <span class="action-btn edit-btn" onclick="editRow(this)">Edit</span>
-                <span class="action-btn delete-btn" onclick="deleteRow(this)">Delete</span>
+                <span class="action-btn archive-btn" onclick="archiveRow(this)">Archive</span>
             </td>
         `;
       } else {
@@ -264,13 +272,31 @@ echo ' ';
       openModal(true);
     }
 
-    // Delete Row
-    function deleteRow(element) {
-      if (confirm("Are you sure you want to delete this job posting?")) {
+    // Archive Row (hide from Active view; show in Archived filter)
+    function archiveRow(element) {
+      if (confirm("Archive this record? You can view it under Archived filter.")) {
         const row = element.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        row.setAttribute('data-archived', '1');
+        row.style.display = 'none';
+        applyArchiveFilter(window.currentArchiveFilter || 'active');
       }
     }
+
+    // Filter: Active | Archived
+    window.currentArchiveFilter = 'active';
+    function applyArchiveFilter(filter) {
+      window.currentArchiveFilter = filter;
+      const rows = document.querySelectorAll("#jobsTable tbody tr");
+      rows.forEach(row => {
+        const archived = row.getAttribute('data-archived') === '1';
+        const show = (filter === 'active' && !archived) || (filter === 'archived' && archived);
+        row.style.display = show ? '' : 'none';
+      });
+      document.getElementById('filterActive').classList.toggle('active', filter === 'active');
+      document.getElementById('filterArchived').classList.toggle('active', filter === 'archived');
+    }
+    document.getElementById('filterActive').onclick = () => applyArchiveFilter('active');
+    document.getElementById('filterArchived').onclick = () => applyArchiveFilter('archived');
 
     // Close Modal if click outside
     window.onclick = function (event) {

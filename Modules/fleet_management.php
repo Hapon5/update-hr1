@@ -92,8 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit();
 }
 
-// Fetch all records
-$fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = 0 ORDER BY created_at DESC")->fetchAll();
+// Archive filter: active | archived
+$fleet_filter = isset($_GET['fleet_filter']) && $_GET['fleet_filter'] === 'archived' ? 'archived' : 'active';
+$fleet_archived = $fleet_filter === 'archived' ? 1 : 0;
+$fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = " . (int)$fleet_archived . " ORDER BY created_at DESC")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -235,6 +237,13 @@ $fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = 0 ORD
             <?php endforeach; ?>
         </div>
 
+        <!-- Filter: Active | Archived -->
+        <div class="flex items-center gap-2 mb-6">
+            <span class="text-sm font-semibold text-slate-600">Show:</span>
+            <a href="?fleet_filter=active" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $fleet_filter === 'active' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">Active</a>
+            <a href="?fleet_filter=archived" class="px-3 py-1.5 rounded-lg text-sm font-medium <?= $fleet_filter === 'archived' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">Archived</a>
+        </div>
+
         <!-- Fleet Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php if (empty($fleets)): ?>
@@ -298,9 +307,11 @@ $fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = 0 ORD
                         <button onclick="editFleet(<?= $fleet['id'] ?>)" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200">
                             Manage Log
                         </button>
-                        <button onclick="deleteFleet(<?= $fleet['id'] ?>)" class="w-12 h-12 flex items-center justify-center bg-orange-50 text-orange-500 rounded-xl hover:bg-orange-500 hover:text-white transition-all border border-orange-100" title="Archive">
+                        <?php if ($fleet_filter === 'active'): ?>
+                        <button onclick="archiveFleet(<?= $fleet['id'] ?>)" class="w-12 h-12 flex items-center justify-center bg-orange-50 text-orange-500 rounded-xl hover:bg-orange-500 hover:text-white transition-all border border-orange-100" title="Archive">
                             <i class="fas fa-box-archive text-xs"></i>
                         </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; endif; ?>
@@ -428,8 +439,8 @@ $fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = 0 ORD
                 });
         };
 
-        function deleteFleet(id) {
-            if(confirm('Archive this vehicle record?')) {
+        function archiveFleet(id) {
+            if(confirm('Archive this vehicle record? You can view it under Archived filter.')) {
                 const formData = new FormData();
                 formData.append('action', 'delete_fleet');
                 formData.append('id', id);
