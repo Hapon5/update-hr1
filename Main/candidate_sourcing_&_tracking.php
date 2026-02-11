@@ -321,18 +321,10 @@ class CandidateManager
 
     private function deleteCandidate(int $id): array
     {
-        $candidate = $this->getCandidate($id);
-        if (!$candidate) {
-            throw new Exception("Candidate not found.");
-        }
-
-        $this->deleteFile($candidate['resume_path']);
-        $this->deleteFile($candidate['extracted_image_path']);
-
-        $stmt = $this->conn->prepare("DELETE FROM candidates WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
         $stmt->execute([$id]);
 
-        return ['message' => "Candidate deleted successfully!"];
+        return ['message' => "Candidate moved to archives successfully!"];
     }
 
     private function uploadFile(array $file, string $subdir): string

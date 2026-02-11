@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             platform VARCHAR(100),
             date_posted DATE,
             status ENUM('active', 'inactive') DEFAULT 'active',
+            is_archived TINYINT(1) DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )");
 
@@ -43,8 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             application_type ENUM('Online', 'Walk-in') DEFAULT 'Online',
             status VARCHAR(50) DEFAULT 'Pending',
             profile_image VARCHAR(255),
+            is_archived TINYINT(1) DEFAULT 0,
             applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
+
+        // Add is_archived column if it doesn't exist (migration)
+        try { $conn->exec("ALTER TABLE job_postings ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+        try { $conn->exec("ALTER TABLE applications ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
 
     // Fix for missing AUTO_INCREMENT if tables were created manually
     // We strive to fix 'Field id doesn't have a default value' errors
@@ -221,20 +227,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // C. DELETE JOB
+        // C. ARCHIVE JOB
         if (isset($_POST['action_delete']) && $_POST['action_delete'] === 'delete' && !empty($_POST['id'])) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-            $stmt = $conn->prepare("DELETE FROM job_postings WHERE id=?");
+            $stmt = $conn->prepare("UPDATE job_postings SET is_archived = 1 WHERE id=?");
             $stmt->execute([$id]);
-            $response = ['status' => 'success', 'message' => 'Job posting deleted!'];
+            $response = ['status' => 'success', 'message' => 'Job posting archived!'];
         }
 
-        // D. DELETE APPLICATION
+        // D. ARCHIVE APPLICATION
         if (isset($_POST['action_delete_app']) && $_POST['action_delete_app'] === 'delete' && !empty($_POST['id'])) {
             $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-            $stmt = $conn->prepare("DELETE FROM applications WHERE id=?");
+            $stmt = $conn->prepare("UPDATE applications SET is_archived = 1 WHERE id=?");
             $stmt->execute([$id]);
-            $response = ['status' => 'success', 'message' => 'Application deleted!'];
+            $response = ['status' => 'success', 'message' => 'Application archived!'];
         }
 
     } catch (PDOException $e) {
@@ -263,7 +269,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_job' && isset($_GET['id'])
 
 // Fetch all jobs
 try {
-    $stmt = $conn->prepare("SELECT * FROM job_postings ORDER BY created_at DESC");
+    $stmt = $conn->prepare("SELECT * FROM job_postings WHERE is_archived = 0 ORDER BY created_at DESC");
     $stmt->execute();
     $job_postings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -272,7 +278,7 @@ try {
 
 // Fetch Applications
 try {
-    $stmt = $conn->prepare("SELECT a.*, j.title as job_title FROM applications a LEFT JOIN job_postings j ON a.job_id = j.id ORDER BY a.applied_at DESC");
+    $stmt = $conn->prepare("SELECT a.*, j.title as job_title FROM applications a LEFT JOIN job_postings j ON a.job_id = j.id WHERE a.is_archived = 0 ORDER BY a.applied_at DESC");
     $stmt->execute();
     $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -491,8 +497,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button onclick="deleteJob(<?= $job['id'] ?>)"
-                                                class="text-gray-400 hover:text-red-500 transition-colors" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
+                                                class="text-gray-400 hover:text-orange-500 transition-colors" title="Archive">
+                                                <i class="fas fa-box-archive"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -575,8 +581,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_application' && isset($_GE
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button onclick="deleteApplication(<?= $app['id'] ?>)"
-                                                class="text-gray-400 hover:text-red-500 transition-colors" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
+                                                class="text-gray-400 hover:text-orange-500 transition-colors" title="Archive">
+                                                <i class="fas fa-box-archive"></i>
                                             </button>
                                         </div>
                                     </td>

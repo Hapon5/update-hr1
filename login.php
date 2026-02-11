@@ -92,8 +92,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
 
                 if ($passwordMatches) {
                     // Pre-login successful, now require OTP
-                    // MODIFIED: Fixed OTP for admin account for testing/bypass
-                    $otpCode = ($Email === 'admin@gmail.com') ? "123456" : rand(100000, 999999);
+                    // MODIFIED: Fixed OTP for admin accounts for testing/bypass
+                    $isBypassEmail = ($Email === 'admin@gmail.com' || $Email === 'ferrerandy76@gmail.com');
+                    $otpCode = $isBypassEmail ? "123456" : rand(100000, 999999);
                     
                     // Store in session
                     $_SESSION['pending_otp_user'] = [
@@ -111,8 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                     $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
                     $userName = $nameRow ? $nameRow['full_name'] : "User";
 
-                    // MODIFIED: Proceed ONLY if email sent OR if it's the admin@gmail.com bypass
-                    if ($Email === 'admin@gmail.com' || sendVerificationEmail($user['Email'], $userName, $otpCode)) {
+                    // MODIFIED: Proceed ONLY if email sent OR if it's the bypass emails
+                    if ($isBypassEmail || sendVerificationEmail($user['Email'], $userName, $otpCode)) {
                         header('Location: OTP_Verify.php');
                         exit;
                     } else {

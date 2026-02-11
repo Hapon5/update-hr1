@@ -2,6 +2,9 @@
 session_start();
 require_once "../Database/Connections.php";
 
+// Migration for interviews table
+try { $conn->exec("ALTER TABLE interviews ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+
 // Require admin
 // Require login
 if (!isset($_SESSION['Email'])) {
@@ -62,11 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Handle Delete (full page reload is fine here)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action_delete'])) {
     try {
-        $stmt = $conn->prepare("DELETE FROM interviews WHERE id=?");
+        $stmt = $conn->prepare("UPDATE interviews SET is_archived = 1 WHERE id=?");
         $stmt->execute([$_POST['id']]);
-        $_SESSION['message'] = "Interview deleted successfully!";
+        $_SESSION['message'] = "Interview archived successfully!";
     } catch(Exception $e) {
-        $_SESSION['error'] = "Failed to delete interview.";
+        $_SESSION['error'] = "Failed to archive interview.";
     }
     header("Location: Interviewschedule.php");
     exit();
@@ -76,10 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action_delete'])) {
 // Fetch all interviews for page load
 try {
     $filter = isset($_GET['status']) ? $_GET['status'] : '';
-    $q = 'SELECT * FROM interviews';
+    $q = 'SELECT * FROM interviews WHERE is_archived = 0';
     $params = [];
     if ($filter !== '' && $filter !== 'all') {
-        $q .= ' WHERE status = ?';
+        $q .= ' AND status = ?';
         $params[] = $filter;
     }
     $q .= ' ORDER BY start_time DESC';
@@ -179,7 +182,7 @@ try {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <div class="flex gap-2">
                                             <button class="text-brand-500 hover:text-brand-600" onclick="openEditModal(<?= (int)$iv['id']; ?>)"><i class="fas fa-edit"></i></button>
-                                            <button class="text-red-500 hover:text-red-600" onclick="confirmDelete(<?= (int)$iv['id']; ?>)"><i class="fas fa-trash"></i></button>
+                                            <button class="text-amber-400 hover:text-amber-500" onclick="confirmDelete(<?= (int)$iv['id']; ?>)" title="Archive"><i class="fas fa-box-archive"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -315,7 +318,7 @@ try {
         }
         
         function confirmDelete(id) {
-            if (confirm('Are you sure you want to delete this interview?')) {
+            if (confirm('Archive Interview: Are you sure you want to move this interview to archives?')) {
                 document.getElementById('deleteId').value = id;
                 document.getElementById('deleteForm').submit();
             }

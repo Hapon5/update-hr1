@@ -64,7 +64,16 @@ function getIconColor($pageName, $current_page)
     <div class="flex items-center gap-3 px-6 h-20 border-b border-gray-800 mb-2 flex-shrink-0">
         <div class="relative group">
             <div class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center shadow-lg overflow-hidden border border-gray-800 group-hover:border-indigo-500/50 transition-all">
-                <img src="<?php echo $sidebar_user['photo']; ?>" alt="Profile" class="w-full h-full object-cover">
+                <?php 
+                // Check if photo is base64 or file path
+                if (strpos($sidebar_user['photo'], 'data:image') === 0) {
+                    // It's a base64 image
+                    echo '<img src="' . $sidebar_user['photo'] . '" alt="Profile" class="w-full h-full object-cover" onerror="this.src=\'' . $root_path . 'Image/logo.png\'">';
+                } else {
+                    // It's a file path
+                    echo '<img src="' . htmlspecialchars($sidebar_user['photo']) . '" alt="Profile" class="w-full h-full object-cover" onerror="this.src=\'' . $root_path . 'Image/logo.png\'">';
+                }
+                ?>
             </div>
             <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-gray-950 rounded-full"></div>
         </div>

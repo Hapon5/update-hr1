@@ -4,6 +4,10 @@ session_start();
 $root_path = '../../';
 require_once $root_path . "Database/Connections.php";
 
+// Migration for account archiving
+try { $conn->exec("ALTER TABLE logintbl ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+try { $conn->exec("ALTER TABLE candidates ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+
 if (!isset($_SESSION['Email']) || !in_array($_SESSION['Account_type'], [0, 1])) {
     header("Location: " . $root_path . "login.php");
     exit();
@@ -72,15 +76,15 @@ if (isset($_GET['delete'])) {
                 $error = "Access Denied: HR Admins cannot delete Super Admin accounts.";
             } else {
                 $conn->beginTransaction();
-                // Delete from logintbl
-                $stmtDel = $conn->prepare("DELETE FROM logintbl WHERE LoginID = ?");
+                // Archive in logintbl
+                $stmtDel = $conn->prepare("UPDATE logintbl SET is_archived = 1 WHERE LoginID = ?");
                 if ($stmtDel->execute([$deleteId])) {
-                    // Also delete from candidates if applicable
-                    $stmtDelCand = $conn->prepare("DELETE FROM candidates WHERE email = ?");
+                    // Also archive in candidates if applicable
+                    $stmtDelCand = $conn->prepare("UPDATE candidates SET is_archived = 1 WHERE email = ?");
                     $stmtDelCand->execute([$row['Email']]);
                     
                     $conn->commit();
-                    $msg = "<div class='bg-amber-50 text-amber-600 p-4 rounded-xl mb-6 border border-amber-100 text-[10px] font-black uppercase tracking-widest text-center'>Account removed successfully.</div>";
+                    $msg = "<div class='bg-amber-50 text-amber-600 p-4 rounded-xl mb-6 border border-amber-100 text-[10px] font-black uppercase tracking-widest text-center'>Account archived successfully.</div>";
                 }
             }
         } else {
@@ -98,6 +102,7 @@ try {
     $stmt = $conn->query("SELECT l.LoginID, l.Email, l.Account_type, c.full_name 
                          FROM logintbl l 
                          LEFT JOIN candidates c ON l.Email = c.email 
+                         WHERE l.is_archived = 0
                          ORDER BY l.LoginID DESC");
     $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
@@ -267,9 +272,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                      <i class="fas fa-edit text-[10px]"></i>
                                                  </button>
                                                  <a href="?delete=<?php echo $acc['LoginID']; ?>" 
-                                                    onclick="return confirm('Strict Warning: Are you sure you want to PERMANENTLY delete this account?')"
-                                                    class="w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-red-100 flex items-center justify-center">
-                                                     <i class="fas fa-trash-alt text-[10px]"></i>
+                                                    onclick="return confirm('Archive Account: Are you sure you want to move this account to archives?')"
+                                                    class="w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-amber-100 flex items-center justify-center">
+                                                     <i class="fas fa-box-archive text-[10px]"></i>
                                                  </a>
                                              </div>
                                         </td>

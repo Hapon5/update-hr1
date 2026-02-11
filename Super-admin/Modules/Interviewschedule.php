@@ -2,6 +2,9 @@
 session_start();
 include '../../Database/Connections.php';
 
+// Migration for interviews table
+try { $conn->exec("ALTER TABLE interviews ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -66,7 +69,7 @@ if (isset($_GET['action'])) {
     header('Content-Type: application/json');
 
     if ($_GET['action'] === 'get_events') {
-        $stmt = $conn->query("SELECT id, candidate_name as title, start_time as start, end_time as end, status, interview_type FROM interviews");
+        $stmt = $conn->query("SELECT id, candidate_name as title, start_time as start, end_time as end, status, interview_type FROM interviews WHERE is_archived = 0");
         $events = $stmt->fetchAll();
         foreach ($events as &$event) {
             $event['color'] = $event['status'] === 'completed' ? '#10b981' : ($event['status'] === 'cancelled' ? '#ef4444' : '#6366f1');
@@ -76,7 +79,7 @@ if (isset($_GET['action'])) {
     }
 
     if ($_GET['action'] === 'get_interview' && isset($_GET['id'])) {
-        $stmt = $conn->prepare("SELECT * FROM interviews WHERE id = ?");
+        $stmt = $conn->prepare("SELECT * FROM interviews WHERE id = ? AND is_archived = 0");
         $stmt->execute([$_GET['id']]);
         echo json_encode($stmt->fetch());
         exit();
@@ -153,9 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (isset($data['action']) && $data['action'] === 'delete_interview') {
-            $stmt = $conn->prepare("DELETE FROM interviews WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE interviews SET is_archived = 1 WHERE id = ?");
             $stmt->execute([$data['id']]);
-            echo json_encode(['status' => 'success', 'message' => 'Interview deleted']);
+            echo json_encode(['status' => 'success', 'message' => 'Interview archived']);
             exit();
         }
     } catch (Exception $e) {
@@ -164,10 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 // Stats
-$total_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews");
-$scheduled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='scheduled'");
-$completed_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='completed'");
-$cancelled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='cancelled'");
+$total_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE is_archived = 0");
+$scheduled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='scheduled' AND is_archived = 0");
+$completed_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='completed' AND is_archived = 0");
+$cancelled_interviews = getCount($conn, "SELECT COUNT(*) FROM interviews WHERE status='cancelled' AND is_archived = 0");
 
 // Fetch Candidates for dropdown
 $candidates = $conn->query("SELECT id, full_name, email, job_title FROM candidates ORDER BY full_name ASC")->fetchAll();
@@ -792,13 +795,13 @@ $employees = $conn->query("SELECT id, name, position FROM employees ORDER BY nam
 
         function deleteInterview(id) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Archive Interview?',
+                text: "This record will be moved to archives.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
+                confirmButtonColor: '#f59e0b',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, archive it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     const fd = new FormData();
@@ -808,7 +811,7 @@ $employees = $conn->query("SELECT id, name, position FROM employees ORDER BY nam
                         .then(r => r.json())
                         .then(res => {
                             if (res.status === 'success') {
-                                Swal.fire('Deleted!', 'Interview has been deleted.', 'success').then(() => location.reload());
+                                Swal.fire('Archived!', 'Interview has been moved to archives.', 'success').then(() => location.reload());
                             }
                         });
                 }

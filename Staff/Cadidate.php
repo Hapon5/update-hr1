@@ -47,7 +47,7 @@ class CandidateManager
 
     public function getCandidates($search = '', $status = '')
     {
-        $sql = "SELECT * FROM candidates WHERE 1=1";
+        $sql = "SELECT * FROM candidates WHERE is_archived = 0";
         $params = [];
         if (!empty($search)) {
             $sql .= " AND (full_name LIKE ? OR email LIKE ? OR position LIKE ?)";
@@ -86,9 +86,9 @@ class CandidateManager
 
     public function deleteCandidate($id)
     {
-        $stmt = $this->conn->prepare("DELETE FROM candidates WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE candidates SET is_archived = 1 WHERE id = ?");
         $stmt->execute([$id]);
-        return ['status' => 'success', 'message' => 'Candidate removed'];
+        return ['status' => 'success', 'message' => 'Candidate moved to archives'];
     }
 
     private function uploadFile($file, $subdir)
@@ -267,8 +267,8 @@ $candidates = $manager->getCandidates($search, $status);
                                     </a>
                                 <?php endif; ?>
                                 <button onclick="deleteCandidate(<?= $c['id'] ?>)" 
-                                        class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 hover:border-red-100 transition-all">
-                                    <i class="fas fa-trash-alt"></i>
+                                        class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-100 transition-all" title="Archive">
+                                    <i class="fas fa-box-archive"></i>
                                 </button>
                             </div>
                         </div>
@@ -338,7 +338,7 @@ $candidates = $manager->getCandidates($search, $status);
 
     <script>
         function deleteCandidate(id) {
-            if (!confirm('Are you sure you want to remove this candidate?')) return;
+            if (!confirm('Move this candidate to archives?')) return;
             const fd = new FormData();
             fd.append('action', 'delete');
             fd.append('id', id);

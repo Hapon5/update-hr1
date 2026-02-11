@@ -21,9 +21,13 @@ try {
         contact_no VARCHAR(100),
         status ENUM('Available', 'On Trip', 'Under Maintenance', 'Out of Service') DEFAULT 'Available',
         last_destination VARCHAR(255),
+        is_archived TINYINT(1) DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )");
+    
+    // Add is_archived column if it doesn't exist (migration)
+    try { $conn->exec("ALTER TABLE fleet_management ADD COLUMN is_archived TINYINT(1) DEFAULT 0"); } catch (Exception $e) {}
 
     // Initial dummy data if table is empty
     $check = $conn->query("SELECT COUNT(*) FROM fleet_management")->fetchColumn();
@@ -78,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
             echo json_encode(['status' => 'success', 'message' => $msg]);
         } elseif ($action === 'delete_fleet') {
-            $stmt = $conn->prepare("DELETE FROM fleet_management WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE fleet_management SET is_archived = 1 WHERE id = ?");
             $stmt->execute([$_POST['id']]);
-            echo json_encode(['status' => 'success', 'message' => 'Record deleted!']);
+            echo json_encode(['status' => 'success', 'message' => 'Record archived!']);
         }
     } catch (Exception $e) {
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
@@ -89,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch all records
-$fleets = $conn->query("SELECT * FROM fleet_management ORDER BY created_at DESC")->fetchAll();
+$fleets = $conn->query("SELECT * FROM fleet_management WHERE is_archived = 0 ORDER BY created_at DESC")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -294,8 +298,8 @@ $fleets = $conn->query("SELECT * FROM fleet_management ORDER BY created_at DESC"
                         <button onclick="editFleet(<?= $fleet['id'] ?>)" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200">
                             Manage Log
                         </button>
-                        <button onclick="deleteFleet(<?= $fleet['id'] ?>)" class="w-12 h-12 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-100">
-                            <i class="fas fa-trash-alt text-xs"></i>
+                        <button onclick="deleteFleet(<?= $fleet['id'] ?>)" class="w-12 h-12 flex items-center justify-center bg-orange-50 text-orange-500 rounded-xl hover:bg-orange-500 hover:text-white transition-all border border-orange-100" title="Archive">
+                            <i class="fas fa-box-archive text-xs"></i>
                         </button>
                     </div>
                 </div>
