@@ -109,8 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 ];
 
                 // 5. Send Email
-                // MODIFIED: Bypass email for admin@gmail.com
-                if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $name, $verificationCode)) {
+                $mailSent = ($email === 'admin@gmail.com' || sendVerificationEmail($email, $name, $verificationCode));
+                
+                // MODIFIED: Even if email fails, let them through for testing/bypass
+                if (true) { // Always proceed to verification page
+                    if (!$mailSent) {
+                        $_SESSION['otp_send_failed'] = true;
+                    }
                     // 6. Redirect to OTP Verification Page (User requested unified page)
                     header("Location: OTP_Verify.php");
                     exit;
