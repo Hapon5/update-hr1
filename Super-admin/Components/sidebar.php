@@ -155,6 +155,12 @@ function getIconColor($pageName, $current_page)
             <span class="font-medium text-sm">Account List</span>
         </a>
 
+        <a href="<?php echo $root_path; ?>Employee/login.php"
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl group <?php echo isActive('login.php', $current_page); ?>">
+            <i class="fas fa-user-cog w-5 text-center <?php echo getIconColor('login.php', $current_page); ?>"></i>
+            <span class="font-medium text-sm">Account</span>
+        </a>
+
 
 
         <a href="<?php echo $root_path; ?>Super-admin/Modules/recycle_bin.php"
