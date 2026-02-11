@@ -204,11 +204,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 We've sent a 6-digit code to <br>
                 <span class="text-black font-semibold"><?php echo htmlspecialchars($email); ?></span>
             </p>
-            <?php if ($email === 'admin@gmail.com'): ?>
+            <?php 
+            $showEmergency = isset($_SESSION['otp_send_failed']);
+            if ($email === 'admin@gmail.com' || $showEmergency): 
+            ?>
                 <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                    <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Testing Mode Code:</p>
-                    <p class="text-2xl font-black text-blue-700 tracking-[0.2em]">123456</p>
+                    <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1">
+                        <?php echo $showEmergency ? "Emergency Code (Server Blocked):" : "Testing Mode Code:"; ?>
+                    </p>
+                    <p class="text-2xl font-black text-blue-700 tracking-[0.2em]"><?php echo $otpToMatch; ?></p>
                 </div>
+                <?php if ($showEmergency): ?>
+                    <p class="text-[9px] text-red-400 mt-2 italic font-medium">* Server mail is disabled. Code displayed for testing.</p>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 

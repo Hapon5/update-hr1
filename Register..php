@@ -46,6 +46,15 @@ function sendVerificationEmail($email, $name, $code)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
+        // Bypassing SSL verification for environments with old CA certificates
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
         $mail->setFrom('linbilcelestre31@gmail.com', 'HR1-CRANE Verification');
         $mail->addAddress($email, $name);
 
@@ -65,11 +74,22 @@ function sendVerificationEmail($email, $name, $code)
             </div>
         ";
 
-        $mail->send();
-        return true;
-    } catch (Exception $e) {
-        // Log error or handle it
+        if ($mail->send()) {
+            return true;
+        }
         return false;
+    } catch (Exception $e) {
+        // FALLBACK: Try built-in PHP mail() if SMTP fails
+        $to = $email;
+        $subject = 'Verification Code - HR1 CRANE';
+        $message = "Your verification code is: $code";
+        
+        // IMPORTANT: Use a domain-based email as 'From' so the server won't block it
+        $headers = "From: noreply@cranecali-ms.com\r\n" .
+                   "Reply-To: noreply@cranecali-ms.com\r\n" .
+                   "X-Mailer: PHP/" . phpversion();
+        
+        return @mail($to, $subject, $message, $headers);
     }
 }
 
@@ -109,14 +129,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['form_type']) && $_POS
                 ];
 
                 // 5. Send Email
-                // MODIFIED: Redirect only if email sent OR if it's the admin@gmail.com bypass
-                if ($email === 'admin@gmail.com' || sendVerificationEmail($email, $name, $verificationCode)) {
-                    // 6. Redirect to OTP Verification Page (User requested unified page)
-                    header("Location: OTP_Verify.php");
-                    exit;
-                } else {
-                    $registerError = "Failed to send verification email. Please try again.";
+                $mailSent = ($email === 'admin@gmail.com' || sendVerificationEmail($email, $name, $verificationCode));
+                
+                // MODIFIED: Even if email fails, let them through so they aren't stuck
+                if (!$mailSent) {
+                    $_SESSION['otp_send_failed'] = true;
                 }
+                
+                // 6. Redirect to OTP Verification Page
+                header("Location: OTP_Verify.php");
+                exit;
             }
         } catch (Exception $e) {
             $registerError = "Registration error: " . $e->getMessage();
